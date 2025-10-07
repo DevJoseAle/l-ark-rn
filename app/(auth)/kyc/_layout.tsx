@@ -9,14 +9,15 @@ export const unstable_settings = {
   anchor: '(tabs)',
 };
 
-export default function RootLayout() {
+export default function KycLayout() {
   const colorScheme = useColorScheme();
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(public)" options={{ presentation: 'modal', title: 'Modal' }} />
+        <Stack.Screen name="welcome" options={{ headerShown: false }} />
+        <Stack.Screen name="documents" options={{ headerShown: false }} />
+        <Stack.Screen name="login" options={{ headerShown: false  }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

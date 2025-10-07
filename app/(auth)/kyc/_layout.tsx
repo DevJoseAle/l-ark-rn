@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { DarkNavigationTheme, LightNavigationTheme } from '@/hooks/use-theme-color';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -13,7 +14,7 @@ export default function KycLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={colorScheme === 'dark' ? DarkNavigationTheme : LightNavigationTheme}>
       <Stack>
         <Stack.Screen name="welcome" options={{ headerShown: false }} />
         <Stack.Screen name="documents" options={{ headerShown: false }} />

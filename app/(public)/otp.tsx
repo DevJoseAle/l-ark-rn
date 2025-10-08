@@ -1,84 +1,31 @@
 // app/(public)/otp.tsx
 import { View, Text, TouchableOpacity, TextInput, Alert } from 'react-native';
 import React, { useState, useRef } from 'react';
-import { router } from 'expo-router';
+import { router, useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useThemeColors } from '@/hooks/use-theme-color';
 import { GradientBackground } from '@/src/components/common/GradiendBackground';
 import { LarkLogo } from '@/src/components/common/LarkLogo';
 import { createOTPStyles } from '@/src/features/auth/styles/otpStyles';
 import { useLoadingStore } from '@/src/stores/LoadingStore';
+import { useOTPForm } from '@/src/features/auth/hooks/useLogin';
+import { authService } from '@/src/features/auth/service/auth.service';
 
 
 export default function OTPScreen() {
-
-  
+  const router = useRouter();
   const colors = useThemeColors();
   const styles = createOTPStyles(colors);
-  const { showLoading, hideLoading } = useLoadingStore();
-  
-  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const { 
+    otp, 
+    setOtp, 
+    isCodeComplete, 
+    code, 
+    handleConfirm, 
+    handleResend, 
+    handleKeyPress,
+    handleOtpChange } = useOTPForm(6, router);
   const inputRefs = useRef<Array<TextInput | null>>([]);
-
-  const handleOtpChange = (value: string, index: number) => {
-    // Solo permite números
-    if (!/^\d*$/.test(value)) return;
-
-    const newOtp = [...otp];
-    newOtp[index] = value;
-    setOtp(newOtp);
-
-    // Auto-focus al siguiente input
-    if (value && index < 5) {
-      inputRefs.current[index + 1]?.focus();
-    }
-  };
-
-  const handleKeyPress = (e: any, index: number) => {
-    // Retroceso: borra y vuelve al anterior
-    if (e.nativeEvent.key === 'Backspace' && !otp[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus();
-    }
-  };
-
-  const handleConfirm = async () => {
-    const code = otp.join('');
-    
-    if (code.length !== 6) {
-      Alert.alert('Error', 'Por favor ingresa el código completo');
-      return;
-    }
-
-    showLoading('Verificando código...');
-    try {
-      // Lógica de verificación
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      console.log('✅ Código verificado:', code);
-      
-      // Navegar a pantalla principal
-      router.replace('/(auth)/(tabs)/arkHome');
-    } catch (error) {
-      console.error('❌ Error:', error);
-      Alert.alert('Error', 'Código inválido');
-      hideLoading();
-    }
-  };
-
-  const handleResend = async () => {
-    showLoading('Reenviando código...');
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      Alert.alert('Éxito', 'Código reenviado');
-      setOtp(['', '', '', '', '', '']); // Limpia el input
-      inputRefs.current[0]?.focus();
-    } catch (error) {
-      Alert.alert('Error', 'No se pudo reenviar el código');
-    } finally {
-      hideLoading();
-    }
-  };
-
-  const isCodeComplete = otp.every(digit => digit !== '');
 
   return (
     <GradientBackground>

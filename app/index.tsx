@@ -1,12 +1,25 @@
 import { useEffect } from 'react';
 import { Redirect } from 'expo-router';
 import { View, ActivityIndicator } from 'react-native';
+import { useAuthStore } from '@/src/stores/authStore';
+import { useShallow } from 'zustand/react/shallow';
+
 
 export default function Index() {
-  const isLoading = false;
-  const isAuthenticated = false;
 
-  // Si todavía está cargando el estado de auth
+  const { user, isAuthenticated, isLoading, initialize } = useAuthStore(
+    useShallow(state => ({
+      user: state.user,
+      isAuthenticated: state.isAuthenticated,
+      isLoading: state.isLoading,
+      initialize: state.initialize,
+    }))
+  );
+useEffect(() => {
+    initialize();
+  }, []);
+
+  console.log('Index - isLoading:', isLoading, 'isAuthenticated:', isAuthenticated, 'user:', user?.email);  // Si todavía está cargando el estado de auth
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

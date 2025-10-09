@@ -8,7 +8,7 @@ import { Campaign, CampaignVisibility } from './campaign.types';
 
 export type CampaignImageType = 'campaign' | 'diagnosis' | 'beneficiary';
 
-export type BeneficiaryShareType = 'percentage' | 'fixed_amount';
+export type BeneficiaryShareType = 'percent' | 'fixed_amount';
 
 export type DistributionRule = 'percentage' | 'fixed_parts';
 

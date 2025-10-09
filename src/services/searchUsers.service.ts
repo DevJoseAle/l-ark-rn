@@ -43,7 +43,7 @@ export class UserSearchService {
         .from('users')
         .select('id, display_name, email, kyc_status')
         .eq('id', userId)
-        .eq('kyc_status', 'kyc_approved')
+        .eq('kyc_status', 'kyc_verified')
         .single();
 
       if (error) {
@@ -66,7 +66,7 @@ export class UserSearchService {
   static async canBecomeBeneficiary(userId: string): Promise<boolean> {
     try {
       const user = await this.getUserById(userId);
-      return user !== null && user.kyc_status === 'kyc_approved';
+      return user !== null && user.kyc_status === 'kyc_verified';
     } catch (error) {
       console.error('Error validating beneficiary:', error);
       return false;

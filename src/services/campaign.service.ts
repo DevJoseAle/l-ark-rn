@@ -1,5 +1,5 @@
 import { supabase } from "../lib/supabaseClient";
-import { Campaign, CreateCampaignDTO, UpdateCampaignDTO, CampaignStats } from "../types/campaign.types";
+import { Campaign, CreateCampaignDTO, UpdateCampaignDTO, CampaignStats, CampaignDetail } from "../types/campaign.types";
 
 
 export class CampaignService {
@@ -10,7 +10,7 @@ export class CampaignService {
   static async getUserCampaign(): Promise<Campaign | null> {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      
+
       if (!user) {
         throw new Error('Usuario no autenticado');
       }
@@ -42,7 +42,7 @@ export class CampaignService {
   static async createCampaign(data: CreateCampaignDTO): Promise<Campaign> {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      
+
       if (!user) {
         throw new Error('Usuario no autenticado');
       }
@@ -76,7 +76,7 @@ export class CampaignService {
   ): Promise<Campaign> {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      
+
       if (!user) {
         throw new Error('Usuario no autenticado');
       }
@@ -135,7 +135,7 @@ export class CampaignService {
 
       // Calcular porcentaje
       const goalAmount = campaign.goal_amount || 0;
-      const percentage = goalAmount > 0 
+      const percentage = goalAmount > 0
         ? Math.min(Math.round((campaign.total_raised / goalAmount) * 100), 100)
         : 0;
 
@@ -179,5 +179,144 @@ export class CampaignService {
       console.error('Error al eliminar campaña:', error);
       throw error;
     }
+  }
+
+  /**
+ * Obtener campaña del usuario actual
+ */
+  static async getCurrentUserCampaign(): Promise<CampaignDetail | null> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error('Usuario no autenticado');
+      }
+
+      const { data, error } = await supabase
+        .from('campaigns')
+        .select(`
+        *,
+        owner:users!campaigns_owner_user_id_fkey(id, display_name, email),
+        images:campaign_images(id, image_url, image_type, display_order, is_primary),
+        beneficiaries:campaign_beneficiaries(
+          id,
+          beneficiary_user_id,
+          share_type,
+          share_value,
+          is_active,
+          user:users!campaign_beneficiaries_beneficiary_user_id_fkey(
+            id,
+            display_name,
+            email,
+            kyc_status
+          ),
+          documents:campaign_images!campaign_images_beneficiary_id_fkey(
+            id,
+            image_url,
+            image_type,
+            display_order
+          )
+        )
+      `)
+        .eq('owner_user_id', user.id)
+        .single();
+
+      if (error) {
+        if (error.code === 'PGRST116') {
+          return null;
+        }
+        throw error;
+      }
+
+      return data as unknown as CampaignDetail;
+    } catch (error) {
+      console.error('Error fetching campaign:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Obtener campaña por ID
+   */
+  static async getCampaignById(campaignId: string): Promise<CampaignDetail | null> {
+    try {
+      const { data, error } = await supabase
+        .from('campaigns')
+        .select(`
+        *,
+        owner:users!campaigns_owner_user_id_fkey(id, display_name, email),
+        images:campaign_images(id, image_url, image_type, display_order, is_primary),
+        beneficiaries:campaign_beneficiaries(
+          id,
+          beneficiary_user_id,
+          share_type,
+          share_value,
+          is_active,
+          user:users!campaign_beneficiaries_beneficiary_user_id_fkey(
+            id,
+            display_name,
+            email,
+            kyc_status
+          ),
+          documents:campaign_images!campaign_images_beneficiary_id_fkey(
+            id,
+            image_url,
+            image_type,
+            display_order
+          )
+        )
+      `)
+        .eq('id', campaignId)
+        .single();
+
+      if (error) {
+        if (error.code === 'PGRST116') {
+          return null;
+        }
+        throw error;
+      }
+
+      return data as unknown as CampaignDetail;
+    } catch (error) {
+      console.error('Error fetching campaign by id:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Calcular días restantes
+   */
+  static getDaysRemaining(endDate: string | null): number {
+    if (!endDate) return 0;
+
+    const now = new Date();
+    const end = new Date(endDate);
+    const diffTime = end.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return Math.max(0, diffDays);
+  }
+
+  /**
+   * Calcular porcentaje de progreso
+   */
+  static getProgressPercentage(totalRaised: number, goalAmount: number | null): number {
+    if (!goalAmount || goalAmount === 0) return 0;
+    return Math.min(100, Math.round((totalRaised / goalAmount) * 100));
+  }
+
+  /**
+   * Obtener imagen principal
+   */
+  static getMainImage(images: CampaignDetail['images']): string | null {
+    if (!images || images.length === 0) return null;
+
+    const mainImage = images
+      .filter(img => img.image_type === 'main' || img.image_type === 'campaign')
+      .sort((a, b) => {
+        if (a.is_primary && !b.is_primary) return -1;
+        if (!a.is_primary && b.is_primary) return 1;
+        return a.display_order - b.display_order;
+      })[0];
+
+    return mainImage?.image_url || null;
   }
 }

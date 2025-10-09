@@ -20,25 +20,25 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="arkHome"
         options={{
           title: 'Home',
         }}
       />
       <Tabs.Screen
-        name="vault"
+        name="vaultHome"
         options={{
           title: 'Vault',
         }}
       />
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="favorites"
         options={{
           title: 'Favoritos',
         }}
-      />
+      /> */}
       <Tabs.Screen
-        name="profile"
+        name="profileHome"
         options={{
           title: 'Perfil',
         }}

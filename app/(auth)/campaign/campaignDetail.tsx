@@ -21,7 +21,6 @@ import { GradientBackground } from '@/src/components/common/GradiendBackground';
 import { CampaignService } from '@/src/services/campaign.service';
 import { CampaignDetail } from '@/src/types/campaign.types';
 import { Formatters } from '@/src/utils/formatters';
-import { ImageGalleryViewer, ImageGridViewer } from '@/src/components/common/ImageGalleryViewer';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -53,8 +52,8 @@ export default function CampaignDetailScreen() {
     try {
       setIsLoading(true);
       setError(null);
-
-      const data = campaignId
+      
+      const data = campaignId 
         ? await CampaignService.getCampaignById(campaignId)
         : await CampaignService.getCurrentUserCampaign();
 
@@ -117,7 +116,7 @@ export default function CampaignDetailScreen() {
 
   const mainImage = CampaignService.getMainImage(campaign.images);
   const progress = CampaignService.getProgressPercentage(
-    campaign.total_raised,
+    campaign.current_amount,
     campaign.goal_amount ?? 0
   );
   const daysRemaining = CampaignService.getDaysRemaining(campaign.end_at ?? '');
@@ -140,59 +139,53 @@ export default function CampaignDetailScreen() {
         contentContainerStyle={styles.scrollContent}
       >
         {/* HERO IMAGE */}
-        <ImageGalleryViewer
-          images={mainImage ? [{ uri: mainImage }] : []}
-          style={styles.heroContainer}
-        >
-          <View style={styles.heroContainer}>
-            {mainImage ? (
-              <Image source={{ uri: mainImage }} style={styles.heroImage} />
-            ) : (
-              <View style={[styles.heroPlaceholder, { backgroundColor: colors.separator }]}>
-                <Ionicons name="image-outline" size={64} color={colors.icon} />
-              </View>
-            )}
+        <View style={styles.heroContainer}>
+          {mainImage ? (
+            <Image source={{ uri: mainImage }} style={styles.heroImage} />
+          ) : (
+            <View style={[styles.heroPlaceholder, { backgroundColor: colors.separator }]}>
+              <Ionicons name="image-outline" size={64} color={colors.icon} />
+            </View>
+          )}
 
-            {/* Gradient Overlay */}
-            <LinearGradient
-              colors={['transparent', 'rgba(0,0,0,0.7)']}
-              style={styles.heroGradient}
-            />
+          {/* Gradient Overlay */}
+          <LinearGradient
+            colors={['transparent', 'rgba(0,0,0,0.7)']}
+            style={styles.heroGradient}
+          />
 
-            {/* Header Buttons */}
-            <View style={styles.headerButtons}>
+          {/* Header Buttons */}
+          <View style={styles.headerButtons}>
+            <TouchableOpacity
+              style={[styles.headerButton, { backgroundColor: 'rgba(0,0,0,0.5)' }]}
+              onPress={() => router.back()}
+            >
+              <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
+            </TouchableOpacity>
+
+            <View style={styles.headerRight}>
               <TouchableOpacity
                 style={[styles.headerButton, { backgroundColor: 'rgba(0,0,0,0.5)' }]}
-                onPress={() => router.back()}
+                onPress={handleShare}
               >
-                <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
+                <Ionicons name="share-outline" size={24} color="#FFFFFF" />
               </TouchableOpacity>
-
-              <View style={styles.headerRight}>
-                <TouchableOpacity
-                  style={[styles.headerButton, { backgroundColor: 'rgba(0,0,0,0.5)' }]}
-                  onPress={handleShare}
-                >
-                  <Ionicons name="share-outline" size={24} color="#FFFFFF" />
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            {/* Status Badge */}
-            <View style={styles.statusBadgeContainer}>
-              <View
-                style={[
-                  styles.statusBadge,
-                  { backgroundColor: statusConfig.color },
-                ]}
-              >
-                <Ionicons name={statusConfig.icon} size={16} color="#FFFFFF" />
-                <Text style={styles.statusText}>{statusConfig.label}</Text>
-              </View>
             </View>
           </View>
-        </ImageGalleryViewer>
 
+          {/* Status Badge */}
+          <View style={styles.statusBadgeContainer}>
+            <View
+              style={[
+                styles.statusBadge,
+                { backgroundColor: statusConfig.color },
+              ]}
+            >
+              <Ionicons name={statusConfig.icon} size={16} color="#FFFFFF" />
+              <Text style={styles.statusText}>{statusConfig.label}</Text>
+            </View>
+          </View>
+        </View>
 
         {/* CONTENT */}
         <View style={styles.content}>
@@ -254,7 +247,7 @@ export default function CampaignDetailScreen() {
                   Recaudado
                 </Text>
                 <Text style={[styles.amountValue, { color: colors.text }]}>
-                  {Formatters.formatCLP(campaign.total_raised)}
+                  {Formatters.formatCLP(campaign.current_amount)}
                 </Text>
               </View>
               <View style={{ alignItems: 'flex-end' }}>
@@ -419,7 +412,6 @@ export default function CampaignDetailScreen() {
           )}
 
           {/* Campaign Images Gallery */}
-          {/* Campaign Images Gallery */}
           {campaignImages.length > 0 && (
             <View
               style={[
@@ -442,21 +434,17 @@ export default function CampaignDetailScreen() {
               </View>
 
               <View style={styles.galleryGrid}>
-                <ImageGridViewer
-                  images={campaignImages.map(img => ({ uri: img.image_url }))}
-                  renderItem={(image, index) => (
-                    <Image
-                      key={index}
-                      source={{ uri: image.uri }}
-                      style={styles.galleryImage}
-                    />
-                  )}
-                />
+                {campaignImages.map((image) => (
+                  <Image
+                    key={image.id}
+                    source={{ uri: image.image_url }}
+                    style={styles.galleryImage}
+                  />
+                ))}
               </View>
             </View>
           )}
 
-          {/* Diagnosis Images */}
           {/* Diagnosis Images */}
           {campaign.has_diagnosis && diagnosisImages.length > 0 && (
             <View
@@ -482,16 +470,13 @@ export default function CampaignDetailScreen() {
               </View>
 
               <View style={styles.galleryGrid}>
-                <ImageGridViewer
-                  images={diagnosisImages.map(img => ({ uri: img.image_url }))}
-                  renderItem={(image, index) => (
-                    <Image
-                      key={index}
-                      source={{ uri: image.uri }}
-                      style={styles.galleryImage}
-                    />
-                  )}
-                />
+                {diagnosisImages.map((image) => (
+                  <Image
+                    key={image.id}
+                    source={{ uri: image.image_url }}
+                    style={styles.galleryImage}
+                  />
+                ))}
               </View>
             </View>
           )}

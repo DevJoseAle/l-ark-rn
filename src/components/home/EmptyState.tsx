@@ -1,9 +1,10 @@
 // src/components/home/EmptyState.tsx
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemeColors } from '@/constants/theme';
 import { useThemeColors } from '@/hooks/use-theme-color';
+import { useRouter } from 'expo-router';
 
 interface EmptyStateProps {
   onCreateCampaign?: () => void;
@@ -12,11 +13,14 @@ interface EmptyStateProps {
 export default function EmptyState({ onCreateCampaign }: EmptyStateProps) {
     const color = useThemeColors();
     const styles = emptyStateStyles(color);
+    const router = useRouter()
   return (
     <View style={styles.container}>
       <TouchableOpacity 
         style={styles.addButton}
-        onPress={onCreateCampaign}
+        onPress={() => {
+            router.push('/(auth)/campaign/createCampaign')
+        }}
       >
         <Ionicons name="add" size={40} color="#FFFFFF" />
       </TouchableOpacity>

@@ -1,10 +1,12 @@
 // src/components/home/CampaignCard.tsx
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemeColors } from '@/constants/theme';
 import { useThemeColors } from '@/hooks/use-theme-color';
+import { CampaignService } from '@/src/services/campaign.service';
+import { useRouter } from 'expo-router';
 
 interface CampaignCardProps {
   totalRaised: string;
@@ -31,7 +33,20 @@ export default function CampaignCard({
 }: CampaignCardProps) {
   const theme = useThemeColors();
   const styles = cardCampaignStyles(theme);
-
+  const router = useRouter()
+const handleViewCampaign = async () => {
+  try {
+    const campaign = await CampaignService.getCurrentUserCampaign();
+    if (campaign) {
+      router.push(`/(auth)/campaign/${campaign.id}`);
+    } else {
+      Alert.alert('Sin campaña', 'Aún no tienes una campaña creada.');
+    }
+  } catch (error) {
+    console.error('Error loading campaign:', error);
+    Alert.alert('Error', 'No se pudo cargar la campaña.');
+  }
+};
   return (
     <LinearGradient
       colors={['#1e3a8a', '#2563eb', '#1e40af']}
@@ -85,7 +100,7 @@ export default function CampaignCard({
       {/* Action Buttons */}
       <TouchableOpacity 
         style={styles.primaryButton}
-        onPress={onViewCampaign}
+        onPress={handleViewCampaign}
       >
         <Text style={styles.primaryButtonText}>Ver mi Campaña</Text>
         <Ionicons name="document-text-outline" size={20} color="#0f1c3a" />

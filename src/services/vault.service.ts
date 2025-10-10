@@ -28,15 +28,6 @@ export const VaultService = {
     }
   },
 
-  /**
-   * Sube un archivo a la bóveda
-   * @param file - Archivo a subir
-   * @param userId - ID del usuario
-   * @param campaignId - ID de la campaña
-   * @param subscriptionId - ID de la suscripción
-   * @param currentUsedBytes - Bytes actualmente usados
-   * @param quotaBytes - Cuota total en bytes
-   */
   async uploadFile(
     file: FileToUpload,
     userId: string,

@@ -1,3 +1,5 @@
+import { UserService } from "@/src/services/user.service";
+import { useAuthStore } from "@/src/stores/authStore";
 import { useCampaignStore } from "@/src/stores/campaign.store";
 import { useDonationStore } from "@/src/stores/donation.store";
 import { useState, useEffect, useCallback } from "react";
@@ -24,6 +26,7 @@ export function useHomeData() {
   // Load initial data
   useEffect(() => {
     loadData();
+
   }, []);
 
   // Update view state based on campaign and loading states
@@ -43,7 +46,6 @@ export function useHomeData() {
     try {
       // Primero cargar campaña
       await fetchCampaign();
-      
       // Si hay campaña, cargar donaciones
       const currentCampaign = useCampaignStore.getState().campaign;
       if (currentCampaign) {
@@ -105,6 +107,7 @@ export function useHomeData() {
     handleRetry,
     handleToggleVisibility,
     handleRefresh,
+    loadData,
   };
 }
 

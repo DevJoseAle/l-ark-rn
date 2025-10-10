@@ -251,7 +251,7 @@ const handleCancel = () => {
         onRetry={handleRetry}
         onCancel={handleCancelSubmit}
       />
-      {__DEV__ && (
+      {/* {__DEV__ && (
   <TouchableOpacity 
     onPress={() => {
       reset();
@@ -263,7 +263,7 @@ const handleCancel = () => {
       Reset
     </Text>
   </TouchableOpacity>
-)}
+)} */}
     </GradientBackground>
   );
 }

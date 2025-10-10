@@ -3,6 +3,7 @@ import { Redirect } from 'expo-router';
 import { View, ActivityIndicator } from 'react-native';
 import { useAuthStore } from '@/src/stores/authStore';
 import { useShallow } from 'zustand/react/shallow';
+import { useHomeData } from '@/src/features/home/useHomeData';
 
 
 export default function Index() {
@@ -15,6 +16,7 @@ export default function Index() {
       initialize: state.initialize,
     }))
   );
+  const {loadData} = useHomeData();
 useEffect(() => {
     initialize();
   }, []);

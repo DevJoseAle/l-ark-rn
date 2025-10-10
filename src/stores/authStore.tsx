@@ -3,6 +3,8 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { authService } from '../features/auth/service/auth.service';
+import { KYCUserStatus } from '../types/kyc.types';
+import { UserService } from '../services/user.service';
 
 interface User {
   id: string;
@@ -16,12 +18,13 @@ interface AuthStore {
   isAuthenticated: boolean;
   isLoading: boolean;
   email: string;
-  
+  kycStatus: KYCUserStatus;
   // Acciones
   setUser: (user: User | null) => void;
   setEmail: (email: string) => void;
   initialize: () => Promise<void>;
   logout: () => Promise<void>;
+  setKYCStatus: (status: KYCUserStatus) => void;
 }
 
 export const useAuthStore = create<AuthStore>()(
@@ -31,24 +34,27 @@ export const useAuthStore = create<AuthStore>()(
       email: '',
       isAuthenticated: false,
       isLoading: true,
+      kycStatus: KYCUserStatus.PENDING,
 
+      setKYCStatus: (status: KYCUserStatus) => set({ kycStatus: status }),
       setUser: (user) => set({ 
         user, 
         isAuthenticated: !!user 
       }),
       setEmail: (email: string) => set({email}),
-     initialize: async () => {
+      initialize: async () => {
         console.log('🔵 Inicializando auth...');
         set({ isLoading: true });
         
         try {
           // Supabase recupera la sesión de AsyncStorage automáticamente
           const response = await authService.getSession();
-          
+          console.log("RESPONSE", {response});
           if (response.success && response.data) {
             const session = response.data;
             console.log('✅ Sesión encontrada:', session.user.email);
-            
+            const {kyc_status}  = await UserService.getUserInfo(session.user.id);
+            get().setKYCStatus(kyc_status as KYCUserStatus);
             set({ 
               user: {
                 id: session.user.id,
@@ -96,6 +102,7 @@ export const useAuthStore = create<AuthStore>()(
       partialize: (state) => ({ 
         user: state.user,
         isAuthenticated: state.isAuthenticated,
+        kycStatus: state.kycStatus
       }),
     }
   )

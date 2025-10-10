@@ -5,6 +5,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { ThemeColors } from '@/constants/theme';
 import { useThemeColors } from '@/hooks/use-theme-color';
 import { useRouter } from 'expo-router';
+import { useAuthStore } from '@/src/stores/authStore';
+import { KYCUserStatus } from '@/src/types/kyc.types';
 
 interface EmptyStateProps {
   onCreateCampaign?: () => void;
@@ -14,13 +16,28 @@ export default function EmptyState({ onCreateCampaign }: EmptyStateProps) {
     const color = useThemeColors();
     const styles = emptyStateStyles(color);
     const router = useRouter()
+    const kycStatus = useAuthStore((state) => state.kycStatus);
+    const handleCreateCampaign = () =>{
+      switch (kycStatus) {
+        case KYCUserStatus.PENDING:
+          router.push('/(auth)/kyc/welcome')
+          break;
+        case KYCUserStatus.VERIFIED:
+          router.push('/(auth)/campaign/createCampaign')
+          break;
+        case KYCUserStatus.REJECTED:
+          router.push('/(auth)/kyc/welcome')
+          break;
+        case KYCUserStatus.REVIEW:
+          router.push('/(auth)/campaign/createCampaign')
+          break;
+      }
+    }
   return (
     <View style={styles.container}>
       <TouchableOpacity 
         style={styles.addButton}
-        onPress={() => {
-            router.push('/(auth)/campaign/createCampaign')
-        }}
+        onPress={handleCreateCampaign}
       >
         <Ionicons name="add" size={40} color="#FFFFFF" />
       </TouchableOpacity>

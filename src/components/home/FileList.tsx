@@ -1,22 +1,28 @@
-// src/features/vault/components/FileList.tsx
+// src/components/home/FileList.tsx
+// 🔄 REEMPLAZA COMPLETAMENTE
 
 import React from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { VaultFile } from '@/src/types/vault.types';
-import { FILE_TYPE_ICONS, FILE_TYPE_COLORS } from '@/src/utils/vaultConstants';
-import { truncateFileName, formatBytes, formatRelativeDate } from '@/src/utils/vaultUtils';
-
+import { formatBytes, formatRelativeDate } from '@/src/utils/vaultUtils';
 
 interface FileListProps {
-  files: VaultFile[];
+  files: any[]; // VaultFile[]
+  onFilePress?: (file: any) => void;
+  onDownload?: (file: any) => void;
+  onDelete?: (file: any) => void;
 }
 
 /**
- * Lista de archivos de la bóveda
- * (Acciones de gestión se agregarán en Fase 11)
+ * Lista de archivos de la bóveda con acciones
  */
-export function FileList({ files }: FileListProps) {
+export function FileList({ files, onFilePress, onDownload, onDelete }: FileListProps) {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>
@@ -26,7 +32,14 @@ export function FileList({ files }: FileListProps) {
       <FlatList
         data={files}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <FileCard file={item} />}
+        renderItem={({ item }) => (
+          <FileCard
+            file={item}
+            onPress={() => onFilePress?.(item)}
+            onDownload={() => onDownload?.(item)}
+            onDelete={() => onDelete?.(item)}
+          />
+        )}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
@@ -36,14 +49,47 @@ export function FileList({ files }: FileListProps) {
 }
 
 /**
- * Card individual de archivo
+ * Card individual de archivo con acciones
  */
-function FileCard({ file }: { file: VaultFile }) {
-  const iconName = FILE_TYPE_ICONS[file.file_type] || FILE_TYPE_ICONS.other;
-  const iconColor = FILE_TYPE_COLORS[file.file_type] || FILE_TYPE_COLORS.other;
+interface FileCardProps {
+  file: any;
+  onPress?: () => void;
+  onDownload?: () => void;
+  onDelete?: () => void;
+}
+
+function FileCard({ file, onPress, onDownload, onDelete }: FileCardProps) {
+  const getIconName = (fileType: string) => {
+    switch (fileType) {
+      case 'image': return 'image';
+      case 'pdf': return 'document-text';
+      case 'video': return 'videocam';
+      case 'audio': return 'musical-notes';
+      case 'document': return 'document';
+      default: return 'document-outline';
+    }
+  };
+
+  const getIconColor = (fileType: string) => {
+    switch (fileType) {
+      case 'image': return '#4BA3D9';
+      case 'pdf': return '#EF4444';
+      case 'video': return '#8B5CF6';
+      case 'audio': return '#F59E0B';
+      case 'document': return '#10B981';
+      default: return '#6B7280';
+    }
+  };
+
+  const iconName = getIconName(file.file_type);
+  const iconColor = getIconColor(file.file_type);
 
   return (
-    <View style={styles.card}>
+    <TouchableOpacity 
+      style={styles.card}
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
       {/* Icono del archivo */}
       <View style={[styles.iconContainer, { backgroundColor: `${iconColor}15` }]}>
         <Ionicons name={iconName} size={24} color={iconColor} />
@@ -52,7 +98,7 @@ function FileCard({ file }: { file: VaultFile }) {
       {/* Información del archivo */}
       <View style={styles.infoContainer}>
         <Text style={styles.fileName} numberOfLines={1}>
-          {truncateFileName(file.file_name, 35)}
+          {file.file_name}
         </Text>
         <View style={styles.metaContainer}>
           <Text style={styles.metaText}>
@@ -65,11 +111,35 @@ function FileCard({ file }: { file: VaultFile }) {
         </View>
       </View>
 
-      {/* Indicador de más opciones (por ahora solo visual) */}
-      <View style={styles.moreButton}>
-        <Ionicons name="ellipsis-vertical" size={20} color="#9CA3AF" />
+      {/* Botones de acción */}
+      <View style={styles.actions}>
+        {onDownload && (
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={(e) => {
+              e.stopPropagation();
+              onDownload();
+            }}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="download-outline" size={20} color="#6B7280" />
+          </TouchableOpacity>
+        )}
+
+        {onDelete && (
+          <TouchableOpacity
+            style={[styles.actionButton, styles.deleteButton]}
+            onPress={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="trash-outline" size={20} color="#EF4444" />
+          </TouchableOpacity>
+        )}
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -78,20 +148,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
     marginTop: 16,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingTop: 20,
+    borderRadius: 16,
+    padding: 16,
   },
   header: {
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: '600',
     color: '#111827',
-    paddingHorizontal: 16,
     marginBottom: 16,
   },
   listContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 100, // Espacio para el FAB
+    paddingBottom: 8,
   },
   separator: {
     height: 12,
@@ -99,19 +166,17 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
     alignItems: 'center',
+    padding: 12,
     backgroundColor: '#F9FAFB',
     borderRadius: 12,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
+    gap: 12,
   },
   iconContainer: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
   },
   infoContainer: {
     flex: 1,
@@ -125,6 +190,7 @@ const styles = StyleSheet.create({
   metaContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 6,
   },
   metaText: {
     fontSize: 13,
@@ -132,13 +198,21 @@ const styles = StyleSheet.create({
   },
   metaDot: {
     fontSize: 13,
-    color: '#9CA3AF',
-    marginHorizontal: 6,
+    color: '#6B7280',
   },
-  moreButton: {
-    width: 32,
-    height: 32,
+  actions: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  actionButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(107, 114, 128, 0.1)',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  deleteButton: {
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
   },
 });

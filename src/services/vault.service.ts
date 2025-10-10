@@ -1,34 +1,14 @@
 import { supabase } from "../lib/supabaseClient";
-import { VaultFile, FileToUpload, UploadResult } from "../types/vault.types";
+import { FileToUpload, UploadResult } from "../types/vault.types";
 import { STORAGE_BUCKET } from "../utils/vaultConstants";
-import { validateFileUpload, generateStoragePath, getFileTypeFromMimeType } from "../utils/vaultUtils";
+import { validateFileUpload, generateStoragePath } from "../utils/vaultUtils";
+import * as FileSystem from 'expo-file-system/legacy';
 
-/**
- * Servicio para gestionar archivos de la bóveda
- */
-export const VaultService = {
+export class VaultService {
   /**
-   * Obtiene todos los archivos de un usuario/campaña
+   * Sube un archivo a Supabase Storage
    */
-  async getFiles(userId: string, campaignId: string): Promise<VaultFile[]> {
-    try {
-      const { data, error } = await supabase
-        .from('vault_files')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('campaign_id', campaignId)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      return data || [];
-    } catch (error) {
-      console.error('❌ Error obteniendo archivos:', error);
-      throw new Error('No se pudieron cargar los archivos');
-    }
-  },
-
-  async uploadFile(
+  static async uploadFile(
     file: FileToUpload,
     userId: string,
     campaignId: string,
@@ -47,6 +27,7 @@ export const VaultService = {
       );
 
       if (!validation.isValid) {
+        console.error('❌ Validación fallida:', validation.error);
         return {
           success: false,
           error: validation.error,
@@ -55,30 +36,45 @@ export const VaultService = {
 
       // 2. Generar path único en Storage
       const storagePath = generateStoragePath(userId, campaignId, file.name);
+      console.log('📁 Storage path:', storagePath);
 
-      // 3. Leer el archivo como ArrayBuffer/Blob
-      const response = await fetch(file.uri);
-      const blob = await response.blob();
+      // 3. ✅ LEER ARCHIVO CON EXPO-FILE-SYSTEM (React Native compatible)
+      console.log('🔄 Leyendo archivo desde:', file.uri);
+      
+      // Leer archivo como base64
+      const base64Data = await FileSystem.readAsStringAsync(file.uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      
+      console.log('✅ Archivo leído, tamaño base64:', base64Data.length, 'chars');
+
+      // Convertir base64 a Uint8Array
+      const binaryString = atob(base64Data);
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      
+      console.log('✅ Uint8Array creado:', bytes.length, 'bytes');
 
       // 4. Subir a Supabase Storage
+      console.log('☁️ Subiendo a Supabase Storage...');
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from(STORAGE_BUCKET)
-        .upload(storagePath, blob, {
+        .upload(storagePath, bytes, {
           contentType: file.type,
           upsert: false, // No sobrescribir si existe
         });
 
       if (uploadError) {
-        console.error('❌ Error subiendo a Storage:', uploadError);
+        console.error('❌ Error en upload:', uploadError);
         throw uploadError;
       }
 
-      console.log('✅ Archivo subido a Storage:', uploadData.path);
+      console.log('✅ Upload a Storage exitoso:', uploadData.path);
 
-      // 5. Determinar el tipo de archivo
-      const fileType = getFileTypeFromMimeType(file.type);
-
-      // 6. Crear registro en la tabla vault_files
+      // 5. Crear registro en la tabla vault_files
+      console.log('💾 Creando registro en DB...');
       const { data: fileRecord, error: dbError } = await supabase
         .from('vault_files')
         .insert({
@@ -87,89 +83,100 @@ export const VaultService = {
           subscription_id: subscriptionId,
           file_name: file.name,
           file_size_bytes: file.size,
+          file_type: file.type.split('/')[0], // 'image', 'application', etc.
           mime_type: file.type,
           storage_path: storagePath,
-          file_type: fileType,
         })
         .select()
         .single();
 
       if (dbError) {
-        console.error('❌ Error guardando en DB:', dbError);
-        
-        // Rollback: eliminar archivo de Storage
-        await supabase.storage.from(STORAGE_BUCKET).remove([storagePath]);
-        
+        console.error('❌ Error al crear registro:', dbError);
+        // Intentar eliminar archivo de storage si falla la DB
+        await supabase.storage
+          .from(STORAGE_BUCKET)
+          .remove([storagePath]);
         throw dbError;
       }
 
-      console.log('✅ Archivo registrado en DB:', fileRecord.id);
+      console.log('✅ Registro creado en DB:', fileRecord.id);
+
+      // 6. Actualizar bytes usados en la suscripción
+      console.log('📊 Actualizando cuota...');
+      const newUsedBytes = currentUsedBytes + file.size;
+      
+      const { error: updateError } = await supabase
+        .from('vault_subscriptions')
+        .update({ storage_used_bytes: newUsedBytes })
+        .eq('id', subscriptionId);
+
+      if (updateError) {
+        console.error('⚠️ Error actualizando cuota:', updateError);
+        // No es crítico, continuar
+      }
+
+      console.log('✅ Upload completado exitosamente!');
 
       return {
         success: true,
-        file: fileRecord as VaultFile,
+        file: fileRecord,
       };
+
     } catch (error: any) {
-      console.error('❌ Error en uploadFile:', error);
+      console.error('❌ Error en uploadFile:', error.message || error);
       return {
         success: false,
-        error: error.message || 'Error al subir el archivo',
+        error: error.message || 'Error desconocido al subir archivo',
       };
     }
-  },
+  }
 
   /**
-   * Obtiene la URL pública de un archivo
-   * Nota: El bucket es privado, así que usamos signed URLs
+   * Obtiene todos los archivos de una campaña
    */
-  async getFileUrl(storagePath: string, expiresIn: number = 3600): Promise<string | null> {
+  /**
+   * Obtiene todos los archivos de una campaña
+   */
+  static async getFiles(
+    userId: string,
+    campaignId: string
+  ): Promise<any[]> {
     try {
-      const { data, error } = await supabase.storage
-        .from(STORAGE_BUCKET)
-        .createSignedUrl(storagePath, expiresIn);
+      const { data, error } = await supabase
+        .from('vault_files')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('campaign_id', campaignId)
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
-
-      return data.signedUrl;
+      return data || [];
     } catch (error) {
-      console.error('❌ Error obteniendo URL del archivo:', error);
-      return null;
+      console.error('❌ Error obteniendo archivos:', error);
+      return [];
     }
-  },
+  }
 
   /**
-   * Descarga un archivo (genera URL firmada)
+   * Elimina un archivo
    */
-  async downloadFile(file: VaultFile): Promise<{ url: string | null; error?: string }> {
-    try {
-      const url = await this.getFileUrl(file.storage_path, 3600); // 1 hora de validez
-
-      if (!url) {
-        return {
-          url: null,
-          error: 'No se pudo generar el enlace de descarga',
-        };
-      }
-
-      return { url };
-    } catch (error) {
-      console.error('❌ Error descargando archivo:', error);
-      return {
-        url: null,
-        error: 'Error al descargar el archivo',
-      };
-    }
-  },
-
-  /**
-   * Elimina un archivo de la bóveda
-   */
-  async deleteFile(fileId: string, storagePath: string): Promise<{ success: boolean; error?: string }> {
+  static async deleteFile(fileId: string, storagePath: string): Promise<{ success: boolean; error?: string }> {
     try {
       console.log('🗑️ Eliminando archivo:', fileId);
 
-      // 1. Eliminar registro de la DB
-      // Nota: El trigger tr_vf_after_del se encargará de actualizar storage_used_bytes
+      // 1. Eliminar de Storage
+      console.log('☁️ Eliminando de Storage:', storagePath);
+      const { error: storageError } = await supabase.storage
+        .from(STORAGE_BUCKET)
+        .remove([storagePath]);
+
+      if (storageError) {
+        console.error('❌ Error eliminando de Storage:', storageError);
+        throw new Error(storageError.message || 'Error al eliminar de Storage');
+      }
+
+      // 2. Eliminar registro de DB
+      console.log('💾 Eliminando registro de DB...');
       const { error: dbError } = await supabase
         .from('vault_files')
         .delete()
@@ -177,69 +184,88 @@ export const VaultService = {
 
       if (dbError) {
         console.error('❌ Error eliminando de DB:', dbError);
-        throw dbError;
-      }
-
-      // 2. Eliminar archivo de Storage
-      const { error: storageError } = await supabase.storage
-        .from(STORAGE_BUCKET)
-        .remove([storagePath]);
-
-      if (storageError) {
-        console.error('⚠️ Advertencia: Archivo eliminado de DB pero no de Storage:', storageError);
-        // No lanzamos error porque el archivo ya se eliminó de la DB
+        throw new Error(dbError.message || 'Error al eliminar de DB');
       }
 
       console.log('✅ Archivo eliminado exitosamente');
-
       return { success: true };
+
     } catch (error: any) {
-      console.error('❌ Error en deleteFile:', error);
+      console.error('❌ Error en deleteFile:', error.message || error);
       return {
         success: false,
-        error: error.message || 'Error al eliminar el archivo',
+        error: error.message || 'Error desconocido al eliminar archivo',
       };
     }
-  },
+  }
+  // 📍 AGREGAR ESTAS 2 FUNCIONES al final de tu VaultService
+// Justo ANTES del cierre de la clase (antes de la última "}")
 
   /**
-   * Obtiene el total de archivos de un usuario
+   * Descarga un archivo al dispositivo
    */
-  async getFileCount(userId: string, campaignId: string): Promise<number> {
+  static async downloadFile(
+    file: any
+  ): Promise<{ success: boolean; localUri?: string; error?: string }> {
     try {
-      const { count, error } = await supabase
-        .from('vault_files')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', userId)
-        .eq('campaign_id', campaignId);
+      console.log('⬇️ Descargando archivo:', file.file_name);
 
-      if (error) throw error;
+      // 1. Obtener URL pública temporal del archivo
+      const { data: urlData } = await supabase.storage
+        .from(STORAGE_BUCKET)
+        .createSignedUrl(file.storage_path, 60); // 60 segundos
 
-      return count || 0;
-    } catch (error) {
-      console.error('❌ Error obteniendo conteo de archivos:', error);
-      return 0;
+      if (!urlData?.signedUrl) {
+        throw new Error('No se pudo obtener URL del archivo');
+      }
+
+      console.log('🔗 URL obtenida, descargando...');
+
+      // 2. Descargar archivo con expo-file-system
+      const fileUri = `${FileSystem.documentDirectory}${file.file_name}`;
+      
+      const downloadResult = await FileSystem.downloadAsync(
+        urlData.signedUrl,
+        fileUri
+      );
+
+      if (downloadResult.status !== 200) {
+        throw new Error('Error al descargar el archivo');
+      }
+
+      console.log('✅ Archivo descargado en:', downloadResult.uri);
+
+      return {
+        success: true,
+        localUri: downloadResult.uri,
+      };
+
+    } catch (error: any) {
+      console.error('❌ Error en downloadFile:', error.message || error);
+      return {
+        success: false,
+        error: error.message || 'Error desconocido al descargar archivo',
+      };
     }
-  },
+  }
 
   /**
-   * Verifica si un archivo existe en la bóveda
+   * Obtiene una URL pública temporal para preview
    */
-  async fileExists(userId: string, fileName: string): Promise<boolean> {
+  static async getFilePreviewUrl(storagePath: string): Promise<string | null> {
     try {
-      const { data, error } = await supabase
-        .from('vault_files')
-        .select('id')
-        .eq('user_id', userId)
-        .eq('file_name', fileName)
-        .maybeSingle();
+      const { data } = await supabase.storage
+        .from(STORAGE_BUCKET)
+        .createSignedUrl(storagePath, 3600); // 1 hora
 
-      if (error) throw error;
-
-      return !!data;
+      return data?.signedUrl || null;
     } catch (error) {
-      console.error('❌ Error verificando existencia del archivo:', error);
-      return false;
+      console.error('❌ Error obteniendo preview URL:', error);
+      return null;
     }
-  },
-};
+  }
+
+}
+
+// Export por defecto para compatibilidad
+export default VaultService;

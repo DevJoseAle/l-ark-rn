@@ -1,3 +1,6 @@
+// src/screens/VaultHomeScreen.tsx o donde lo tengas
+// 🔄 REEMPLAZA COMPLETAMENTE
+
 import React, { useEffect } from 'react';
 import {
   View,
@@ -8,6 +11,7 @@ import {
   RefreshControl,
   TouchableOpacity,
   Alert,
+  Share,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -19,15 +23,19 @@ import { PlanBadge } from '@/src/components/home/PlanBadge';
 import { StorageBar } from '@/src/components/home/StorageBar';
 import { UpgradeModal } from '@/src/components/home/UpgradeModal';
 import { UploadProgressModal } from '@/src/components/home/UploadProgressModal';
+import { FilePreviewModal } from '@/src/components/home/FilePreviewModal';
+import { DeleteConfirmDialog } from '@/src/components/home/DeleteConfirmDialog';
+import { FileList } from '@/src/components/home/FileList';
+
 import { useFilePicker } from '@/src/features/home/useFilePicker';
 import { useVaultStore, useStorageStatus } from '@/src/stores/vault.store';
-import { FileToUpload } from '@/src/types/vault.types';
-import { FileList } from '@/src/components/home/FileList';
 import { useAuthStore } from '@/src/stores/authStore';
+import { VaultService } from '@/src/services/vault.service';
+import { FileToUpload } from '@/src/types/vault.types';
 
 /**
  * Pantalla principal de la Bóveda
- * Maneja 3 estados: sin campaña, FREE, y PRO
+ * Con funcionalidades completas: Upload, Preview, Download, Delete
  */
 export default function VaultHomeScreen() {
   const {
@@ -43,20 +51,19 @@ export default function VaultHomeScreen() {
     refreshFiles,
     refreshSubscription,
     uploadFile,
+    deleteFile: deleteFileFromStore,
   } = useVaultStore();
 
   const id = useAuthStore((state) => state.user?.id);
-  // TODO: Obtener userId de tu contexto de autenticación
-  // Por ahora usamos un placeholder
-  const userId = id; // REEMPLAZAR con: const { user } = useAuth();// REEMPLAZAR con: const { user } = useAuth();
+  const userId = id;
 
-  // Estado de refresh
+  // Estados de refresh
   const [refreshing, setRefreshing] = React.useState(false);
 
-  // Estado del modal de upgrade
+  // Estados del modal de upgrade
   const [showUpgradeModal, setShowUpgradeModal] = React.useState(false);
 
-  // Estado del sheet de file picker
+  // Estados del sheet de file picker
   const [showFilePickerSheet, setShowFilePickerSheet] = React.useState(false);
 
   // Estados del modal de progreso de upload
@@ -64,6 +71,16 @@ export default function VaultHomeScreen() {
   const [uploadingFile, setUploadingFile] = React.useState<FileToUpload | null>(null);
   const [uploadSuccess, setUploadSuccess] = React.useState(false);
   const [uploadError, setUploadError] = React.useState<string | null>(null);
+
+  // Estados de preview
+  const [previewFile, setPreviewFile] = React.useState<any | null>(null);
+  const [previewImageUrl, setPreviewImageUrl] = React.useState<string | null>(null);
+  const [showPreview, setShowPreview] = React.useState(false);
+
+  // Estados de delete
+  const [deleteFile, setDeleteFile] = React.useState<any | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
+  const [isDeleting, setIsDeleting] = React.useState(false);
 
   // Hook para selección de archivos
   const { pickFromGallery, pickDocument } = useFilePicker();
@@ -76,9 +93,10 @@ export default function VaultHomeScreen() {
    */
   useEffect(() => {
     console.log('📱 VaultHomeScreen montado');
-    initialize(userId!);
+    if (userId) {
+      initialize(userId);
+    }
 
-    // Cleanup al desmontar
     return () => {
       console.log('📱 VaultHomeScreen desmontado');
     };
@@ -91,44 +109,12 @@ export default function VaultHomeScreen() {
     setRefreshing(true);
 
     if (hasCampaign && campaignId) {
-      await Promise.all([
-        refreshFiles(),
-        refreshSubscription(),
-      ]);
-    } else {
-      await initialize(userId!);
+      await Promise.all([refreshFiles(), refreshSubscription()]);
+    } else if (userId) {
+      await initialize(userId);
     }
 
     setRefreshing(false);
-  };
-
-  /**
-   * Handler para abrir modal de upgrade
-   */
-  const handleUpgradePress = () => {
-    setShowUpgradeModal(true);
-  };
-
-  /**
-   * Handler para subir archivos
-   * Abre el sheet si hay espacio disponible
-   */
-  const handleUploadPress = () => {
-    // Validar que no esté al límite
-    if (isAtLimit) {
-      Alert.alert(
-        'Sin espacio disponible',
-        'Has alcanzado el límite de almacenamiento. Actualiza a PRO para obtener más espacio.',
-        [
-          { text: 'Cancelar', style: 'cancel' },
-          { text: 'Ver planes', onPress: () => setShowUpgradeModal(true) },
-        ]
-      );
-      return;
-    }
-
-    // Abrir sheet de selección
-    setShowFilePickerSheet(true);
   };
 
   /**
@@ -151,16 +137,13 @@ export default function VaultHomeScreen() {
    * Handler para procesar el upload de un archivo
    */
   const handleUploadFile = async (file: FileToUpload) => {
-    // Preparar modal de progreso
     setUploadingFile(file);
     setUploadSuccess(false);
     setUploadError(null);
     setShowUploadProgress(true);
 
-    // Ejecutar upload
     const result = await uploadFile(file);
 
-    // Mostrar resultado
     if (result.success) {
       console.log('✅ Upload exitoso');
       setUploadSuccess(true);
@@ -169,18 +152,18 @@ export default function VaultHomeScreen() {
       setUploadError(result.error || 'Error al subir el archivo');
     }
   };
+
+  /**
+   * Handler para seleccionar desde galería
+   */
   const handlePickFromGallery = async () => {
     const file = await pickFromGallery();
 
     if (file) {
-      // ✅ Cerrar el sheet
       setShowFilePickerSheet(false);
-
-      // ✅ Llamar al upload real (NO más Alert placeholder)
       await handleUploadFile(file);
     }
   };
-
 
   /**
    * Handler para seleccionar documento
@@ -189,12 +172,124 @@ export default function VaultHomeScreen() {
     const file = await pickDocument();
 
     if (file) {
-      // ✅ Cerrar el sheet
       setShowFilePickerSheet(false);
-
-      // ✅ Llamar al upload real (NO más Alert placeholder)
       await handleUploadFile(file);
     }
+  };
+
+  /**
+   * Handler para abrir preview de un archivo
+   */
+  const handlePreviewFile = async (file: any) => {
+    console.log('👁️ Abriendo preview:', file.file_name);
+
+    // Si es imagen, obtener URL
+    if (file.file_type === 'image') {
+      const url = await VaultService.getFilePreviewUrl(file.storage_path);
+      setPreviewImageUrl(url);
+    }
+
+    setPreviewFile(file);
+    setShowPreview(true);
+  };
+
+  /**
+   * Handler para descargar un archivo
+   */
+  const handleDownloadFile = async (file: any) => {
+    console.log('⬇️ Descargando:', file.file_name);
+
+    const result = await VaultService.downloadFile(file);
+
+    if (result.success && result.localUri) {
+      Alert.alert(
+        'Descarga completa',
+        `El archivo se guardó exitosamente`,
+        [
+          {
+            text: 'Compartir',
+            onPress: () => handleShareFile(result.localUri!),
+          },
+          { text: 'OK' },
+        ]
+      );
+    } else {
+      Alert.alert(
+        'Error al descargar',
+        result.error || 'No se pudo descargar el archivo',
+        [{ text: 'OK' }]
+      );
+    }
+  };
+
+  /**
+   * Handler para compartir un archivo descargado
+   */
+  const handleShareFile = async (uri: string) => {
+    try {
+      await Share.share({
+        url: uri,
+        message: 'Archivo de mi bóveda',
+      });
+    } catch (error) {
+      console.error('Error compartiendo:', error);
+    }
+  };
+
+  /**
+   * Handler para confirmar eliminación
+   */
+  const handleDeleteFile = (file: any) => {
+    setDeleteFile(file);
+    setShowDeleteDialog(true);
+  };
+
+  /**
+   * Ejecuta la eliminación
+   */
+  const executeDelete = async () => {
+    if (!deleteFile) return;
+
+    setIsDeleting(true);
+
+    const success = await deleteFileFromStore(deleteFile.id, deleteFile.storage_path);
+
+    setIsDeleting(false);
+    setShowDeleteDialog(false);
+    setDeleteFile(null);
+
+    if (success) {
+      Alert.alert(
+        'Archivo eliminado',
+        'El archivo se eliminó correctamente de tu bóveda.',
+        [{ text: 'OK' }]
+      );
+    } else {
+      Alert.alert(
+        'Error',
+        'No se pudo eliminar el archivo. Intenta nuevamente.',
+        [{ text: 'OK' }]
+      );
+    }
+  };
+
+  /**
+   * Handler para subir archivos
+   */
+  const handleUploadPress = () => {
+    if (isAtLimit) {
+      Alert.alert(
+        'Sin espacio disponible',
+        'Has alcanzado el límite de almacenamiento. Actualiza a PRO para obtener más espacio.',
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          { text: 'Ver planes', onPress: () => setShowUpgradeModal(true) },
+        ]
+      );
+      return;
+    }
+
+    setShowFilePickerSheet(true);
   };
 
   /**
@@ -217,7 +312,7 @@ export default function VaultHomeScreen() {
   }
 
   /**
-   * Estados FREE y PRO
+   * Estados FREE y PRO con funcionalidades completas
    */
   return (
     <GradientBackground>
@@ -236,12 +331,12 @@ export default function VaultHomeScreen() {
         }
       >
         {/* Plan Badge */}
-        <PlanBadge onUpgradePress={handleUpgradePress} />
+        <PlanBadge onUpgradePress={() => setShowUpgradeModal(true)} />
 
         {/* Storage Bar */}
         <StorageBar />
 
-        {/* Lista de archivos o empty state */}
+        {/* Lista de archivos con acciones */}
         {isLoadingFiles ? (
           <View style={styles.loadingFiles}>
             <ActivityIndicator size="small" color="#4BA3D9" />
@@ -250,11 +345,16 @@ export default function VaultHomeScreen() {
         ) : files.length === 0 ? (
           <EmptyFilesList />
         ) : (
-          <FileList files={files} />
+          <FileList
+            files={files}
+            onFilePress={handlePreviewFile}
+            onDownload={handleDownloadFile}
+            onDelete={handleDeleteFile}
+          />
         )}
       </ScrollView>
 
-      {/* FAB para subir archivos (sin funcionalidad aún) */}
+      {/* FAB para subir archivos */}
       <TouchableOpacity
         style={styles.fab}
         onPress={handleUploadPress}
@@ -263,13 +363,12 @@ export default function VaultHomeScreen() {
         <Ionicons name="add" size={28} color="#FFFFFF" />
       </TouchableOpacity>
 
-      {/* Modal de upgrade */}
+      {/* Modals */}
       <UpgradeModal
         visible={showUpgradeModal}
         onClose={() => setShowUpgradeModal(false)}
       />
 
-      {/* Sheet de file picker */}
       <FilePickerSheet
         visible={showFilePickerSheet}
         onClose={() => setShowFilePickerSheet(false)}
@@ -277,7 +376,6 @@ export default function VaultHomeScreen() {
         onPickDocument={handlePickDocument}
       />
 
-      {/* Modal de progreso de upload */}
       {uploadingFile && (
         <UploadProgressModal
           visible={showUploadProgress}
@@ -289,6 +387,35 @@ export default function VaultHomeScreen() {
           errorMessage={uploadError || undefined}
         />
       )}
+
+      <FilePreviewModal
+        visible={showPreview}
+        file={previewFile}
+        imageUrl={previewImageUrl}
+        onClose={() => {
+          setShowPreview(false);
+          setPreviewFile(null);
+          setPreviewImageUrl(null);
+        }}
+        onDownload={() => previewFile && handleDownloadFile(previewFile)}
+        onDelete={() => {
+          if (previewFile) {
+            setShowPreview(false);
+            handleDeleteFile(previewFile);
+          }
+        }}
+      />
+
+      <DeleteConfirmDialog
+        visible={showDeleteDialog}
+        file={deleteFile}
+        isDeleting={isDeleting}
+        onConfirm={executeDelete}
+        onCancel={() => {
+          setShowDeleteDialog(false);
+          setDeleteFile(null);
+        }}
+      />
     </GradientBackground>
   );
 }
@@ -303,7 +430,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: 120, // Espacio para el FAB y el tabbar flotante
+    paddingBottom: 120,
   },
   loadingContainer: {
     flex: 1,
@@ -344,7 +471,7 @@ const styles = StyleSheet.create({
   fab: {
     position: 'absolute',
     right: 20,
-    bottom: 100, // Ajustado para estar por encima del tabbar flotante
+    bottom: 100,
     width: 56,
     height: 56,
     borderRadius: 28,
@@ -358,4 +485,3 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
 });
-

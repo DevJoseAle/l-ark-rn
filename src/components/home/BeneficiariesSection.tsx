@@ -7,8 +7,6 @@ import {
     TouchableOpacity,
     StyleSheet,
     useColorScheme,
-
-
     Alert,
     ActivityIndicator,
 } from 'react-native';
@@ -18,7 +16,7 @@ import { useDebounce } from '@/src/features/home/useDebounce';
 import { supabase } from '@/src/lib/supabaseClient';
 import { UserSearchService } from '@/src/services/searchUsers.service';
 import { useCreateCampaignStore } from '@/src/stores/createCampaign.store';
-import { BeneficiaryShareType, BeneficiaryUser, CampaignBeneficiary } from '@/src/types/campaign-create.types';
+import { BeneficiaryShareType, BeneficiaryUser, CampaignBeneficiary, COUNTRIES } from '@/src/types/campaign-create.types';
 import { BeneficiaryCard } from './BeneficiaryCard';
 
 export const BeneficiariesSection = () => {
@@ -32,6 +30,7 @@ export const BeneficiariesSection = () => {
     const [searchResults, setSearchResults] = useState<BeneficiaryUser[]>([]);
     const [isSearching, setIsSearching] = useState(false);
     const [currentUserId, setCurrentUserId] = useState<string>('');
+    const [selectedCountry, setSelectedCountry] = useState<'US' | 'ES' | 'MX' | 'CL' | null>(null)
 
     const debouncedSearch = useDebounce(searchQuery, 300);
 
@@ -143,6 +142,7 @@ export const BeneficiariesSection = () => {
                 ]}
             >
                 {/* HEADER */}
+                
                 <View style={styles.header}>
                     <View style={styles.titleContainer}>
                         <Text style={[styles.sectionTitle, { color: colors.text }]}>
@@ -150,7 +150,7 @@ export const BeneficiariesSection = () => {
                         </Text>
                         <Text style={[styles.required, { color: colors.error }]}> *</Text>
                     </View>
-
+                    
                     {/* Badge de porcentaje */}
                     {formData.distributionRule === 'percentage' && formData.beneficiaries.length > 0 && (
                         <View
@@ -173,7 +173,14 @@ export const BeneficiariesSection = () => {
                         </View>
                     )}
                 </View>
-
+                <View>
+                        <Text style={{color: colors.text}}>Pais de Entrega del beneficio</Text>
+                        <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+                            {
+                                COUNTRIES.map((cty) =>  <CountryButton fn={setSelectedCountry} key={cty.code} country={cty.code} isSelected={selectedCountry == cty.code}/>  )
+                            }
+                        </View>
+                </View>       
                 {/* SEARCH BAR */}
                 <View
                     style={[
@@ -282,6 +289,24 @@ export const BeneficiariesSection = () => {
         </View>
     );
 };
+
+
+export const CountryButton = ({country, isSelected, fn}: {country: string, isSelected: boolean, fn: (cty: any) => void }) => {
+    const colorScheme = useColorScheme();
+    const colors = Colors[colorScheme ?? 'light'];
+    
+    return (
+        <View>
+
+        <TouchableOpacity 
+        onPress={() => fn(country)}
+        style={{ width: 80, height: 40, borderColor: colors.separator, borderWidth: 0.3, borderRadius: 40, justifyContent: 'center', alignItems: 'center', marginVertical: 10, backgroundColor: isSelected ? colors.success : colors.background, opacity: isSelected ? 0.8 : 1}}>
+            <Text style={{color: isSelected ? colors.customWhite : colors.text}}>{ country }</Text>
+        </TouchableOpacity>
+        </View>
+    )
+
+}
 
 const styles = StyleSheet.create({
     container: {

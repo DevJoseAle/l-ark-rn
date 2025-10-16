@@ -157,3 +157,12 @@ export interface CreateCampaignState {
   isSubmitting: boolean;
   errors: ValidationError[];
 }
+
+export const COUNTRIES = [
+  { code: 'US', name: 'Estados Unidos' },
+  { code: 'ES', name: 'España' },
+  { code: 'MX', name: 'México' },
+  { code: 'CL', name: 'Chile' },
+] as const;
+
+export type CountryCode = typeof COUNTRIES[number]['code'];

@@ -8,6 +8,7 @@ import { queryClient } from '@/src/lib/queryClient';
 import { useColorScheme } from 'react-native';
 import { DarkNavigationTheme, LightNavigationTheme } from '@/hooks/use-theme-color';
 import { GlobalLoadingProvider } from '@/src/Providers/GlobalLoadingProvider';
+import { useDeepLinking } from '@/src/features/home/useDeepLinking';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -15,7 +16,7 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-
+  useDeepLinking();
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={colorScheme === 'dark' ? DarkNavigationTheme : LightNavigationTheme}>

@@ -45,7 +45,6 @@ export class CampaignCreateService {
             formData.diagnosisImages,
             'diagnosis'
           );
-
           await this.insertCampaignImages(campaign.id, user.id, diagnosisImages);
         }
 
@@ -54,10 +53,20 @@ export class CampaignCreateService {
         await this.createBeneficiaries(
           campaign.id,
           user.id,
-          formData.beneficiaries
+          formData.beneficiaries,
+          formData.country
         );
 
-        onProgress?.('Finalizado', 100);
+            if (formData.country === 'US' || formData.country === 'ES' || formData.country === 'MX') {
+      onProgress?.('Configurando pagos automáticos', 85);
+      
+      // Fire-and-forget (no esperamos resultado)
+      this.processConnectBeneficiaries(campaign.id).catch((err) => {
+        console.error('Error background processing Connect:', err);
+      });
+    }
+
+        onProgress?.('Campaña creada exitosamente', 100);
         return campaign;
 
       } catch (error) {
@@ -66,12 +75,12 @@ export class CampaignCreateService {
         await this.deleteCampaign(campaign.id);
         throw error;
       }
-
     } catch (error) {
       console.error('Error al crear campaña:', error);
       throw error;
     }
   }
+
 
   /**
    * Insertar campaña en la base de datos
@@ -87,6 +96,7 @@ export class CampaignCreateService {
           owner_user_id: userId,
           title: formData.title.trim(),
           description: formData.description.trim(),
+          country: formData.country,
           goal_amount: parseFloat(formData.goalAmount),
           soft_cap: parseFloat(formData.softCap),
           hard_cap: formData.hardCap ? parseFloat(formData.hardCap) : null,
@@ -96,7 +106,7 @@ export class CampaignCreateService {
           start_at: formData.startDate.toISOString(),
           end_at: formData.endDate.toISOString(),
           has_diagnosis: formData.hasDiagnosis,
-          beneficiary_rule: formData.beneficiaries.length > 1 ?  'fixed_shares' : 'single_beneficiary',
+          beneficiary_rule: formData.beneficiaries.length > 1 ? 'fixed_shares' : 'single_beneficiary',
         })
         .select()
         .single();
@@ -146,40 +156,42 @@ export class CampaignCreateService {
   /**
    * Crear beneficiarios con sus documentos
    */
-private static async createBeneficiaries(
-  campaignId: string,
-  userId: string,
-  beneficiaries: CreateCampaignFormData['beneficiaries']
-): Promise<void> {
-  try {
-    for (const beneficiary of beneficiaries) {
-      // 👇 AGREGA ESTE LOG AQUÍ
-      console.log('🔍 DEBUG en service - beneficiary.shareType:', beneficiary.shareType);
-      console.log('🔍 DEBUG en service - beneficiary completo:', JSON.stringify(beneficiary, null, 2));
-      
-      // 1. Crear beneficiario
-      const { data: beneficiaryData, error: beneficiaryError } = await supabase
-        .from('campaign_beneficiaries')
-        .insert({
-          campaign_id: campaignId,
-          beneficiary_user_id: beneficiary.user.id,
-          share_type: beneficiary.shareType, // 👈 Este es el valor problemático
-          share_value: beneficiary.shareValue,
-          is_active: true,
-        })
-        .select()
-        .single();
+  private static async createBeneficiaries(
+    campaignId: string,
+    userId: string,
+    beneficiaries: CreateCampaignFormData['beneficiaries'],
+    campaignCountry: string
+  ): Promise<void> {
+    try {
+      for (const beneficiary of beneficiaries) {
+        // 👇 AGREGA ESTE LOG AQUÍ
+        console.log('🔍 DEBUG en service - beneficiary.shareType:', beneficiary.shareType);
+        console.log('🔍 DEBUG en service - beneficiary completo:', JSON.stringify(beneficiary, null, 2));
 
-      if (beneficiaryError) {
-        throw beneficiaryError;
+        // 1. Crear beneficiario
+        const { data: beneficiaryData, error: beneficiaryError } = await supabase
+          .from('campaign_beneficiaries')
+          .insert({
+            campaign_id: campaignId,
+            beneficiary_user_id: beneficiary.user.id,
+            share_type: beneficiary.shareType, // 👈 Este es el valor problemático
+            share_value: beneficiary.shareValue,
+            beneficiary_country: campaignCountry,
+            is_active: true,
+          })
+          .select()
+          .single();
+
+        if (beneficiaryError) {
+          throw beneficiaryError;
+        }
+        // ... resto del código
       }
-      // ... resto del código
+    } catch (error) {
+      console.error('Error creating beneficiaries:', error);
+      throw error;
     }
-  } catch (error) {
-    console.error('Error creating beneficiaries:', error);
-    throw error;
   }
-}
 
   /**
    * Eliminar campaña (rollback)
@@ -226,5 +238,28 @@ private static async createBeneficiaries(
     }
   }
 
-  
+  private static async processConnectBeneficiaries(campaignId: string): Promise<void> {
+    try {
+      console.log('🔄 Procesando Connect beneficiaries para campaign:', campaignId);
+
+      const { data, error } = await supabase.functions.invoke(
+        'process-campaign-beneficiaries',
+        {
+          body: { campaignId },
+        }
+      );
+
+      if (error) {
+        console.error('❌ Error invocando Edge Function:', error);
+        return;
+      }
+
+      console.log('✅ Beneficiarios Connect procesados:', data);
+    } catch (error) {
+      console.error('❌ Error en processConnectBeneficiaries:', error);
+    }
+  }
+
+
 }
+

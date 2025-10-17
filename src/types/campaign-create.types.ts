@@ -67,7 +67,7 @@ export interface CreateCampaignFormData {
   title: string;
   description: string;
   hasDiagnosis: boolean;
-  
+  country: CountryCode; 
   // Imágenes
   campaignImages: LocalImage[]; // Max 3
   diagnosisImages: LocalImage[]; // Max 3 (solo si hasDiagnosis = true)
@@ -159,10 +159,26 @@ export interface CreateCampaignState {
 }
 
 export const COUNTRIES = [
-  { code: 'US', name: 'Estados Unidos' },
-  { code: 'ES', name: 'España' },
-  { code: 'MX', name: 'México' },
-  { code: 'CL', name: 'Chile' },
+  { code: 'US', name: 'Estados Unidos', flag: '🇺🇸' },
+  { code: 'CO', name: 'Colombia', flag: '🇨🇴' },
+  { code: 'MX', name: 'México', flag: '🇲🇽' },
+  { code: 'CL', name: 'Chile', flag: '🇨🇱' },
 ] as const;
 
 export type CountryCode = typeof COUNTRIES[number]['code'];
+
+
+export const getCountryName = (code: CountryCode): string => {
+  return COUNTRIES.find(c => c.code === code)?.name || code;
+};
+export const getCountryFlag = (code: CountryCode): string => {
+  return COUNTRIES.find(c => c.code === code)?.flag || '';
+};
+
+export const isConnectSupported = (code: CountryCode): boolean => {
+  return ['US', 'CO', 'MX'].includes(code);
+};
+
+export const getPayoutMode = (code: CountryCode): 'connect' | 'external' => {
+  return isConnectSupported(code) ? 'connect' : 'external';
+};

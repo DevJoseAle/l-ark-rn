@@ -57,7 +57,7 @@ export class CampaignCreateService {
           formData.country
         );
 
-            if (formData.country === 'US' || formData.country === 'ES' || formData.country === 'MX') {
+            if (formData.country === 'US' || formData.country === 'CO' || formData.country === 'MX') {
       onProgress?.('Configurando pagos automáticos', 85);
       
       // Fire-and-forget (no esperamos resultado)

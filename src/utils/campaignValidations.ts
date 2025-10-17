@@ -129,10 +129,10 @@ export class CampaignValidations {
       };
     }
 
-    if (numHardCap <= numGoalAmount) {
+    if (numHardCap >= numGoalAmount) {
       return {
         field: 'hardCap',
-        message: 'La meta media debe ser mayor que la meta total',
+        message: 'La meta media debe ser menor que la meta total',
       };
     }
 
@@ -233,6 +233,25 @@ export class CampaignValidations {
     return null;
   }
 
+  static validateCountry(country: string): ValidationError | null {
+    const validCountries = ['US', 'ES', 'MX', 'CL'];
+    
+    if (!country || country.trim().length === 0) {
+      return {
+        field: 'country',
+        message: 'Debes seleccionar el país de la campaña',
+      };
+    }
+
+    if (!validCountries.includes(country)) {
+      return {
+        field: 'country',
+        message: 'El país seleccionado no es válido',
+      };
+    }
+
+    return null;
+  }
   /**
    * Validar beneficiarios
    */
@@ -324,6 +343,10 @@ export class CampaignValidations {
     const imageError = this.validateCampaignImages(formData.campaignImages);
     if (imageError) errors.push(imageError);
 
+        // 👇 NUEVA: Validar país
+    const countryError = this.validateCountry(formData.country);
+    if (countryError) errors.push(countryError);
+    
     // Validar imágenes de diagnóstico
     const diagnosisError = this.validateDiagnosisImages(
       formData.hasDiagnosis,

@@ -1,4 +1,4 @@
-// src/components/campaign/BeneficiariesSection.tsx
+// src/components/home/BeneficiariesSection.tsx
 import React, { useState, useEffect } from 'react';
 import {
     View,
@@ -16,25 +16,33 @@ import { useDebounce } from '@/src/features/home/useDebounce';
 import { supabase } from '@/src/lib/supabaseClient';
 import { UserSearchService } from '@/src/services/searchUsers.service';
 import { useCreateCampaignStore } from '@/src/stores/createCampaign.store';
-import { BeneficiaryShareType, BeneficiaryUser, CampaignBeneficiary, COUNTRIES } from '@/src/types/campaign-create.types';
+import { 
+    BeneficiaryShareType, 
+    BeneficiaryUser, 
+    CampaignBeneficiary, 
+    COUNTRIES,
+    CountryCode,
+    getPayoutMode // 👈 Importar helper
+} from '@/src/types/campaign-create.types';
 import { BeneficiaryCard } from './BeneficiaryCard';
 
 export const BeneficiariesSection = () => {
     const colorScheme = useColorScheme();
     const colors = Colors[colorScheme ?? 'light'];
 
-    const { formData, addBeneficiary, errors } = useCreateCampaignStore();
+    // 👇 CAMBIO: Obtener country y setCountry del STORE
+    const { formData, addBeneficiary, errors, setCountry } = useCreateCampaignStore();
 
     // Estados de búsqueda
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState<BeneficiaryUser[]>([]);
     const [isSearching, setIsSearching] = useState(false);
     const [currentUserId, setCurrentUserId] = useState<string>('');
-    const [selectedCountry, setSelectedCountry] = useState<'US' | 'ES' | 'MX' | 'CL' | null>(null)
 
     const debouncedSearch = useDebounce(searchQuery, 300);
+    const selectedCountry = formData.country;
+    const payoutMode = selectedCountry ? getPayoutMode(selectedCountry) : null;
 
-    // Obtener usuario actual
     useEffect(() => {
         const fetchCurrentUser = async () => {
             const { data: { user } } = await supabase.auth.getUser();
@@ -73,7 +81,6 @@ export const BeneficiariesSection = () => {
 
     // Handler para agregar beneficiario
     const handleAddBeneficiary = (user: BeneficiaryUser) => {
-        // Verificar si ya está agregado
         const isAlreadyAdded = formData.beneficiaries.some(
             (b) => b.user.id === user.id
         );
@@ -83,31 +90,17 @@ export const BeneficiariesSection = () => {
             return;
         }
 
-        // Verificar límite
-        if (formData.beneficiaries.length >= 3) {
-            Alert.alert('Límite alcanzado', 'Solo puedes agregar hasta 3 beneficiarios.');
-            return;
-        }
+        // Calcular porcentaje automático
+        const currentCount = formData.beneficiaries.length;
+        const newShareValue = currentCount === 0 
+            ? 100 
+            : Math.floor(100 / (currentCount + 1));
 
-        // Calcular share inicial
-        const shareValue =
-            formData.distributionRule === 'percentage'
-                ? Math.floor(100 / (formData.beneficiaries.length + 1))
-                : 1;
-
-
-                
-        const shareType: 'percent' | 'fixed_amount' =
-            formData.distributionRule === 'percentage' ? 'percent' : 'fixed_amount';
-
-
-              console.log('🔍 DEBUG shareType:', shareType); // 👈 Agrega esto
-  console.log('🔍 DEBUG distributionRule:', formData.distributionRule); 
         const newBeneficiary: CampaignBeneficiary = {
             id: `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
             user: user,
-            shareType: shareType, // Ahora usa el tipo correcto
-            shareValue: shareValue,
+            shareType: 'percent' as BeneficiaryShareType,
+            shareValue: newShareValue,
             documents: [],
         };
 
@@ -116,33 +109,18 @@ export const BeneficiariesSection = () => {
         setSearchResults([]);
     };
 
-    // Calcular porcentaje total
     const totalPercentage = formData.beneficiaries.reduce(
-        (sum, b) => sum + (b.shareValue || 0),
+        (sum, b) => sum + b.shareValue,
         0
     );
 
     const beneficiariesError = errors.find((e) => e.field === 'beneficiaries');
+    const countryError = errors.find((e) => e.field === 'country');
 
     return (
         <View style={styles.container}>
-            <View
-                style={[
-                    styles.card,
-                    {
-                        backgroundColor:
-                            colorScheme === 'dark'
-                                ? 'rgba(30, 42, 54, 0.7)'
-                                : 'rgba(251, 252, 251, 0.7)',
-                        borderColor:
-                            colorScheme === 'dark'
-                                ? 'rgba(42, 63, 84, 0.5)'
-                                : 'rgba(172, 202, 231, 0.3)',
-                    },
-                ]}
-            >
+            <View style={[styles.card, { backgroundColor: colors.cardBackground, borderColor: colors.separator }]}>
                 {/* HEADER */}
-                
                 <View style={styles.header}>
                     <View style={styles.titleContainer}>
                         <Text style={[styles.sectionTitle, { color: colors.text }]}>
@@ -150,15 +128,16 @@ export const BeneficiariesSection = () => {
                         </Text>
                         <Text style={[styles.required, { color: colors.error }]}> *</Text>
                     </View>
-                    
-                    {/* Badge de porcentaje */}
-                    {formData.distributionRule === 'percentage' && formData.beneficiaries.length > 0 && (
+
+                    {formData.beneficiaries.length > 0 && (
                         <View
                             style={[
                                 styles.percentageBadge,
                                 {
                                     backgroundColor:
-                                        totalPercentage === 100 ? colors.success + '20' : colors.warning + '20',
+                                        totalPercentage === 100
+                                            ? colors.success + '20'
+                                            : colors.warning + '20',
                                 },
                             ]}
                         >
@@ -173,14 +152,56 @@ export const BeneficiariesSection = () => {
                         </View>
                     )}
                 </View>
-                <View>
-                        <Text style={{color: colors.text}}>Pais de Entrega del beneficio</Text>
-                        <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-                            {
-                                COUNTRIES.map((cty) =>  <CountryButton fn={setSelectedCountry} key={cty.code} country={cty.code} isSelected={selectedCountry == cty.code}/>  )
-                            }
-                        </View>
-                </View>       
+
+                {/* 👇 SELECTOR DE PAÍS - MOVIDO AQUÍ ARRIBA */}
+<View style={styles.countrySection}>
+    <Text style={[styles.countryTitle, { color: colors.text }]}>
+        País de entrega del beneficio *
+    </Text>
+    <Text style={[styles.countrySubtitle, { color: colors.secondaryText }]}>
+        Todos los beneficiarios deben estar en el mismo país
+    </Text>
+    
+    <View style={styles.countriesRow}>
+        {COUNTRIES.map((cty) => (
+            <CountryButton
+                fn={() => setCountry(cty.code)} // 👈 CORRECCIÓN: Pasar directamente cty.code
+                key={cty.code}
+                country={`${cty.flag} ${cty.code}`} // Mostrar flag + código
+                isSelected={selectedCountry === cty.code}
+            />
+        ))}
+    </View>
+
+    {/* Badge de modo de pago */}
+    {selectedCountry && payoutMode && (
+        <View style={styles.payoutInfo}>
+            {payoutMode === 'connect' ? (
+                <View style={[styles.payoutBadge, { backgroundColor: colors.success + '20' }]}>
+                    <Text style={styles.badgeIcon}>✓</Text>
+                    <Text style={[styles.badgeText, { color: colors.success }]}>
+                        Pago automático vía Stripe Connect
+                    </Text>
+                </View>
+            ) : (
+                <View style={[styles.payoutBadge, { backgroundColor: colors.warning + '20' }]}>
+                    <Text style={styles.badgeIcon}>⚠️</Text>
+                    <Text style={[styles.badgeText, { color: colors.warning }]}>
+                        Pago manual requerido (transferencia bancaria)
+                    </Text>
+                </View>
+            )}
+        </View>
+    )}
+
+    {/* Error de país */}
+    {countryError && (
+        <Text style={[styles.errorText, { color: colors.error }]}>
+            {countryError.message}
+        </Text>
+    )}
+</View>
+
                 {/* SEARCH BAR */}
                 <View
                     style={[
@@ -228,7 +249,6 @@ export const BeneficiariesSection = () => {
                                 ]}
                                 onPress={() => handleAddBeneficiary(user)}
                             >
-                                {/* Avatar */}
                                 <View
                                     style={[
                                         styles.avatar,
@@ -240,7 +260,6 @@ export const BeneficiariesSection = () => {
                                     </Text>
                                 </View>
 
-                                {/* Info */}
                                 <View style={styles.resultInfo}>
                                     <View style={styles.nameContainer}>
                                         <Text style={styles.resultName}>{user.display_name}</Text>
@@ -251,7 +270,6 @@ export const BeneficiariesSection = () => {
                                     <Text style={styles.resultEmail}>{user.email}</Text>
                                 </View>
 
-                                {/* Add Button */}
                                 <View style={[styles.addButton, { backgroundColor: colors.primary }]}>
                                     <Ionicons name="add" size={20} color={colors.customWhite} />
                                 </View>
@@ -277,7 +295,7 @@ export const BeneficiariesSection = () => {
                     </Text>
                 )}
 
-
+                {/* LISTA DE BENEFICIARIOS */}
                 {formData.beneficiaries.length > 0 && (
                     <View style={styles.beneficiariesList}>
                         {formData.beneficiaries.map((beneficiary) => (
@@ -290,23 +308,40 @@ export const BeneficiariesSection = () => {
     );
 };
 
-
-export const CountryButton = ({country, isSelected, fn}: {country: string, isSelected: boolean, fn: (cty: any) => void }) => {
+export const CountryButton = ({
+    country,
+    isSelected,
+    fn,
+}: {
+    country: string;
+    isSelected: boolean;
+    fn: (cty: any) => void;
+}) => {
     const colorScheme = useColorScheme();
     const colors = Colors[colorScheme ?? 'light'];
-    
+
     return (
-        <View>
-
-        <TouchableOpacity 
-        onPress={() => fn(country)}
-        style={{ width: 80, height: 40, borderColor: colors.separator, borderWidth: 0.3, borderRadius: 40, justifyContent: 'center', alignItems: 'center', marginVertical: 10, backgroundColor: isSelected ? colors.success : colors.background, opacity: isSelected ? 0.8 : 1}}>
-            <Text style={{color: isSelected ? colors.customWhite : colors.text}}>{ country }</Text>
+        <TouchableOpacity
+            onPress={() => fn(country)}
+            style={{
+                width: 90, // 👈 Un poco más ancho para los flags
+                height: 44,
+                borderColor: colors.separator,
+                borderWidth: 1,
+                borderRadius: 22,
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginVertical: 10,
+                backgroundColor: isSelected ? colors.success : colors.background,
+                opacity: isSelected ? 0.9 : 1,
+            }}
+        >
+            <Text style={{ color: isSelected ? colors.customWhite : colors.text, fontSize: 13 }}>
+                {country}
+            </Text>
         </TouchableOpacity>
-        </View>
-    )
-
-}
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -344,6 +379,46 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '700',
     },
+    // 👇 NUEVOS ESTILOS PARA PAÍS
+    countrySection: {
+        marginBottom: 20,
+        paddingBottom: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+    },
+    countryTitle: {
+        fontSize: 15,
+        fontWeight: '600',
+        marginBottom: 4,
+    },
+    countrySubtitle: {
+        fontSize: 13,
+        marginBottom: 12,
+    },
+    countriesRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginBottom: 12,
+    },
+    payoutInfo: {
+        marginTop: 8,
+    },
+    payoutBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 12,
+        borderRadius: 10,
+    },
+    badgeIcon: {
+        fontSize: 16,
+        marginRight: 8,
+    },
+    badgeText: {
+        flex: 1,
+        fontSize: 13,
+        fontWeight: '500',
+    },
+    // Resto de estilos (sin cambios)
     searchBar: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -351,6 +426,7 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         borderRadius: 12,
         gap: 10,
+        marginBottom: 12,
     },
     searchInput: {
         flex: 1,
@@ -418,6 +494,7 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },
     beneficiariesList: {
-        marginTop: 8,
+        marginTop: 16,
+        gap: 12,
     },
 });

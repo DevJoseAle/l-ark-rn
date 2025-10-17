@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { CampaignCreateService } from "../services/createCampaign.service";
-import { CreateCampaignFormData, UploadProgress, ValidationError, LocalImage, CampaignBeneficiary } from "../types/campaign-create.types";
+import { CreateCampaignFormData, UploadProgress, ValidationError, LocalImage, CampaignBeneficiary, CountryCode } from "../types/campaign-create.types";
 import { CampaignValidations } from "../utils/campaignValidations";
 
 
@@ -12,11 +12,13 @@ interface CreateCampaignStore {
   errors: ValidationError[];
   currentStep: string;
   progress: number;
+  country: CountryCode;
 
   // Actions - Form Data
   setTitle: (title: string) => void;
   setDescription: (description: string) => void;
   setHasDiagnosis: (hasDiagnosis: boolean) => void;
+  setCountry: (country: CountryCode) => void;
   setGoalAmount: (amount: string) => void;
   setSoftCap: (amount: string) => void;
   setHardCap: (amount: string) => void;
@@ -36,6 +38,7 @@ interface CreateCampaignStore {
   removeBeneficiary: (beneficiaryId: string) => void;
   updateBeneficiaryShare: (beneficiaryId: string, shareValue: number) => void;
   addBeneficiaryDocument: (beneficiaryId: string, document: LocalImage) => void;
+  updateBeneficiaryCountry: (beneficiaryId: string, country: CountryCode) => void; // 👈 NUEVO
   removeBeneficiaryDocument: (beneficiaryId: string, documentId: string) => void;
 
   // Actions - Validation
@@ -62,6 +65,7 @@ const initialFormData: CreateCampaignFormData = {
   visibility: 'public',
   distributionRule: 'percentage',
   beneficiaries: [],
+  country: 'CL',
 };
 
 export const useCreateCampaignStore = create<CreateCampaignStore>((set, get) => ({
@@ -72,6 +76,7 @@ export const useCreateCampaignStore = create<CreateCampaignStore>((set, get) => 
   errors: [],
   currentStep: '',
   progress: 0,
+  country: 'CL',
 
   // Form Data Actions
   setTitle: (title) => {
@@ -90,8 +95,8 @@ export const useCreateCampaignStore = create<CreateCampaignStore>((set, get) => 
 
   setHasDiagnosis: (hasDiagnosis) => {
     set((state) => ({
-      formData: { 
-        ...state.formData, 
+      formData: {
+        ...state.formData,
         hasDiagnosis,
         diagnosisImages: hasDiagnosis ? state.formData.diagnosisImages : [],
       },
@@ -123,6 +128,12 @@ export const useCreateCampaignStore = create<CreateCampaignStore>((set, get) => 
     set((state) => ({
       formData: { ...state.formData, startDate: date },
       errors: state.errors.filter((e) => e.field !== 'startDate'),
+    }));
+  },
+    setCountry: (country) => {
+    set((state) => ({
+      formData: { ...state.formData, country },
+      errors: state.errors.filter((e) => e.field !== 'country'),
     }));
   },
 
@@ -229,6 +240,17 @@ export const useCreateCampaignStore = create<CreateCampaignStore>((set, get) => 
       },
     }));
   },
+  updateBeneficiaryCountry: (beneficiaryId, country) => {
+    set((state) => ({
+      formData: {
+        ...state.formData,
+        beneficiaries: state.formData.beneficiaries.map((b) =>
+          b.id === beneficiaryId ? { ...b, country } : b
+        ),
+      },
+      errors: state.errors.filter((e) => e.field !== `beneficiary-${beneficiaryId}-country`),
+    }));
+  },
 
   addBeneficiaryDocument: (beneficiaryId, document) => {
     set((state) => ({
@@ -265,7 +287,6 @@ export const useCreateCampaignStore = create<CreateCampaignStore>((set, get) => 
   validateForm: () => {
     const { formData } = get();
     const result = CampaignValidations.validateForm(formData);
-    
     set({ errors: result.errors });
     return result.isValid;
   },

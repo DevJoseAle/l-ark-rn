@@ -1,6 +1,3 @@
-// src/screens/VaultHomeScreen.tsx o donde lo tengas
-// 🔄 REEMPLAZA COMPLETAMENTE
-
 import React, { useEffect } from 'react';
 import {
   View,
@@ -33,10 +30,7 @@ import { useAuthStore } from '@/src/stores/authStore';
 import { VaultService } from '@/src/services/vault.service';
 import { FileToUpload } from '@/src/types/vault.types';
 
-/**
- * Pantalla principal de la Bóveda
- * Con funcionalidades completas: Upload, Preview, Download, Delete
- */
+
 export default function VaultHomeScreen() {
   const {
     hasCampaign,

@@ -28,5 +28,38 @@ export class StripeConnectService {
       console.error('Error en createConnectedAccount:', error);
       throw error;
     }
+  } 
+  static async getOnboardingLink(): Promise<string | null> {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      throw new Error('Usuario no autenticado');
+    }
+
+    // Llamar a la Edge Function
+    const { data, error } = await supabase.functions.invoke(
+      'stripe-connect-onboarding-link',
+      {
+        body: { userId: user.id },
+      }
+    );
+
+    if (error) {
+      throw error;
+    }
+
+    return data?.url || null;
+  } catch (error: any) {
+    console.error('Error getting onboarding link:', error);
+    throw error;
   }
+}
+
+
+
+
+
+
+
 }

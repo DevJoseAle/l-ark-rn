@@ -34,6 +34,11 @@ export interface Donation {
   created_at: string;
   updated_at: string;
 }
+export interface SendDonationLinkParams {
+  campaignId: string;
+  userEmail: string;
+  userName?: string;
+}
 
 export interface DonationWithDonor extends Donation {
   donor?: {

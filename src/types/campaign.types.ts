@@ -87,6 +87,7 @@ export interface CampaignDetail extends Campaign {
   images: CampaignImage[];
   beneficiaries: CampaignBeneficiaryDetail[];
   owner: CampaignOwner;
+  short_code: string;
 }
 
 // ==================== DTOs ====================
@@ -128,4 +129,25 @@ export interface CampaignStats {
   percentage: number;
   donationsCount: number;
   daysLeft: number | null;
+}
+
+export interface CampaignSearchResult {
+  id: string;
+  short_code: string;
+  title: string;
+  description: string;
+  goal_amount: number;
+  total_raised: number;
+  country: string;
+  status: string;
+  owner_user_id: string;
+  created_at: string;
+  images?: Array<{
+    image_url: string;
+    image_type: string;
+  }>;
+  owner?: {
+    display_name: string;
+    email: string;
+  };
 }

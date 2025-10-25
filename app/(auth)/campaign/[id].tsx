@@ -22,6 +22,9 @@ import { CampaignService } from '@/src/services/campaign.service';
 import { CampaignDetail } from '@/src/types/campaign.types';
 import { Formatters } from '@/src/utils/formatters';
 import { ImageGalleryViewer, ImageGridViewer } from '@/src/components/common/ImageGalleryViewer';
+import { useAuthStore } from '@/src/stores/authStore';
+import FloatingDonateButton from '@/src/components/common/FloatingDonatingButton';
+import DonateModal from '@/src/components/common/DonateModal';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -38,13 +41,22 @@ export default function CampaignDetailScreen() {
   const params = useLocalSearchParams();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
-
+  const { user } = useAuthStore();
   const [campaign, setCampaign] = useState<CampaignDetail | null>(null);
+  const isOwnCampaign = campaign?.owner_user_id === user?.id;
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showDonateModal, setShowDonateModal] = useState(false);
+
 
   const campaignId = params.id as string;
+  const handleDonate = () => {
+    // Navegar a pantalla de donación
+    console.log("Donate");
+  };
 
+  // Determinar si es campaña propia
+  const canDonate = campaign?.status === 'active' && !isOwnCampaign;
   useEffect(() => {
     loadCampaign();
   }, [campaignId]);
@@ -83,7 +95,6 @@ export default function CampaignDetailScreen() {
       console.error('Error sharing:', error);
     }
   };
-
   if (isLoading) {
     return (
       <GradientBackground>
@@ -130,6 +141,13 @@ export default function CampaignDetailScreen() {
     img => img.image_type === 'diagnosis'
   );
 
+  const handleOpenDonateModal = () => {
+    setShowDonateModal(true);
+  };
+
+  const handleCloseDonateModal = () => {
+    setShowDonateModal(false);
+  };
   return (
     <GradientBackground>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
@@ -500,6 +518,19 @@ export default function CampaignDetailScreen() {
           <View style={{ height: 40 }} />
         </View>
       </ScrollView>
+      {canDonate && (
+        <FloatingDonateButton
+          onPress={handleOpenDonateModal}
+          disabled={campaign?.status !== 'active'}
+        />
+      )}
+       <DonateModal
+            visible={showDonateModal}
+            onClose={handleCloseDonateModal}
+            campaignId={campaign.id}
+            campaignTitle={campaign.title}
+            shortCode={campaign.short_code}
+          />
     </GradientBackground>
   );
 }

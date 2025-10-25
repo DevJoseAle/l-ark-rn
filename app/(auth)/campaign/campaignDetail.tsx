@@ -33,6 +33,7 @@ const STATUS_CONFIG = {
 };
 
 export default function CampaignDetailScreen() {
+  console.log("Abri1");
   const router = useRouter();
   const params = useLocalSearchParams();
   const colorScheme = useColorScheme();
@@ -116,7 +117,7 @@ export default function CampaignDetailScreen() {
 
   const mainImage = CampaignService.getMainImage(campaign.images);
   const progress = CampaignService.getProgressPercentage(
-    campaign.current_amount,
+    0,
     campaign.goal_amount ?? 0
   );
   const daysRemaining = CampaignService.getDaysRemaining(campaign.end_at ?? '');
@@ -247,7 +248,7 @@ export default function CampaignDetailScreen() {
                   Recaudado
                 </Text>
                 <Text style={[styles.amountValue, { color: colors.text }]}>
-                  {Formatters.formatCLP(campaign.current_amount)}
+                  {Formatters.formatCLP(0)}
                 </Text>
               </View>
               <View style={{ alignItems: 'flex-end' }}>

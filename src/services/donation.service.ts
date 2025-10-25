@@ -1,6 +1,11 @@
 import { supabase } from "../lib/supabaseClient";
-import { DonationWithDonor, CreateDonationDTO, Donation, DonationListItem } from "../types/donation.types";
+import { DonationWithDonor, CreateDonationDTO, Donation, DonationListItem, SendDonationLinkParams } from "../types/donation.types";
+import * as WebBrowser from 'expo-web-browser';
 
+export interface CreateCheckoutSessionParams {
+  campaignId: string;
+  amount?: number; // Opcional: monto predefinido
+}
 
 export class DonationService {
   /**
@@ -156,6 +161,80 @@ export class DonationService {
       return data || [];
     } catch (error) {
       console.error('Error al obtener donaciones del usuario:', error);
+      throw error;
+    }
+  }
+   static async sendDonationLink(params: SendDonationLinkParams): Promise<{ 
+    success: boolean; 
+    donationUrl: string;
+    error?: string;
+  }> {
+    try {
+      const { data, error } = await supabase.functions.invoke('send-donation-link', {
+        body: params,
+      });
+
+      if (error) throw error;
+
+      return {
+        success: true,
+        donationUrl: data.donation_url,
+      };
+    } catch (error: any) {
+      console.error('Send donation link error:', error);
+      return {
+        success: false,
+        donationUrl: '',
+        error: error.message,
+      };
+    }
+  }
+
+  /**
+   * Abrir página de donación en navegador
+   */
+ static async openDonationPage(params: CreateCheckoutSessionParams): Promise<void> {
+    try {
+      // 1. Crear checkout session via Edge Function
+      const { data, error } = await supabase.functions.invoke('create-donation-checkout', {
+        body: params,
+      });
+
+      if (error) throw error;
+
+      // 2. Abrir URL de Stripe directamente
+      await WebBrowser.openBrowserAsync(data.checkout_url, {
+        presentationStyle: WebBrowser.WebBrowserPresentationStyle.FORM_SHEET,
+        controlsColor: '#4BA3D9',
+      });
+    } catch (error) {
+      console.error('Open donation checkout error:', error);
+      throw error;
+    }
+  }
+ static async openDonationCheckout(campaignId: string, amount: number = 500): Promise<void> {
+    try {
+      // Llamar a tu Edge Function existente
+      const { data, error } = await supabase.functions.invoke('stripe-checkout-session', {
+        body: {
+          campaignId,
+          amount, // En centavos (500 = $5)
+        },
+      });
+
+      if (error) throw error;
+
+      if (!data.url) {
+        throw new Error('No checkout URL received');
+      }
+
+      // Abrir Stripe Checkout en navegador
+      await WebBrowser.openBrowserAsync(data.url, {
+        presentationStyle: WebBrowser.WebBrowserPresentationStyle.FORM_SHEET,
+        controlsColor: '#4BA3D9',
+      });
+    } catch (error: any) {
+      console.error('Open donation checkout error:', error);
       throw error;
     }
   }

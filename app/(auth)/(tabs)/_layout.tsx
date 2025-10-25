@@ -31,12 +31,18 @@ export default function TabLayout() {
           title: 'Vault',
         }}
       />
-      {/* <Tabs.Screen
+       <Tabs.Screen
+        name="search"
+        options={{
+          title: 'Search',
+        }}
+      /> 
+       <Tabs.Screen
         name="favorites"
         options={{
-          title: 'Favoritos',
+          title: 'Search',
         }}
-      /> */}
+      /> 
       <Tabs.Screen
         name="profileHome"
         options={{

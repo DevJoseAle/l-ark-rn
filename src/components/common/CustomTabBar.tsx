@@ -7,7 +7,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
-console.log({ state, descriptors, navigation })
   const getIconName = (routeName: string, isFocused: boolean): keyof typeof Ionicons.glyphMap => {
     switch (routeName) {
       case 'index':
@@ -17,6 +16,8 @@ console.log({ state, descriptors, navigation })
         return 'shield-outline';
       case 'favorites':
         return 'heart-outline';
+      case 'search':
+        return 'search-outline';
       case 'profileHome':
         return 'person-outline';
       default:

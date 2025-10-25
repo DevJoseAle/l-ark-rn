@@ -1,5 +1,5 @@
 import { supabase } from "../lib/supabaseClient";
-import { Campaign, CreateCampaignDTO, UpdateCampaignDTO, CampaignStats, CampaignDetail } from "../types/campaign.types";
+import { Campaign, CreateCampaignDTO, UpdateCampaignDTO, CampaignStats, CampaignDetail, CampaignSearchResult } from "../types/campaign.types";
 
 
 export class CampaignService {
@@ -318,5 +318,115 @@ export class CampaignService {
       })[0];
 
     return mainImage?.image_url || null;
+  }
+
+   static async searchByCode(code: string): Promise<CampaignSearchResult | null> {
+    try {
+      const cleanCode = code.trim().toLowerCase();
+
+      const { data, error } = await supabase
+        .from('campaigns')
+        .select(`
+          id,
+          short_code,
+          title,
+          description,
+          goal_amount,
+          total_raised,
+          country,
+          status,
+          owner_user_id,
+          created_at,
+          images:campaign_images(image_url, image_type),
+          owner:owner_user_id(display_name, email)
+        `)
+        .eq('short_code', cleanCode)
+        .in('visibility', ['public', 'unlisted'])
+        .single();
+
+      if (error) {
+        console.error('Search by code error:', error);
+        return null;
+      }
+
+      return data as any;
+    } catch (error) {
+      console.error('Search service error:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Buscar campañas por texto (título o descripción)
+   */
+  static async searchByText(query: string): Promise<CampaignSearchResult[]> {
+    try {
+      const { data, error } = await supabase
+        .from('campaigns')
+        .select(`
+          id,
+          short_code,
+          title,
+          description,
+          goal_amount,
+          total_raised,
+          country,
+          status,
+          owner_user_id,
+          created_at,
+          images:campaign_images(image_url, image_type),
+          owner:owner_user_id(display_name, email)
+        `)
+        .or(`title.ilike.%${query}%,description.ilike.%${query}%`)
+        .eq('status', 'active')
+        .eq('visibility', 'public')
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      if (error) {
+        console.error('Search by text error:', error);
+        return [];
+      }
+
+      return data as any|| [];
+    } catch (error) {
+      console.error('Text search error:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Obtener campañas recientes/destacadas
+   */
+  static async getFeaturedCampaigns(): Promise<CampaignSearchResult[]> {
+    try {
+      const { data, error } = await supabase
+        .from('campaigns')
+        .select(`
+          id,
+          short_code,
+          title,
+          description,
+          goal_amount,
+          total_raised,
+          country,
+          status,
+          owner_user_id,
+          created_at,
+          images:campaign_images(image_url, image_type),
+          owner:owner_user_id(display_name, email)
+        `)
+        .eq('status', 'active')
+        .eq('visibility', 'public')
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (error) throw error;
+
+      return data as any || [];
+    } catch (error) {
+      console.error('Featured campaigns error:', error);
+      return [];
+    }
   }
 }

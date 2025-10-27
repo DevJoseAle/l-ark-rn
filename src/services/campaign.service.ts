@@ -111,6 +111,7 @@ export class CampaignService {
     visibility: Campaign['visibility']
   ): Promise<Campaign> {
     try {
+      console.log('pase');
       return await this.updateCampaign(campaignId, { visibility });
     } catch (error) {
       console.error('Error al actualizar visibilidad:', error);

@@ -63,9 +63,8 @@ export function useHomeData() {
 
   const handleToggleVisibility = useCallback(async () => {
     if (!campaign) return;
-    
     try {
-      await toggleVisibility(campaign.id);
+      await toggleVisibility();
     } catch (error) {
       console.error('Error toggling visibility:', error);
       // El error ya está en el store

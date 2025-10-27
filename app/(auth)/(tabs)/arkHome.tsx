@@ -49,7 +49,6 @@ export default function ArkHomePage() {
   };
 
   const handleViewCampaign = () => {
-    // TODO: Navegar a detalle de campaña
     router.push('/campaign/detail');
   };
 

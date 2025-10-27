@@ -9,12 +9,13 @@ interface CampaignState {
   isLoading: boolean;
   error: string | null;
   lastFetchedAt: number | null;
+  amountVisibility: boolean;
 
   // Actions
   fetchCampaign: () => Promise<void>;
   createCampaign: (data: CreateCampaignDTO) => Promise<Campaign>;
   updateCampaign: (campaignId: string, data: UpdateCampaignDTO) => Promise<void>;
-  toggleVisibility: (campaignId: string) => Promise<void>;
+  toggleVisibility: () => void;
   deleteCampaign: (campaignId: string) => Promise<void>;
   clearCampaign: () => void;
   setError: (error: string | null) => void;
@@ -26,6 +27,7 @@ export const useCampaignStore = create<CampaignState>((set, get) => ({
   isLoading: false,
   error: null,
   lastFetchedAt: null,
+  amountVisibility: false,
 
   // Fetch user campaign
   fetchCampaign: async () => {
@@ -101,28 +103,32 @@ export const useCampaignStore = create<CampaignState>((set, get) => ({
   },
 
   // Toggle visibility
-  toggleVisibility: async (campaignId: string) => {
-    const campaign = get().campaign;
-    if (!campaign) return;
-
-    const newVisibility = campaign.visibility === 'public' ? 'private' : 'public';
-    
-    // Optimistic update
-    set({ 
-      campaign: { ...campaign, visibility: newVisibility },
-    });
-    
-    try {
-      await CampaignService.updateVisibility(campaignId, newVisibility);
-    } catch (error) {
-      // Revert on error
-      set({ campaign });
-      
-      const errorMessage = error instanceof Error ? error.message : 'Error al cambiar visibilidad';
-      set({ error: errorMessage });
-      throw error;
-    }
+  toggleVisibility: () => {
+    let visibility = get().amountVisibility
+    set({amountVisibility: !visibility})
   },
+  // toggleVisibility: async (campaignId: string) => {
+  //   const campaign = get().campaign;
+  //   if (!campaign) return;
+
+  //   const newVisibility = campaign.visibility === 'public' ? 'private' : 'public';
+    
+  //   // Optimistic update
+  //   set({ 
+  //     campaign: { ...campaign, visibility: newVisibility },
+  //   });
+    
+  //   try {
+  //     await CampaignService.updateVisibility(campaignId, newVisibility);
+  //   } catch (error) {
+  //     // Revert on error
+  //     set({ campaign });
+      
+  //     const errorMessage = error instanceof Error ? error.message : 'Error al cambiar visibilidad';
+  //     set({ error: errorMessage });
+  //     throw error;
+  //   }
+  // },
 
   // Delete campaign
   deleteCampaign: async (campaignId: string) => {

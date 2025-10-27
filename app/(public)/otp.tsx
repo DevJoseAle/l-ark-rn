@@ -1,15 +1,13 @@
 // app/(public)/otp.tsx
 import { View, Text, TouchableOpacity, TextInput, Alert } from 'react-native';
-import React, { useState, useRef } from 'react';
-import { router, useRouter } from 'expo-router';
+import React, { useRef } from 'react';
+import { useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useThemeColors } from '@/hooks/use-theme-color';
 import { GradientBackground } from '@/src/components/common/GradiendBackground';
 import { LarkLogo } from '@/src/components/common/LarkLogo';
 import { createOTPStyles } from '@/src/features/auth/styles/otpStyles';
-import { useLoadingStore } from '@/src/stores/LoadingStore';
 import { useOTPForm } from '@/src/features/auth/hooks/useLogin';
-import { authService } from '@/src/features/auth/service/auth.service';
 
 
 export default function OTPScreen() {
@@ -24,8 +22,8 @@ export default function OTPScreen() {
     handleConfirm, 
     handleResend, 
     handleKeyPress,
-    handleOtpChange } = useOTPForm(6, router);
-  const inputRefs = useRef<Array<TextInput | null>>([]);
+    handleOtpChange,
+  inputRefs } = useOTPForm(6, router);
 
   return (
     <GradientBackground>

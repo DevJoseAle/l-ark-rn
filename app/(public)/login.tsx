@@ -9,26 +9,30 @@ import { LarkLogo } from '@/src/components/common/LarkLogo';
 import { GradientBackground } from '@/src/components/common/GradiendBackground';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useLogin } from '@/src/features/auth/hooks/useLogin';
+import TermsModal from '@/src/components/common/TermsModal';
 
 export default function LoginScreen() {
   const router = useRouter();
-  const  {
-        email,
-        setEmail,
-        isChecked,
-        setIsChecked,
-        handleContinue,
-        isFormValid,
-        styles,
-        colors
-      } = useLogin(router);
+  const {
+    email,
+    setEmail,
+    isChecked,
+    setIsChecked,
+    handleContinue,
+    isFormValid,
+    styles,
+    colors,
+    showTermsModal,
+    handleAcceptTerms,
+    handleDeclineTerms,
+  } = useLogin(router);
 
 
   return (
     <GradientBackground>
       <View style={styles.container}>
         {/* Header con botón atrás */}
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
         >
@@ -48,10 +52,10 @@ export default function LoginScreen() {
 
         {/* Input de email */}
         <View style={styles.inputContainer}>
-          <Ionicons 
-            name="mail-outline" 
-            size={20} 
-            color={colors.secondaryText} 
+          <Ionicons
+            name="mail-outline"
+            size={20}
+            color={colors.secondaryText}
             style={styles.inputIcon}
           />
           <TextInput
@@ -67,7 +71,7 @@ export default function LoginScreen() {
         </View>
 
         {/* Checkbox */}
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.checkboxContainer}
           onPress={() => setIsChecked(!isChecked)}
           activeOpacity={0.7}
@@ -103,6 +107,11 @@ export default function LoginScreen() {
           </Text>
         </TouchableOpacity>
       </View>
+      <TermsModal
+        visible={showTermsModal}
+        onAccept={handleAcceptTerms}
+        onDecline={handleDeclineTerms}
+      />
     </GradientBackground>
   );
 }

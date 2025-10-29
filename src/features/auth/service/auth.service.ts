@@ -7,25 +7,25 @@ export interface AuthServiceResponse<T = void> {
     success: boolean;
     message: string;
     data?: T;
-    error?: AuthError | null; 
+    error?: AuthError | null;
 }
 export interface SendOTPData {
-  messageId?: string;
+    messageId?: string;
 }
 
 export interface VerifyOTPData {
-  session: Session;
-  user: User;
+    session: Session;
+    user: User;
 }
 
 export interface CheckUserExistsData {
-  exists: boolean;
-  userId?: string;
+    exists: boolean;
+    userId?: string;
 }
 
 export interface UserExist {
-  exists: boolean;
-  userId?: string;
+    exists: boolean;
+    userId?: string;
 }
 
 export const authService = {
@@ -33,20 +33,20 @@ export const authService = {
         console.log("SendOTPData email:", email);
         try {
             const { data, error } = await supabase.auth.signInWithOtp({
-            email,
-            options: {
-                shouldCreateUser: true,
-            },
-        });
-        console.log(data);
-        if (error) throw error;
-        console.log(error);
+                email,
+                options: {
+                    shouldCreateUser: true,
+                },
+            });
+            console.log(data);
+            if (error) throw error;
+            console.log(error);
 
-        return {
-            success: true,
-            message: "OTP enviado exitosamente",
-            data: data as SendOTPData,
-        };
+            return {
+                success: true,
+                message: "OTP enviado exitosamente",
+                data: data as SendOTPData,
+            };
         } catch (error) {
             console.log(error)
             return {
@@ -57,22 +57,83 @@ export const authService = {
         }
     },
 
-    verifyOTP: async (email: string, token: string):Promise<AuthServiceResponse<VerifyOTPData>> => {
-        console.log("entre")
+    // src/services/authService.ts
+
+    verifyOTP: async (email: string, token: string): Promise<AuthServiceResponse<VerifyOTPData>> => {
+        console.log("Verificando OTP para:", email);
+
         try {
             const { data, error } = await supabase.auth.verifyOtp({
-            email,
-            token,
-            type: 'email',
-        });
-        console.log("Data",{data});
-        if (error) throw error;
-        return {
-            success: true,
-            message: "OTP Verificado Exitosamente",
-            data: data as VerifyOTPData
-        };
+                email,
+                token,
+                type: 'email',
+            });
+
+            console.log("Data:", { data });
+
+            if (error) throw error;
+
+            // ============================================
+            // GUARDAR ACEPTACIÓN DE TÉRMINOS
+            // ============================================
+            if (data.user) {
+                try {
+                    // 1. Obtener versión actual de términos
+                    const { data: currentTerms } = await supabase
+                        .from('terms_versions')
+                        .select('version')
+                        .eq('is_current', true)
+                        .single();
+
+                    const currentVersion = currentTerms?.version || '1.0';
+
+                    // 2. Verificar si ya aceptó esta versión
+                    const { data: existingAcceptance } = await supabase
+                        .from('user_terms_acceptances')
+                        .select('id')
+                        .eq('user_id', data.user.id)
+                        .eq('terms_version', currentVersion)
+                        .maybeSingle();
+
+                    if (!existingAcceptance) {
+                        // 3. Guardar aceptación de términos
+                        const { error: acceptanceError } = await supabase
+                            .from('user_terms_acceptances')
+                            .insert({
+                                user_id: data.user.id,
+                                terms_version: currentVersion,
+                                accepted_at: new Date().toISOString(),
+                            });
+
+                        if (acceptanceError && acceptanceError.code !== '23505') {
+                            // Ignorar error de duplicado (23505)
+                            console.error('⚠️ Error guardando aceptación de términos:', acceptanceError);
+                        } else {
+                            console.log('✅ Términos aceptados:', currentVersion);
+
+                            // 4. Actualizar columna helper en users
+                            await supabase
+                                .from('users')
+                                .update({ current_terms_version: currentVersion })
+                                .eq('id', data.user.id);
+                        }
+                    } else {
+                        console.log('✅ Usuario ya aceptó términos:', currentVersion);
+                    }
+                } catch (termsError) {
+                    // No fallar el login si hay error con términos
+                    console.error('⚠️ Error procesando términos:', termsError);
+                }
+            }
+
+            return {
+                success: true,
+                message: "OTP Verificado Exitosamente",
+                data: data as VerifyOTPData
+            };
+
         } catch (error) {
+            console.error("❌ Error verificando OTP:", error);
             return {
                 success: false,
                 message: "Error al verificar OTP (Falla servicio)",
@@ -81,17 +142,17 @@ export const authService = {
         }
     },
 
-    getSession: async ():Promise<AuthServiceResponse<Session>> => {
+    getSession: async (): Promise<AuthServiceResponse<Session>> => {
         try {
-                    const { data, error } = await supabase.auth.getSession();
-        if (error) throw error;
-        return {
-            success: true,
-            message: "Session obtenida",
-            data: data.session as Session
-        };
+            const { data, error } = await supabase.auth.getSession();
+            if (error) throw error;
+            return {
+                success: true,
+                message: "Session obtenida",
+                data: data.session as Session
+            };
         } catch (error) {
-            return{
+            return {
                 success: false,
                 message: "Error al obtener Sesion",
                 error: error as AuthError
@@ -110,23 +171,23 @@ export const authService = {
     checkIfUserExists: async (email: string): Promise<AuthServiceResponse<UserExist>> => {
         try {
             const { data, error } = await supabase.functions.invoke('check-user-exists', {
-            body: { email }
-        })
-        if(error) throw error
-        const exists = data as UserExist
-        if(exists.exists == false){
-            return{
+                body: { email }
+            })
+            if (error) throw error
+            const exists = data as UserExist
+            if (exists.exists == false) {
+                return {
+                    success: true,
+                    message: "Usuario no existe en la base de datos",
+                    data
+                }
+            }
+            return {
                 success: true,
-                message: "Usuario no existe en la base de datos",
+                message: "Usuario encontrado Exitosamente",
                 data
             }
-        }
-        return{
-            success: true,
-            message: "Usuario encontrado Exitosamente",
-            data
-        }
-        
+
         } catch (error) {
             return {
                 success: false,

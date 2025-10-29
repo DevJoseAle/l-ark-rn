@@ -7,49 +7,122 @@ import { isValidEmail, isValidOTPArray } from "@/src/lib/validators";
 import { authService } from "../service/auth.service";
 import { Alert, TextInput } from "react-native";
 import { useAuthStore } from "@/src/stores/authStore";
+import { supabase } from "@/src/lib/supabaseClient";
+import { CURRENT_TERMS_VERSION } from "@/constants/Constants";
 
-export const useLogin = (router: Router) =>{
-      const colors = useThemeColors();
-      const styles = createLoginStyles(colors);
-      const { showLoading, hideLoading } = useLoadingStore();
-      const { setEmail: setEmailStore, email: emailStore  } = useAuthStore();
+export const useLogin = (router: any) => {
+  const colors = useThemeColors();
+  const styles = createLoginStyles(colors);
+  const { showLoading, hideLoading } = useLoadingStore();
+  const { setEmail: setEmailStore } = useAuthStore();
 
-    const [email, setEmail] = useState('');
+  const [email, setEmail] = useState('');
   const [isChecked, setIsChecked] = useState(false);
-  
-  const isFormValid = isValidEmail(email) && isChecked;
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [pendingEmail, setPendingEmail] = useState('');
+
+  const isFormValid = email.length > 0 && isChecked && /\S+@\S+\.\S+/.test(email);
 
   const handleContinue = async () => {
     if (!isFormValid) return;
-    setEmailStore(email);
+
+    showLoading('Verificando...');
+
+    try {
+      const cleanEmail = email.toLowerCase().trim();
+
+      // 1. Verificar si el usuario existe
+      const { data: existingUser, error } = await supabase
+        .from('users')
+        .select('id, email')
+        .eq('email', cleanEmail)
+        .maybeSingle();
+
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
+
+      hideLoading();
+
+      if (existingUser) {
+        // Usuario existe → Verificar si aceptó la versión actual
+        const { data: acceptance } = await supabase
+          .from('user_terms_acceptances')
+          .select('id')
+          .eq('user_id', existingUser.id)
+          .eq('terms_version', CURRENT_TERMS_VERSION)
+          .maybeSingle();
+
+        if (acceptance) {
+          // Ya aceptó términos actuales → Enviar OTP
+          console.log('✅ Usuario existente con términos aceptados');
+          await sendOTP(cleanEmail);
+        } else {
+          // Debe aceptar nueva versión
+          console.log('📝 Usuario debe aceptar términos actualizados');
+          setPendingEmail(cleanEmail);
+          setShowTermsModal(true);
+        }
+      } else {
+        // Usuario nuevo → Mostrar modal de T&C
+        console.log('📝 Usuario nuevo, mostrando T&C...');
+        setPendingEmail(cleanEmail);
+        setShowTermsModal(true);
+      }
+    } catch (error: any) {
+      hideLoading();
+      console.error('Error verificando usuario:', error);
+      Alert.alert('Error', 'Hubo un problema. Intenta nuevamente.');
+    }
+  };
+
+  const sendOTP = async (emailToSend: string) => {
+    setEmailStore(emailToSend);
     showLoading('Enviando código...');
-    const response = await authService.loginSendOTP(email);
-    
+
+    const response = await authService.loginSendOTP(emailToSend);
+
     if (response.success) {
       router.push({
         pathname: '/(public)/otp',
-        params: { email }
+        params: { email: emailToSend }
       });
-       hideLoading();
+      hideLoading();
     } else {
       Alert.alert('Error', response.message);
       hideLoading();
     }
   };
-    
 
-      return {
-        email,
-        setEmail,
-        isChecked,
-        setIsChecked,
-        handleContinue,
-        isFormValid,
-        styles,
-        colors
-      }
-}
+  const handleAcceptTerms = async () => {
+    setShowTermsModal(false);
+    // El registro de aceptación se hará después de verificar OTP
+    await sendOTP(pendingEmail);
+  };
 
+  const handleDeclineTerms = () => {
+    setShowTermsModal(false);
+    setPendingEmail('');
+    Alert.alert(
+      'Términos requeridos',
+      'Debes aceptar los Términos y Condiciones para usar L-ark.'
+    );
+  };
+
+  return {
+    email,
+    setEmail,
+    isChecked,
+    setIsChecked,
+    handleContinue,
+    isFormValid,
+    styles,
+    colors,
+    showTermsModal,
+    handleAcceptTerms,
+    handleDeclineTerms,
+  };
+};
 // src/features/auth/hooks/useAuthForm.ts
 
 

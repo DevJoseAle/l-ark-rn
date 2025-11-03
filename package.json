@@ -9,7 +9,37 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "genTypes": "supabase gen types typescript --linked > supabaseTypes/supabase.ts"
+    "genTypes": "supabase gen types typescript --linked > supabaseTypes/supabase.ts",
+    "postinstall": "npx expo-modules-autolinking postinstall",
+    
+    "prebuild": "npx expo prebuild",
+    "prebuild:clean": "npx expo prebuild --clean",
+    
+    "ios:pods": "cd ios && pod install && cd ..",
+    "ios:version": "cd ios && fastlane version",
+    "ios:dev": "cd ios && fastlane dev",
+    "ios:beta": "cd ios && fastlane beta",
+    "ios:release": "cd ios && fastlane release",
+    "ios:clean": "cd ios && fastlane clean",
+    "ios:xcode": "cd ios && fastlane xcode",
+    
+    "android:clean": "cd android && ./gradlew clean && cd ..",
+    "android:dev": "cd android && fastlane dev",
+    "android:beta": "cd android && fastlane beta",
+    "android:release": "cd android && fastlane release",
+    "android:studio": "open -a /Applications/Android\\ Studio.app ./android",
+    
+    "build:dev": "npm run ios:dev && npm run android:dev",
+    "build:beta": "npm run ios:beta && npm run android:beta",
+    "build:release": "npm run ios:release && npm run android:release",
+    
+    "version:show": "npm run ios:version",
+    "version:patch": "cd ios && fastlane bump type:patch && cd ..",
+    "version:minor": "cd ios && fastlane bump type:minor && cd ..",
+    "version:major": "cd ios && fastlane bump type:major && cd ..",
+    
+    "clean:all": "npm run ios:clean && npm run android:clean && rm -rf node_modules && npm install",
+    "clean:builds": "npm run ios:clean && npm run android:clean"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",

@@ -1,0 +1,12 @@
+# ios/fastlane/Appfile
+
+app_identifier("com.lark.app") 
+apple_id("dh.lark.25@gmail.com") 
+
+# Team ID (opcional pero recomendado)
+# Para encontrarlo: https://developer.apple.com/account → Membership → Team ID
+team_id("G2VZD86Z48")
+
+
+# For more information about the Appfile, see:
+#     https://docs.fastlane.tools/advanced/#appfile

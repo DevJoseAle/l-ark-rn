@@ -1,0 +1,223 @@
+# ios/fastlane/Fastfile
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+  
+  # 🔧 Pre-check antes de cada lane
+  before_all do
+    # Verificar que Git esté limpio (desactivado para desarrollo)
+    # ensure_git_status_clean
+  end
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🧪 DESARROLLO
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  desc "Build para testing local en dispositivo"
+  lane :dev do
+    puts "🔨 Generando build de desarrollo..."
+    
+    # Incrementar build number automáticamente
+    increment_build_number(xcodeproj: "lark.xcodeproj")
+    
+    # Build
+    build_app(
+      scheme: "lark",
+      export_method: "development",
+      output_directory: "./builds",
+      output_name: "lark-dev-#{lane_context[SharedValues::BUILD_NUMBER]}.ipa",
+      clean: true,
+      export_options: {
+        compileBitcode: false
+      }
+    )
+    
+    # Mostrar ubicación del IPA
+    ipa_path = lane_context[SharedValues::IPA_OUTPUT_PATH]
+    puts "✅ Build completado exitosamente!"
+    puts "📦 IPA ubicado en: #{ipa_path}"
+    puts ""
+    puts "Para instalar en tu dispositivo:"
+    puts "1. Conecta tu iPhone/iPad"
+    puts "2. Abre Xcode → Window → Devices and Simulators"
+    puts "3. Arrastra el archivo .ipa a tu dispositivo"
+  end
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🚀 BETA (TestFlight)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  desc "Build y subir a TestFlight para beta testing"
+  lane :beta do
+    puts "🚀 Preparando build para TestFlight..."
+    
+    # Incrementar build number
+    increment_build_number(xcodeproj: "lark.xcodeproj")
+    
+    # Obtener versión actual
+    version = get_version_number(xcodeproj: "lark.xcodeproj")
+    build = get_build_number(xcodeproj: "lark.xcodeproj")
+    
+    puts "📱 Versión: #{version} (#{build})"
+    
+    # Build para App Store
+    build_app(
+      scheme: "lark",
+      export_method: "app-store",
+      output_directory: "./builds",
+      output_name: "lark-testflight-#{version}-#{build}.ipa",
+      clean: true
+    )
+    
+    # Subir a TestFlight
+    puts "📤 Subiendo a TestFlight..."
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true,
+      skip_submission: true,
+      distribute_external: false,
+      notify_external_testers: false,
+      changelog: "Nueva versión de prueba"
+    )
+    
+    puts "✅ Build subido exitosamente a TestFlight!"
+    puts ""
+    puts "Próximos pasos:"
+    puts "1. Ve a App Store Connect: https://appstoreconnect.apple.com"
+    puts "2. Selecciona L-ark → TestFlight"
+    puts "3. Espera ~5-10 min a que Apple procese el build"
+    puts "4. Agrega testers internos o externos"
+    puts "5. Distribuye el build a tus testers"
+  end
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 📦 PRODUCCIÓN (App Store)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  desc "Build para producción (App Store)"
+  lane :release do
+    puts "📦 Preparando build de producción..."
+    
+    # Incrementar build number
+    increment_build_number(xcodeproj: "lark.xcodeproj")
+    
+    # Obtener versión
+    version = get_version_number(xcodeproj: "lark.xcodeproj")
+    build = get_build_number(xcodeproj: "lark.xcodeproj")
+    
+    puts "📱 Versión de producción: #{version} (#{build})"
+    
+    # Build
+    build_app(
+      scheme: "lark",
+      export_method: "app-store",
+      clean: true
+    )
+    
+    # Subir a App Store
+    puts "📤 Subiendo a App Store Connect..."
+    upload_to_app_store(
+      skip_metadata: true,
+      skip_screenshots: true,
+      submit_for_review: false,
+      automatic_release: false,
+      force: true
+    )
+    
+    puts "✅ Build de producción subido!"
+    puts "Ve a App Store Connect para completar la información y enviar a revisión"
+  end
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🔢 GESTIÓN DE VERSIONES
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  desc "Incrementar version number"
+  lane :bump do |options|
+    type = options[:type] || "patch" # patch, minor, major
+    
+    increment_version_number(
+      bump_type: type,
+      xcodeproj: "lark.xcodeproj"
+    )
+    
+    version = get_version_number(xcodeproj: "lark.xcodeproj")
+    puts "✅ Nueva versión: #{version}"
+    
+    # Opcional: Commit del cambio
+    # git_commit(
+    #   path: ["lark.xcodeproj/project.pbxproj"],
+    #   message: "Bump version to #{version}"
+    # )
+  end
+
+  desc "Mostrar versión actual"
+  lane :version do
+    version = get_version_number(xcodeproj: "lark.xcodeproj")
+    build = get_build_number(xcodeproj: "lark.xcodeproj")
+    
+    puts "📱 L-ark"
+    puts "Versión: #{version}"
+    puts "Build: #{build}"
+  end
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🧹 UTILIDADES
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  desc "Limpiar archivos de build y caché"
+  lane :clean do
+    puts "🧹 Limpiando archivos de build..."
+    
+    # Limpiar builds anteriores
+    sh("rm -rf ./builds") if File.directory?("./builds")
+    sh("rm -rf ./derived_data") if File.directory?("./derived_data")
+    
+    # Limpiar build artifacts
+    clean_build_artifacts
+    
+    # Limpiar DerivedData de Xcode
+    sh("rm -rf ~/Library/Developer/Xcode/DerivedData/lark-*")
+    
+    puts "✅ Limpieza completada"
+  end
+
+  desc "Abrir proyecto en Xcode"
+  lane :xcode do
+    sh("open lark.xcworkspace")
+  end
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🔐 CERTIFICADOS (Opcional - Fastlane Match)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  # Descomenta si usas Fastlane Match para certificados
+  # desc "Sincronizar certificados de desarrollo"
+  # lane :sync_dev_certs do
+  #   match(type: "development", readonly: true)
+  # end
+
+  # desc "Sincronizar certificados de App Store"
+  # lane :sync_appstore_certs do
+  #   match(type: "appstore", readonly: true)
+  # end
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # ❌ ERROR HANDLER
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  error do |lane, exception|
+    puts ""
+    puts "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    puts "❌ Error en lane '#{lane}'"
+    puts "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    puts exception.message
+    puts ""
+    
+    # Aquí podrías enviar notificación a Slack, Discord, etc.
+  end
+
+end

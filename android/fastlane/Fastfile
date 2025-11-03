@@ -1,0 +1,70 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+  
+  # 🧪 LANE: Build de desarrollo (LOCAL - sin subir a Play Console)
+  desc "Build APK de desarrollo"
+  lane :dev do
+    gradle(
+      task: "clean assembleRelease",
+      project_dir: "."
+    )
+    
+    puts "✅ APK generado: android/app/build/outputs/apk/release/app-release.apk"
+    puts "📱 Instala en tu dispositivo manualmente"
+  end
+
+  # 🚀 LANE: Build para Play Console (requiere service account)
+  desc "Build AAB y subir a Internal Testing"
+  lane :beta do
+    gradle(
+      task: "clean bundleRelease",
+      project_dir: "."
+    )
+    
+    # Solo descomentar cuando tengas configurado el service account JSON
+    # upload_to_play_store(
+    #   track: 'internal',
+    #   aab: 'app/build/outputs/bundle/release/app-release.aab',
+    #   json_key: ENV['PLAY_STORE_JSON_KEY']
+    # )
+    
+    puts "✅ AAB generado: android/app/build/outputs/bundle/release/app-release.aab"
+    puts "📤 Sube manualmente a Play Console por ahora"
+  end
+
+  # 📦 LANE: Build de producción
+  desc "Build para producción"
+  lane :release do
+    gradle(
+      task: "clean bundleRelease",
+      project_dir: "."
+    )
+    
+    # Solo descomentar cuando tengas configurado el service account JSON
+    # upload_to_play_store(
+    #   track: 'production',
+    #   aab: 'app/build/outputs/bundle/release/app-release.aab',
+    #   json_key: ENV['PLAY_STORE_JSON_KEY']
+    # )
+    
+    puts "✅ AAB generado para producción"
+    puts "📤 Sube manualmente a Play Console"
+  end
+
+end

@@ -1,6 +1,6 @@
 # ios/fastlane/Appfile
 
-app_identifier("com.lark.app") 
+app_identifier("com.devjoseale.lark") 
 apple_id("dh.lark.25@gmail.com") 
 
 # Team ID (opcional pero recomendado)

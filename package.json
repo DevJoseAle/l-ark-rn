@@ -11,7 +11,8 @@
     "lint": "expo lint",
     "genTypes": "supabase gen types typescript --linked > supabaseTypes/supabase.ts",
     "postinstall": "npx expo-modules-autolinking postinstall",
-    
+    "device:ios": "npx expo run:ios --device",
+
     "prebuild": "npx expo prebuild",
     "prebuild:clean": "npx expo prebuild --clean",
     

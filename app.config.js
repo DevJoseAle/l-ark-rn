@@ -1,8 +1,8 @@
 // app.config.js
 export default {
   expo: {
-    name: "l-ark",
-    slug: "l-ark",
+    name: "L-ark",
+    slug: "L-ark",
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/images/icon.png",

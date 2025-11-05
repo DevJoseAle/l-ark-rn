@@ -1,13 +1,12 @@
-import { useEffect } from 'react';
-import { Redirect } from 'expo-router';
-import { View, ActivityIndicator } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Redirect, useNavigation } from 'expo-router';
 import { useAuthStore } from '@/src/stores/authStore';
 import { useShallow } from 'zustand/react/shallow';
-import { useHomeData } from '@/src/features/home/useHomeData';
-
+import { SplashScreen } from '@/src/components/common/SplashScreen';
 
 export default function Index() {
-
+  const [animationComplete, setAnimationComplete] = useState(false);
+  
   const { user, isAuthenticated, isLoading, initialize } = useAuthStore(
     useShallow(state => ({
       user: state.user,
@@ -16,17 +15,18 @@ export default function Index() {
       initialize: state.initialize,
     }))
   );
-  const {loadData} = useHomeData();
-useEffect(() => {
+  const navigation = useNavigation();
+  useEffect(() => {
     initialize();
+    navigation.setOptions({ headerShown: false });
   }, []);
 
-  console.log('Index - isLoading:', isLoading, 'isAuthenticated:', isAuthenticated, 'user:', user?.email);  // Si todavía está cargando el estado de auth
-  if (isLoading) {
+  // Mostrar splash mientras carga O mientras la animación no termina
+  if (isLoading || !animationComplete) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" />
-      </View>
+      <SplashScreen 
+        onAnimationComplete={() => setAnimationComplete(true)}
+      />
     );
   }
 

@@ -21,7 +21,19 @@ export default function TabLayout() {
         }}
       />
       <Stack.Screen
-        name="explore"
+        name="(tabs)"
+        options={{
+          title: '',
+        }}
+      />
+      <Stack.Screen
+        name="campaign"
+        options={{
+          title: '',
+        }}
+      />
+      <Stack.Screen
+        name="kyc"
         options={{
           title: 'Explore',
         }}

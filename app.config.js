@@ -9,13 +9,30 @@ export default {
     scheme: "lark",
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
+        splash: {
+      image: "./assets/Logo_lark.png",
+      resizeMode: "contain",
+      backgroundColor: "#F8FBFF"
+    },
+    
     ios: {
       supportsTablet: true,
       bundleIdentifier: "com.devjoseale.lark",
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false
+      },
+      splash: {
+        image: "./assets/Logo_lark.png",
+        resizeMode: "contain",
+        backgroundColor: "#F8FBFF",
+        dark: {
+          image: "./assets/Logo_lark.png",
+          resizeMode: "contain",
+          backgroundColor: "#1E2A36"
+        }
       }
     },
+    
     android: {
       adaptiveIcon: {
         backgroundColor: "#E6F4FE",
@@ -39,61 +56,84 @@ export default {
           category: ["BROWSABLE", "DEFAULT"],
         },
       ],
+      // ✅ Splash específico para Android
+      splash: {
+        image: "./assets/Logo_lark.png",
+        resizeMode: "contain",
+        backgroundColor: "#F8FBFF",
+        dark: {
+          image: "./assets/Logo_lark.png",
+          resizeMode: "contain",
+          backgroundColor: "#1E2A36"
+        }
+      }
     },
+    
     web: {
       output: "static",
-      favicon: "./assets/images/favicon.png"
+      favicon: "./assets/images/favicon.png",
+      // ✅ Splash para web
+      splash: {
+        image: "./assets/Logo_lark.png",
+        resizeMode: "contain",
+        backgroundColor: "#F8FBFF"
+      }
     },
+    
     plugins: [
       "expo-router",
       [
         "expo-web-browser",
-      {
-          "experimentalLauncherActivity": true
-      }
+        {
+          experimentalLauncherActivity: true
+        }
       ],
       [
         "expo-splash-screen",
         {
-          image: "./assets/images/splash-icon.png",
+          // ✅ Plugin usa el mismo logo que la config principal
+          image: "./assets/Logo_lark.png",
           imageWidth: 200,
           resizeMode: "contain",
-          backgroundColor: "#ffffff",
+          backgroundColor: "#F8FBFF",
           dark: {
-            backgroundColor: "#000000"
+            image: "./assets/Logo_lark.png",
+            backgroundColor: "#1E2A36"
           }
         }
       ],
       [
         "expo-camera",
         {
-          "cameraPermission": "Necesitamos acceso a tu cámara para verificar tu identidad mediante fotos de tu documento y selfie",
-          "microphonePermission": false
+          cameraPermission: "Necesitamos acceso a tu cámara para verificar tu identidad mediante fotos de tu documento y selfie",
+          microphonePermission: false
         }
       ],
       [
         "expo-image-picker",
         {
-          "photosPermission": "Necesitamos acceso a tus fotos para subir imágenes a campañas y la Bóveda"
+          photosPermission: "Necesitamos acceso a tus fotos para subir imágenes a campañas y la Bóveda"
         }
       ],
       [
         "expo-document-picker",
         {
-          "iCloudContainerEnvironment": "Production"
+          iCloudContainerEnvironment: "Production"
         }
       ],
       [
         "expo-local-authentication",
         {
-          "faceIDPermission": "Usamos Face ID para proteger tu Bóveda"
+          faceIDPermission: "Usamos Face ID para proteger tu Bóveda"
         }
       ],
     ],
+    
     experiments: {
       typedRoutes: true,
       reactCompiler: true
     },
+    
     extra: {
       supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL,
       supabaseAnonKey: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY,

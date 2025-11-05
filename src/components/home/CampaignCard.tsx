@@ -1,5 +1,5 @@
 // src/components/home/CampaignCard.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,6 +7,7 @@ import { ThemeColors } from '@/constants/theme';
 import { useThemeColors } from '@/hooks/use-theme-color';
 import { CampaignService } from '@/src/services/campaign.service';
 import { useRouter } from 'expo-router';
+import { useCampaignStore } from '@/src/stores/campaign.store';
 
 interface CampaignCardProps {
   totalRaised: string;
@@ -33,19 +34,15 @@ export default function CampaignCard({
 }: CampaignCardProps) {
   const theme = useThemeColors();
   const styles = cardCampaignStyles(theme);
-  const router = useRouter()
+  const router = useRouter();
+  const [isBtnActive, setIsBtnActive] = useState(true);
+  const {campaign} = useCampaignStore();
+  const ownCampaignId = campaign?.id;
+
 const handleViewCampaign = async () => {
-  try {
-    const campaign = await CampaignService.getCurrentUserCampaign();
-    if (campaign) {
-      router.push(`/(auth)/campaign/${campaign.id}`);
-    } else {
-      Alert.alert('Sin campaña', 'Aún no tienes una campaña creada.');
-    }
-  } catch (error) {
-    console.error('Error loading campaign:', error);
-    Alert.alert('Error', 'No se pudo cargar la campaña.');
-  }
+  setIsBtnActive(false);
+  router.push(`/(auth)/campaign/${ownCampaignId}`);
+  setIsBtnActive(true);
 };
   return (
     <LinearGradient
@@ -99,8 +96,9 @@ const handleViewCampaign = async () => {
 
       {/* Action Buttons */}
       <TouchableOpacity 
-        style={styles.primaryButton}
+        style={[styles.primaryButton,{ opacity: isBtnActive ? 1 : 0.6 }]}
         onPress={handleViewCampaign}
+        disabled={!isBtnActive}
       >
         <Text style={styles.primaryButtonText}>Ver mi Campaña</Text>
         <Ionicons name="document-text-outline" size={20} color="#0f1c3a" />

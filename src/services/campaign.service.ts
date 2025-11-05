@@ -12,7 +12,7 @@ export class CampaignService {
       const { data: { user } } = await supabase.auth.getUser();
 
       if (!user) {
-        throw new Error('Usuario no autenticado');
+        return null
       }
 
       const { data, error } = await supabase
@@ -186,6 +186,7 @@ export class CampaignService {
  * Obtener campaña del usuario actual
  */
   static async getCurrentUserCampaign(): Promise<CampaignDetail | null> {
+    console.log("Entré loco");
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {

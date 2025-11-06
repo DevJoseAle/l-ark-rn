@@ -1,4 +1,5 @@
 // app.config.js
+console.log("Cargando configuración de Expo...");
 export default {
   expo: {
     name: "L-ark",
@@ -127,6 +128,12 @@ export default {
           faceIDPermission: "Usamos Face ID para proteger tu Bóveda"
         }
       ],
+      [
+        "expo-iap",
+        {
+          appleTeamId: "G2VZD86Z48"
+        }
+      ]
     ],
     
     experiments: {

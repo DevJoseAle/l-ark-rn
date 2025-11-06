@@ -18,7 +18,7 @@ import { StatusCard } from '@/src/components/home/StatusCard';
 import { useProfileStore, profileSelectors } from '@/src/stores/profile.store';
 import { AlertBanner } from '@/src/components/home/AlertBanner';
 import { GradientBackground } from '@/src/components/common/GradiendBackground';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -160,6 +160,7 @@ export default function ProfileScreen() {
 
   return (
     <GradientBackground>
+
       <View style={{ paddingTop: insets.top, flex: 1 }}>    
         <ScrollView
           style={styles.scrollView}
@@ -305,7 +306,7 @@ export default function ProfileScreen() {
             <CampaignsList
               type="owner"
               campaigns={ownedCampaigns}
-              onCampaignPress={(id) => console.log('Navigate to campaign:', id)}
+              onCampaignPress={(id) => {}}
               onSeeAll={() => router.push('/(auth)/(tabs)/arkHome')}
               maxItems={3}
             />
@@ -316,7 +317,7 @@ export default function ProfileScreen() {
             <CampaignsList
               type="beneficiary"
               campaigns={beneficiaryCampaigns}
-              onCampaignPress={(id) => console.log('Navigate to campaign:', id)}
+              onCampaignPress={(id) => {}}
               onSeeAll={() => router.push('/(auth)/(tabs)/profileHome')}
               maxItems={3}
             />

@@ -1,9 +1,9 @@
 // src/hooks/useDeepLinking.ts
 
-import { useEffect } from 'react';
+import { useAuthStore } from '@/src/stores/authStore';
 import * as Linking from 'expo-linking';
 import { router } from 'expo-router';
-import { useAuthStore } from '@/src/stores/authStore';
+import { useEffect } from 'react';
 
 export function useDeepLinking() {
   const isAuthenticated = useAuthStore((state) => !!state.user);
@@ -15,7 +15,7 @@ export function useDeepLinking() {
         const initialUrl = await Linking.getInitialURL();
         
         if (initialUrl) {
-          console.log('📱 App abierta con link inicial:', initialUrl);
+          //console.log('📱 App abierta con link inicial:', initialUrl);
           handleDeepLink(initialUrl);
         }
       } catch (error) {
@@ -25,7 +25,7 @@ export function useDeepLinking() {
 
     // 2. Manejar links cuando la app ya está abierta
     const handleUrlEvent = (event: { url: string }) => {
-      console.log('📱 App recibió link:', event.url);
+      //console.log('📱 App recibió link:', event.url);
       handleDeepLink(event.url);
     };
 
@@ -46,12 +46,12 @@ export function useDeepLinking() {
    */
   const handleDeepLink = (url: string) => {
     try {
-      console.log('🔍 Procesando deep link:', url);
+      //console.log('🔍 Procesando deep link:', url);
 
       // Parsear URL
       const { hostname, path, queryParams } = Linking.parse(url);
       
-      console.log('📊 Parsed:', { hostname, path, queryParams });
+      //console.log('📊 Parsed:', { hostname, path, queryParams });
 
       // Verificar si es un link de campaña
       if (hostname === 'campaign' || path?.includes('campaign')) {
@@ -74,13 +74,13 @@ export function useDeepLinking() {
         }
 
         if (campaignId) {
-          console.log('✅ Campaign ID encontrado:', campaignId);
+          //console.log('✅ Campaign ID encontrado:', campaignId);
           navigateToCampaign(campaignId);
         } else {
           console.warn('⚠️ No se pudo extraer campaign ID del link');
         }
       } else {
-        console.log('ℹ️ Link no es de campaña, ignorando');
+        //console.log('ℹ️ Link no es de campaña, ignorando');
       }
     } catch (error) {
       console.error('❌ Error procesando deep link:', error);
@@ -91,11 +91,11 @@ export function useDeepLinking() {
    * Navega a la pantalla de campaña
    */
   const navigateToCampaign = (campaignId: string) => {
-    console.log('🚀 Navegando a campaña:', campaignId);
+    //console.log('🚀 Navegando a campaña:', campaignId);
 
     // Verificar autenticación
     if (!isAuthenticated) {
-      console.log('⚠️ Usuario no autenticado, redirigiendo a login');
+      //console.log('⚠️ Usuario no autenticado, redirigiendo a login');
       
       // Guardar el campaignId para después del login
       // Podrías usar AsyncStorage para persistir esto

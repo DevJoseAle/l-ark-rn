@@ -49,19 +49,6 @@ export default function ProfileLayout() {
         }}
       />
       
-      <Stack.Screen
-        name="my-campaigns"
-        options={{
-          title: 'Mis Campañas',
-        }}
-      />
-      
-      <Stack.Screen
-        name="beneficiary-campaigns"
-        options={{
-          title: 'Soy Beneficiario',
-        }}
-      />
     </Stack>
   );
 }

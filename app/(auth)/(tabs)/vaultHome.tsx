@@ -1,34 +1,35 @@
+import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-  ScrollView,
-  RefreshControl,
-  TouchableOpacity,
-  Alert,
-  Share,
+    ActivityIndicator,
+    Alert,
+    RefreshControl,
+    ScrollView,
+    Share,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
 import { GradientBackground } from '@/src/components/common/GradiendBackground';
+import { DeleteConfirmDialog } from '@/src/components/home/DeleteConfirmDialog';
 import { EmptyFilesList } from '@/src/components/home/EmptyFileList';
+import { FileList } from '@/src/components/home/FileList';
 import { FilePickerSheet } from '@/src/components/home/FilePickerSheet';
+import { FilePreviewModal } from '@/src/components/home/FilePreviewModal';
 import { NoCampaignState } from '@/src/components/home/NoCampaignState';
 import { PlanBadge } from '@/src/components/home/PlanBadge';
 import { StorageBar } from '@/src/components/home/StorageBar';
 import { UpgradeModal } from '@/src/components/home/UpgradeModal';
 import { UploadProgressModal } from '@/src/components/home/UploadProgressModal';
-import { FilePreviewModal } from '@/src/components/home/FilePreviewModal';
-import { DeleteConfirmDialog } from '@/src/components/home/DeleteConfirmDialog';
-import { FileList } from '@/src/components/home/FileList';
 
 import { useFilePicker } from '@/src/features/home/useFilePicker';
-import { useVaultStore, useStorageStatus } from '@/src/stores/vault.store';
-import { useAuthStore } from '@/src/stores/authStore';
 import { VaultService } from '@/src/services/vault.service';
+import { useAuthStore } from '@/src/stores/authStore';
+import { useStorageStatus, useVaultStore } from '@/src/stores/vault.store';
 import { FileToUpload } from '@/src/types/vault.types';
+import { SafeAreaInsetsContext, SafeAreaView } from 'react-native-safe-area-context';
 
 
 export default function VaultHomeScreen() {
@@ -86,13 +87,13 @@ export default function VaultHomeScreen() {
    * Inicializar el store al montar la pantalla
    */
   useEffect(() => {
-    console.log('📱 VaultHomeScreen montado');
+    //console.log('📱 VaultHomeScreen montado');
     if (userId) {
       initialize(userId);
     }
 
     return () => {
-      console.log('📱 VaultHomeScreen desmontado');
+      //console.log('📱 VaultHomeScreen desmontado');
     };
   }, [userId]);
 
@@ -139,7 +140,7 @@ export default function VaultHomeScreen() {
     const result = await uploadFile(file);
 
     if (result.success) {
-      console.log('✅ Upload exitoso');
+      //console.log('✅ Upload exitoso');
       setUploadSuccess(true);
     } else {
       console.error('❌ Upload fallido:', result.error);
@@ -175,7 +176,7 @@ export default function VaultHomeScreen() {
    * Handler para abrir preview de un archivo
    */
   const handlePreviewFile = async (file: any) => {
-    console.log('👁️ Abriendo preview:', file.file_name);
+    //console.log('👁️ Abriendo preview:', file.file_name);
 
     // Si es imagen, obtener URL
     if (file.file_type === 'image') {
@@ -191,7 +192,7 @@ export default function VaultHomeScreen() {
    * Handler para descargar un archivo
    */
   const handleDownloadFile = async (file: any) => {
-    console.log('⬇️ Descargando:', file.file_name);
+    //console.log('⬇️ Descargando:', file.file_name);
 
     const result = await VaultService.downloadFile(file);
 
@@ -311,6 +312,9 @@ export default function VaultHomeScreen() {
   return (
     <GradientBackground>
       {/* Error banner */}
+      <SafeAreaView style={{ flex: 1 }}>
+
+     
       {error && (
         <View style={styles.errorBanner}>
           <Text style={styles.errorText}>⚠️ {error}</Text>
@@ -410,6 +414,7 @@ export default function VaultHomeScreen() {
           setDeleteFile(null);
         }}
       />
+       </SafeAreaView>
     </GradientBackground>
   );
 }
@@ -465,7 +470,7 @@ const styles = StyleSheet.create({
   fab: {
     position: 'absolute',
     right: 20,
-    bottom: 100,
+    bottom: 140,
     width: 56,
     height: 56,
     borderRadius: 28,

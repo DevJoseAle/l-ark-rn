@@ -1,12 +1,12 @@
 // src/features/vault/hooks/useFilePicker.ts
 
-import { useState } from 'react';
-import * as ImagePicker from 'expo-image-picker';
-import * as DocumentPicker from 'expo-document-picker';
-import { Alert } from 'react-native';
 import { FileToUpload } from '@/src/types/vault.types';
 import { VAULT_LIMITS } from '@/src/utils/vaultConstants';
 import { isAcceptedMimeType } from '@/src/utils/vaultUtils';
+import * as DocumentPicker from 'expo-document-picker';
+import * as ImagePicker from 'expo-image-picker';
+import { useState } from 'react';
+import { Alert } from 'react-native';
 
 
 /**
@@ -65,7 +65,7 @@ export function useFilePicker() {
       });
 
       if (result.canceled) {
-        console.log('Usuario canceló la selección');
+        //console.log('Usuario canceló la selección');
         return null;
       }
 
@@ -86,7 +86,7 @@ export function useFilePicker() {
         return null;
       }
 
-      console.log('✅ Archivo seleccionado desde galería:', file.name);
+      //console.log('✅ Archivo seleccionado desde galería:', file.name);
       return file;
 
     } catch (error) {
@@ -116,7 +116,7 @@ export function useFilePicker() {
       });
 
       if (result.canceled) {
-        console.log('Usuario canceló la selección');
+        //console.log('Usuario canceló la selección');
         return null;
       }
 
@@ -137,7 +137,7 @@ export function useFilePicker() {
         return null;
       }
 
-      console.log('✅ Documento seleccionado:', file.name);
+      //console.log('✅ Documento seleccionado:', file.name);
       return file;
 
     } catch (error) {

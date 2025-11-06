@@ -37,12 +37,12 @@ export default function TabLayout() {
           title: 'Search',
         }}
       /> 
-       <Tabs.Screen
+       {/* <Tabs.Screen
         name="favorites"
         options={{
           title: 'Search',
         }}
-      /> 
+      />  */}
       <Tabs.Screen
         name="profileHome"
         options={{

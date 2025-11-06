@@ -1,5 +1,5 @@
 import { supabase } from "../lib/supabaseClient";
-import { Campaign, CreateCampaignDTO, UpdateCampaignDTO, CampaignStats, CampaignDetail, CampaignSearchResult } from "../types/campaign.types";
+import { Campaign, CampaignDetail, CampaignSearchResult, CampaignStats, CreateCampaignDTO, UpdateCampaignDTO } from "../types/campaign.types";
 
 
 export class CampaignService {
@@ -111,7 +111,7 @@ export class CampaignService {
     visibility: Campaign['visibility']
   ): Promise<Campaign> {
     try {
-      console.log('pase');
+      //console.log('pase');
       return await this.updateCampaign(campaignId, { visibility });
     } catch (error) {
       console.error('Error al actualizar visibilidad:', error);
@@ -186,7 +186,7 @@ export class CampaignService {
  * Obtener campaña del usuario actual
  */
   static async getCurrentUserCampaign(): Promise<CampaignDetail | null> {
-    console.log("Entré loco");
+    //console.log("Entré loco");
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {

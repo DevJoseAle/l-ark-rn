@@ -31,7 +31,7 @@ export const useCampaignStore = create<CampaignState>((set, get) => ({
 
   // Fetch user campaign
   fetchCampaign: async () => {
-    console.log('fetchCampaign called');
+    //console.log('fetchCampaign called');
     set({ isLoading: true, error: null });
     
     try {

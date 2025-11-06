@@ -1,5 +1,5 @@
 import { supabase } from "../lib/supabaseClient";
-import { VaultSubscription, BillingInterval } from "../types/vault.types";
+import { BillingInterval, VaultSubscription } from "../types/vault.types";
 import { VAULT_LIMITS } from "../utils/vaultConstants";
 import { IS_MOCK_PAYMENTS_ENABLED, MockPaymentService } from "./mockPayment.service";
 
@@ -17,7 +17,7 @@ export const SubscriptionService = {
     campaignId: string
   ): Promise<VaultSubscription | null> {
     try {
-      console.log('🔍 Buscando suscripción para:', { userId, campaignId });
+      //console.log('🔍 Buscando suscripción para:', { userId, campaignId });
 
       // 1. Intentar obtener suscripción existente
       const { data: existing, error: fetchError } = await supabase
@@ -34,12 +34,12 @@ export const SubscriptionService = {
 
       // 2. Si existe, retornarla
       if (existing) {
-        console.log('✅ Suscripción encontrada:', existing.plan_type);
+        //console.log('✅ Suscripción encontrada:', existing.plan_type);
         return existing as VaultSubscription;
       }
 
       // 3. Si no existe, crear una FREE automáticamente
-      console.log('📝 Creando suscripción FREE automática...');
+      //console.log('📝 Creando suscripción FREE automática...');
 
       const { data: newSubscription, error: createError } = await supabase
         .from('vault_subscriptions')
@@ -62,7 +62,7 @@ export const SubscriptionService = {
         throw createError;
       }
 
-      console.log('✅ Suscripción FREE creada:', newSubscription.id);
+      //console.log('✅ Suscripción FREE creada:', newSubscription.id);
       return newSubscription as VaultSubscription;
     } catch (error) {
       console.error('❌ Error en getOrCreateSubscription:', error);
@@ -79,7 +79,7 @@ export const SubscriptionService = {
     interval: BillingInterval
   ): Promise<{ success: boolean; error?: string }> {
     try {
-      console.log('⬆️ Actualizando a PRO:', { subscriptionId, interval });
+      //console.log('⬆️ Actualizando a PRO:', { subscriptionId, interval });
 
       // 1. Procesar pago (mock o real)
       let transactionId: string | undefined;
@@ -135,7 +135,7 @@ export const SubscriptionService = {
         throw error;
       }
 
-      console.log('✅ Suscripción actualizada a PRO:', data.id);
+      //console.log('✅ Suscripción actualizada a PRO:', data.id);
 
       return { success: true };
     } catch (error: any) {
@@ -152,7 +152,7 @@ export const SubscriptionService = {
    */
   async cancelSubscription(subscriptionId: string): Promise<{ success: boolean; error?: string }> {
     try {
-      console.log('🚫 Cancelando suscripción:', subscriptionId);
+      //console.log('🚫 Cancelando suscripción:', subscriptionId);
 
       // 1. Si es mock, usar el método de cancelación mock
       if (IS_MOCK_PAYMENTS_ENABLED) {
@@ -178,7 +178,7 @@ export const SubscriptionService = {
         throw error;
       }
 
-      console.log('✅ Suscripción cancelada (downgrade a FREE)');
+      //console.log('✅ Suscripción cancelada (downgrade a FREE)');
 
       return { success: true };
     } catch (error: any) {
@@ -208,7 +208,7 @@ export const SubscriptionService = {
    */
   async hasCampaign(userId: string): Promise<{ hasCampaign: boolean; campaignId?: string }> {
     try {
-        console.log("entre");
+        //console.log("entre");
       const { data, error } = await supabase
         .from('campaigns')
         .select('id')
@@ -285,7 +285,7 @@ export const SubscriptionService = {
       return { success: false };
     }
 
-    console.log('🔧 [DEV] Activando PRO sin pago...');
+    //console.log('🔧 [DEV] Activando PRO sin pago...');
 
     const periodStart = new Date();
     const periodEnd = new Date();
@@ -314,7 +314,7 @@ export const SubscriptionService = {
       return { success: false };
     }
 
-    console.log('✅ [DEV] PRO activado manualmente');
+    //console.log('✅ [DEV] PRO activado manualmente');
     return { success: true };
   },
 };

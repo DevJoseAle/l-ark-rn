@@ -1,26 +1,26 @@
 // app/(auth)/campaign/[id].tsx
-import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  useColorScheme,
-  TouchableOpacity,
-  Image,
-  Share,
-  Dimensions,
-  ActivityIndicator,
-} from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/theme';
 import { GradientBackground } from '@/src/components/common/GradiendBackground';
 import { CampaignService } from '@/src/services/campaign.service';
 import { CampaignDetail } from '@/src/types/campaign.types';
 import { Formatters } from '@/src/utils/formatters';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import React, { useEffect, useState } from 'react';
+import {
+    ActivityIndicator,
+    Dimensions,
+    Image,
+    ScrollView,
+    Share,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    useColorScheme,
+    View,
+} from 'react-native';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -33,7 +33,7 @@ const STATUS_CONFIG = {
 };
 
 export default function CampaignDetailScreen() {
-  console.log("Abri1");
+  //console.log("Abri1");
   const router = useRouter();
   const params = useLocalSearchParams();
   const colorScheme = useColorScheme();

@@ -1,14 +1,14 @@
+import { CURRENT_TERMS_VERSION } from "@/constants/Constants";
 import { useThemeColors } from "@/hooks/use-theme-color";
+import { supabase } from "@/src/lib/supabaseClient";
+import { isValidOTPArray } from "@/src/lib/validators";
+import { useAuthStore } from "@/src/stores/authStore";
 import { useLoadingStore } from "@/src/stores/LoadingStore";
 import { Router } from "expo-router";
 import { useMemo, useRef, useState } from "react";
-import { createLoginStyles } from "../styles/loginStyles";
-import { isValidEmail, isValidOTPArray } from "@/src/lib/validators";
-import { authService } from "../service/auth.service";
 import { Alert, TextInput } from "react-native";
-import { useAuthStore } from "@/src/stores/authStore";
-import { supabase } from "@/src/lib/supabaseClient";
-import { CURRENT_TERMS_VERSION } from "@/constants/Constants";
+import { authService } from "../service/auth.service";
+import { createLoginStyles } from "../styles/loginStyles";
 
 export const useLogin = (router: any) => {
   const colors = useThemeColors();
@@ -55,17 +55,17 @@ export const useLogin = (router: any) => {
 
         if (acceptance) {
           // Ya aceptó términos actuales → Enviar OTP
-          console.log('✅ Usuario existente con términos aceptados');
+          //console.log('✅ Usuario existente con términos aceptados');
           await sendOTP(cleanEmail);
         } else {
           // Debe aceptar nueva versión
-          console.log('📝 Usuario debe aceptar términos actualizados');
+          //console.log('📝 Usuario debe aceptar términos actualizados');
           setPendingEmail(cleanEmail);
           setShowTermsModal(true);
         }
       } else {
         // Usuario nuevo → Mostrar modal de T&C
-        console.log('📝 Usuario nuevo, mostrando T&C...');
+        //console.log('📝 Usuario nuevo, mostrando T&C...');
         setPendingEmail(cleanEmail);
         setShowTermsModal(true);
       }
@@ -146,9 +146,9 @@ const handleConfirm = async () => {
     try {
       // Lógica de verificación
      const response = await authService.verifyOTP(email, code);
-     console.log(email, code);
-      console.log('✅ Código verificado:');
-      console.log("response",response);
+     //console.log(email, code);
+      //console.log('✅ Código verificado:');
+      //console.log("response",response);
       router.replace('/(auth)/(tabs)/arkHome');
       hideLoading();
       Alert.alert('Éxito', 'Código verificado exitosamente');      

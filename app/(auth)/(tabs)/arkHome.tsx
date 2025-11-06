@@ -1,7 +1,4 @@
 // src/screens/home/ArkHomePage.tsx
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, Platform, RefreshControl } from 'react-native';
-import { useRouter } from 'expo-router';
 import { ThemeColors } from '@/constants/theme';
 import { useThemeColors } from '@/hooks/use-theme-color';
 import { GradientBackground } from '@/src/components/common/GradiendBackground';
@@ -10,6 +7,9 @@ import DonationItem from '@/src/components/home/DonationItem';
 import EmptyState from '@/src/components/home/EmptyState';
 import ErrorState from '@/src/components/home/ErrorState';
 import { useHomeData } from '@/src/features/home/useHomeData';
+import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { Platform, RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export default function ArkHomePage() {
   const router = useRouter();
@@ -40,12 +40,12 @@ export default function ArkHomePage() {
 
   const handleShare = async () => {
     // TODO: Implementar share con Expo Sharing
-    console.log('Share pressed');
+    //console.log('Share pressed');
   };
 
   const handleSendLink = () => {
     // TODO: Abrir modal de compartir
-    console.log('Send link pressed');
+    //console.log('Send link pressed');
   };
 
   const handleViewCampaign = () => {

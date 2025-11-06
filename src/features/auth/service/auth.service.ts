@@ -30,7 +30,7 @@ export interface UserExist {
 
 export const authService = {
     loginSendOTP: async (email: string): Promise<AuthServiceResponse<SendOTPData>> => {
-        console.log("SendOTPData email:", email);
+        //console.log("SendOTPData email:", email);
         try {
             const { data, error } = await supabase.auth.signInWithOtp({
                 email,
@@ -38,9 +38,9 @@ export const authService = {
                     shouldCreateUser: true,
                 },
             });
-            console.log(data);
+            //console.log(data);
             if (error) throw error;
-            console.log(error);
+            //console.log(error);
 
             return {
                 success: true,
@@ -48,7 +48,7 @@ export const authService = {
                 data: data as SendOTPData,
             };
         } catch (error) {
-            console.log(error)
+            //console.log(error)
             return {
                 success: false,
                 message: `${error}`,
@@ -60,7 +60,7 @@ export const authService = {
     // src/services/authService.ts
 
     verifyOTP: async (email: string, token: string): Promise<AuthServiceResponse<VerifyOTPData>> => {
-        console.log("Verificando OTP para:", email);
+        //console.log("Verificando OTP para:", email);
 
         try {
             const { data, error } = await supabase.auth.verifyOtp({
@@ -69,7 +69,7 @@ export const authService = {
                 type: 'email',
             });
 
-            console.log("Data:", { data });
+            //console.log("Data:", { data });
 
             if (error) throw error;
 
@@ -109,7 +109,7 @@ export const authService = {
                             // Ignorar error de duplicado (23505)
                             console.error('⚠️ Error guardando aceptación de términos:', acceptanceError);
                         } else {
-                            console.log('✅ Términos aceptados:', currentVersion);
+                            //console.log('✅ Términos aceptados:', currentVersion);
 
                             // 4. Actualizar columna helper en users
                             await supabase
@@ -118,7 +118,7 @@ export const authService = {
                                 .eq('id', data.user.id);
                         }
                     } else {
-                        console.log('✅ Usuario ya aceptó términos:', currentVersion);
+                        //console.log('✅ Usuario ya aceptó términos:', currentVersion);
                     }
                 } catch (termsError) {
                     // No fallar el login si hay error con términos

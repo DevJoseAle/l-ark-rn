@@ -1,30 +1,30 @@
 // app/(auth)/campaign/[id].tsx
-import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  useColorScheme,
-  TouchableOpacity,
-  Image,
-  Share,
-  Dimensions,
-  ActivityIndicator,
-} from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/theme';
+import DonateModal from '@/src/components/common/DonateModal';
+import FloatingDonateButton from '@/src/components/common/FloatingDonatingButton';
 import { GradientBackground } from '@/src/components/common/GradiendBackground';
+import { ImageGalleryViewer, ImageGridViewer } from '@/src/components/common/ImageGalleryViewer';
 import { CampaignService } from '@/src/services/campaign.service';
+import { useAuthStore } from '@/src/stores/authStore';
 import { CampaignDetail } from '@/src/types/campaign.types';
 import { Formatters } from '@/src/utils/formatters';
-import { ImageGalleryViewer, ImageGridViewer } from '@/src/components/common/ImageGalleryViewer';
-import { useAuthStore } from '@/src/stores/authStore';
-import FloatingDonateButton from '@/src/components/common/FloatingDonatingButton';
-import DonateModal from '@/src/components/common/DonateModal';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import React, { useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  Dimensions,
+  Image,
+  ScrollView,
+  Share,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useColorScheme,
+  View,
+} from 'react-native';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -52,7 +52,7 @@ export default function CampaignDetailScreen() {
   const campaignId = params.id as string;
   const handleDonate = () => {
     // Navegar a pantalla de donación
-    console.log("Donate");
+    //console.log("Donate");
   };
 
   // Determinar si es campaña propia

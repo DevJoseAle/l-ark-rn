@@ -16,6 +16,7 @@ import {
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useProfileStore } from '../../../../src/stores/profile.store';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Tipo simple para los países
 type CountryCode = 'US' | 'MX' | 'CO' | 'CL';
@@ -114,167 +115,171 @@ export default function EditProfileScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={handleCancel}
-          style={styles.headerButton}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-          <Ionicons name="close" size={28} color="#1F2937" />
-        </TouchableOpacity>
+    <SafeAreaView style={{ flex: 1 }}>
 
-        <Text style={styles.headerTitle}>Editar Perfil</Text>
 
-        <TouchableOpacity
-          onPress={handleSave}
-          style={[styles.headerButton, isUpdating && styles.headerButtonDisabled]}
-          disabled={isUpdating}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-          <Text style={[styles.saveText, isUpdating && styles.saveTextDisabled]}>
-            {isUpdating ? 'Guardando...' : 'Guardar'}
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        {/* Display Name */}
-        <View style={styles.section}>
-          <Text style={styles.label}>Nombre</Text>
-          <View style={styles.inputContainer}>
-            <Ionicons
-              name="person-outline"
-              size={20}
-              color="#9CA3AF"
-              style={styles.inputIcon}
-            />
-            <TextInput
-              style={styles.input}
-              value={displayName}
-              onChangeText={setDisplayName}
-              placeholder="Tu nombre"
-              placeholderTextColor="#9CA3AF"
-              autoCapitalize="words"
-              maxLength={50}
-            />
-            {displayName.length > 0 && (
-              <TouchableOpacity onPress={() => setDisplayName('')}>
-                <Ionicons name="close-circle" size={20} color="#9CA3AF" />
-              </TouchableOpacity>
-            )}
-          </View>
-          <Text style={styles.hint}>
-            {displayName.length}/50 caracteres
-          </Text>
-        </View>
-
-        {/* Email (readonly) */}
-        <View style={styles.section}>
-          <Text style={styles.label}>Email</Text>
-          <View style={[styles.inputContainer, styles.inputDisabled]}>
-            <Ionicons
-              name="mail-outline"
-              size={20}
-              color="#9CA3AF"
-              style={styles.inputIcon}
-            />
-            <TextInput
-              style={[styles.input, styles.inputTextDisabled]}
-              value={user?.email}
-              editable={false}
-            />
-            <Ionicons name="lock-closed-outline" size={20} color="#9CA3AF" />
-          </View>
-          <Text style={styles.hint}>
-            El email no se puede cambiar
-          </Text>
-        </View>
-
-        {/* Country */}
-        <View style={styles.section}>
-          <Text style={styles.label}>País</Text>
+        {/* Header */}
+        <View style={styles.header}>
           <TouchableOpacity
-            style={styles.countrySelector}
-            onPress={() => setShowCountryPicker(!showCountryPicker)}
-            activeOpacity={0.7}
+            onPress={handleCancel}
+            style={styles.headerButton}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <View style={styles.countrySelectorLeft}>
+            <Ionicons name="close" size={28} color="#1F2937" />
+          </TouchableOpacity>
+
+          <Text style={styles.headerTitle}>Editar Perfil</Text>
+
+          <TouchableOpacity
+            onPress={handleSave}
+            style={[styles.headerButton, isUpdating && styles.headerButtonDisabled]}
+            disabled={isUpdating}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Text style={[styles.saveText, isUpdating && styles.saveTextDisabled]}>
+              {isUpdating ? 'Guardando...' : 'Guardar'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Display Name */}
+          <View style={styles.section}>
+            <Text style={styles.label}>Nombre</Text>
+            <View style={styles.inputContainer}>
               <Ionicons
-                name="earth-outline"
+                name="person-outline"
                 size={20}
                 color="#9CA3AF"
                 style={styles.inputIcon}
               />
-              {selectedCountry ? (
-                <View style={styles.selectedCountryContainer}>
-                  <Text style={styles.countryFlag}>
-                    {COUNTRIES.find((c) => c.code === selectedCountry)?.flag}
-                  </Text>
-                  <Text style={styles.countryName}>
-                    {COUNTRIES.find((c) => c.code === selectedCountry)?.name}
-                  </Text>
-                </View>
-              ) : (
-                <Text style={styles.placeholderText}>Selecciona tu país</Text>
+              <TextInput
+                style={styles.input}
+                value={displayName}
+                onChangeText={setDisplayName}
+                placeholder="Tu nombre"
+                placeholderTextColor="#9CA3AF"
+                autoCapitalize="words"
+                maxLength={50}
+              />
+              {displayName.length > 0 && (
+                <TouchableOpacity onPress={() => setDisplayName('')}>
+                  <Ionicons name="close-circle" size={20} color="#9CA3AF" />
+                </TouchableOpacity>
               )}
             </View>
-            <Ionicons
-              name={showCountryPicker ? 'chevron-up' : 'chevron-down'}
-              size={20}
-              color="#9CA3AF"
-            />
-          </TouchableOpacity>
+            <Text style={styles.hint}>
+              {displayName.length}/50 caracteres
+            </Text>
+          </View>
 
-          {/* Country Picker */}
-          {showCountryPicker && (
-            <View style={styles.countryList}>
-              {COUNTRIES.map((country) => (
-                <TouchableOpacity
-                  key={country.code}
-                  style={[
-                    styles.countryItem,
-                    selectedCountry === country.code && styles.countryItemSelected,
-                  ]}
-                  onPress={() => {
-                    setSelectedCountry(country.code);
-                    setShowCountryPicker(false);
-                  }}
-                  activeOpacity={0.7}
-                >
-                  <Text style={styles.countryFlag}>{country.flag}</Text>
-                  <Text style={styles.countryItemName}>{country.name}</Text>
-                  {selectedCountry === country.code && (
-                    <Ionicons name="checkmark" size={20} color="#007AFF" />
-                  )}
-                </TouchableOpacity>
-              ))}
+          {/* Email (readonly) */}
+          <View style={styles.section}>
+            <Text style={styles.label}>Email</Text>
+            <View style={[styles.inputContainer, styles.inputDisabled]}>
+              <Ionicons
+                name="mail-outline"
+                size={20}
+                color="#9CA3AF"
+                style={styles.inputIcon}
+              />
+              <TextInput
+                style={[styles.input, styles.inputTextDisabled]}
+                value={user?.email}
+                editable={false}
+              />
+              <Ionicons name="lock-closed-outline" size={20} color="#9CA3AF" />
             </View>
-          )}
+            <Text style={styles.hint}>
+              El email no se puede cambiar
+            </Text>
+          </View>
 
-          <Text style={styles.hint}>
-            El país determina opciones de pago disponibles
-          </Text>
-        </View>
+          {/* Country */}
+          <View style={styles.section}>
+            <Text style={styles.label}>País</Text>
+            <TouchableOpacity
+              style={styles.countrySelector}
+              onPress={() => setShowCountryPicker(!showCountryPicker)}
+              activeOpacity={0.7}
+            >
+              <View style={styles.countrySelectorLeft}>
+                <Ionicons
+                  name="earth-outline"
+                  size={20}
+                  color="#9CA3AF"
+                  style={styles.inputIcon}
+                />
+                {selectedCountry ? (
+                  <View style={styles.selectedCountryContainer}>
+                    <Text style={styles.countryFlag}>
+                      {COUNTRIES.find((c) => c.code === selectedCountry)?.flag}
+                    </Text>
+                    <Text style={styles.countryName}>
+                      {COUNTRIES.find((c) => c.code === selectedCountry)?.name}
+                    </Text>
+                  </View>
+                ) : (
+                  <Text style={styles.placeholderText}>Selecciona tu país</Text>
+                )}
+              </View>
+              <Ionicons
+                name={showCountryPicker ? 'chevron-up' : 'chevron-down'}
+                size={20}
+                color="#9CA3AF"
+              />
+            </TouchableOpacity>
 
-        {/* Info Box */}
-        <View style={styles.infoBox}>
-          <Ionicons name="information-circle" size={24} color="#007AFF" />
-          <Text style={styles.infoText}>
-            Cambiar tu país puede afectar las opciones de verificación y métodos de pago
-            disponibles para ti como beneficiario.
-          </Text>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+            {/* Country Picker */}
+            {showCountryPicker && (
+              <View style={styles.countryList}>
+                {COUNTRIES.map((country) => (
+                  <TouchableOpacity
+                    key={country.code}
+                    style={[
+                      styles.countryItem,
+                      selectedCountry === country.code && styles.countryItemSelected,
+                    ]}
+                    onPress={() => {
+                      setSelectedCountry(country.code);
+                      setShowCountryPicker(false);
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={styles.countryFlag}>{country.flag}</Text>
+                    <Text style={styles.countryItemName}>{country.name}</Text>
+                    {selectedCountry === country.code && (
+                      <Ionicons name="checkmark" size={20} color="#007AFF" />
+                    )}
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+
+            <Text style={styles.hint}>
+              El país determina opciones de pago disponibles
+            </Text>
+          </View>
+
+          {/* Info Box */}
+          <View style={styles.infoBox}>
+            <Ionicons name="information-circle" size={24} color="#007AFF" />
+            <Text style={styles.infoText}>
+              Cambiar tu país puede afectar las opciones de verificación y métodos de pago
+              disponibles para ti como beneficiario.
+            </Text>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 

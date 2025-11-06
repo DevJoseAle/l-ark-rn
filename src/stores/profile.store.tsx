@@ -1,19 +1,19 @@
 // src/stores/profile.store.ts
 
 import { create } from 'zustand';
-import {
-  UserProfile,
-  KYCDocument,
-  BeneficiaryAccount,
-  ProfileCampaign,
-  ProfileBeneficiaryCampaign,
-  ProfileSummary,
-  UpdateProfileDTO,
-  ProfileAlerts,
-  ProfileStats,
-} from '../types/profile.types';
-import { ProfileService } from '../services/profile.service';
 import { supabase } from '../lib/supabaseClient';
+import { ProfileService } from '../services/profile.service';
+import {
+    BeneficiaryAccount,
+    KYCDocument,
+    ProfileAlerts,
+    ProfileBeneficiaryCampaign,
+    ProfileCampaign,
+    ProfileStats,
+    ProfileSummary,
+    UpdateProfileDTO,
+    UserProfile,
+} from '../types/profile.types';
 
 interface ProfileState {
   // Data
@@ -72,7 +72,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
   fetchProfile: async () => {
     // Verificar si necesitamos refetch
     if (!get()._shouldRefetch()) {
-      console.log('📦 Using cached profile data');
+      //console.log('📦 Using cached profile data');
       return;
     }
 

@@ -1,8 +1,8 @@
+import * as FileSystem from 'expo-file-system/legacy';
 import { supabase } from "../lib/supabaseClient";
 import { FileToUpload, UploadResult } from "../types/vault.types";
 import { STORAGE_BUCKET } from "../utils/vaultConstants";
-import { validateFileUpload, generateStoragePath } from "../utils/vaultUtils";
-import * as FileSystem from 'expo-file-system/legacy';
+import { generateStoragePath, validateFileUpload } from "../utils/vaultUtils";
 
 export class VaultService {
   /**
@@ -17,7 +17,7 @@ export class VaultService {
     quotaBytes: number
   ): Promise<UploadResult> {
     try {
-      console.log('📤 Iniciando upload:', file.name);
+      //console.log('📤 Iniciando upload:', file.name);
 
       // 1. Validar el archivo
       const validation = validateFileUpload(
@@ -36,17 +36,17 @@ export class VaultService {
 
       // 2. Generar path único en Storage
       const storagePath = generateStoragePath(userId, campaignId, file.name);
-      console.log('📁 Storage path:', storagePath);
+      //console.log('📁 Storage path:', storagePath);
 
       // 3. ✅ LEER ARCHIVO CON EXPO-FILE-SYSTEM (React Native compatible)
-      console.log('🔄 Leyendo archivo desde:', file.uri);
+      //console.log('🔄 Leyendo archivo desde:', file.uri);
       
       // Leer archivo como base64
       const base64Data = await FileSystem.readAsStringAsync(file.uri, {
         encoding: FileSystem.EncodingType.Base64,
       });
       
-      console.log('✅ Archivo leído, tamaño base64:', base64Data.length, 'chars');
+      //console.log('✅ Archivo leído, tamaño base64:', base64Data.length, 'chars');
 
       // Convertir base64 a Uint8Array
       const binaryString = atob(base64Data);
@@ -55,10 +55,10 @@ export class VaultService {
         bytes[i] = binaryString.charCodeAt(i);
       }
       
-      console.log('✅ Uint8Array creado:', bytes.length, 'bytes');
+      //console.log('✅ Uint8Array creado:', bytes.length, 'bytes');
 
       // 4. Subir a Supabase Storage
-      console.log('☁️ Subiendo a Supabase Storage...');
+      //console.log('☁️ Subiendo a Supabase Storage...');
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from(STORAGE_BUCKET)
         .upload(storagePath, bytes, {
@@ -71,10 +71,10 @@ export class VaultService {
         throw uploadError;
       }
 
-      console.log('✅ Upload a Storage exitoso:', uploadData.path);
+      //console.log('✅ Upload a Storage exitoso:', uploadData.path);
 
       // 5. Crear registro en la tabla vault_files
-      console.log('💾 Creando registro en DB...');
+      //console.log('💾 Creando registro en DB...');
       const { data: fileRecord, error: dbError } = await supabase
         .from('vault_files')
         .insert({
@@ -99,10 +99,10 @@ export class VaultService {
         throw dbError;
       }
 
-      console.log('✅ Registro creado en DB:', fileRecord.id);
+      //console.log('✅ Registro creado en DB:', fileRecord.id);
 
       // 6. Actualizar bytes usados en la suscripción
-      console.log('📊 Actualizando cuota...');
+      //console.log('📊 Actualizando cuota...');
       const newUsedBytes = currentUsedBytes + file.size;
       
       const { error: updateError } = await supabase
@@ -115,7 +115,7 @@ export class VaultService {
         // No es crítico, continuar
       }
 
-      console.log('✅ Upload completado exitosamente!');
+      //console.log('✅ Upload completado exitosamente!');
 
       return {
         success: true,
@@ -162,10 +162,10 @@ export class VaultService {
    */
   static async deleteFile(fileId: string, storagePath: string): Promise<{ success: boolean; error?: string }> {
     try {
-      console.log('🗑️ Eliminando archivo:', fileId);
+      //console.log('🗑️ Eliminando archivo:', fileId);
 
       // 1. Eliminar de Storage
-      console.log('☁️ Eliminando de Storage:', storagePath);
+      //console.log('☁️ Eliminando de Storage:', storagePath);
       const { error: storageError } = await supabase.storage
         .from(STORAGE_BUCKET)
         .remove([storagePath]);
@@ -176,7 +176,7 @@ export class VaultService {
       }
 
       // 2. Eliminar registro de DB
-      console.log('💾 Eliminando registro de DB...');
+      //console.log('💾 Eliminando registro de DB...');
       const { error: dbError } = await supabase
         .from('vault_files')
         .delete()
@@ -187,7 +187,7 @@ export class VaultService {
         throw new Error(dbError.message || 'Error al eliminar de DB');
       }
 
-      console.log('✅ Archivo eliminado exitosamente');
+      //console.log('✅ Archivo eliminado exitosamente');
       return { success: true };
 
     } catch (error: any) {
@@ -208,7 +208,7 @@ export class VaultService {
     file: any
   ): Promise<{ success: boolean; localUri?: string; error?: string }> {
     try {
-      console.log('⬇️ Descargando archivo:', file.file_name);
+      //console.log('⬇️ Descargando archivo:', file.file_name);
 
       // 1. Obtener URL pública temporal del archivo
       const { data: urlData } = await supabase.storage
@@ -219,7 +219,7 @@ export class VaultService {
         throw new Error('No se pudo obtener URL del archivo');
       }
 
-      console.log('🔗 URL obtenida, descargando...');
+      //console.log('🔗 URL obtenida, descargando...');
 
       // 2. Descargar archivo con expo-file-system
       const fileUri = `${FileSystem.documentDirectory}${file.file_name}`;
@@ -233,7 +233,7 @@ export class VaultService {
         throw new Error('Error al descargar el archivo');
       }
 
-      console.log('✅ Archivo descargado en:', downloadResult.uri);
+      //console.log('✅ Archivo descargado en:', downloadResult.uri);
 
       return {
         success: true,

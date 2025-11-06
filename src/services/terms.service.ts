@@ -20,7 +20,7 @@ export const TermsService = {
       if (error) {
         // Si ya existe (UNIQUE constraint), está ok
         if (error.code === '23505') {
-          console.log('⚠️ Usuario ya aceptó esta versión');
+          //console.log('⚠️ Usuario ya aceptó esta versión');
           return true;
         }
         throw error;
@@ -32,7 +32,7 @@ export const TermsService = {
         .update({ current_terms_version: version })
         .eq('id', userId);
 
-      console.log('✅ Términos aceptados:', version);
+      //console.log('✅ Términos aceptados:', version);
       return true;
     } catch (error) {
       console.error('Error guardando aceptación:', error);

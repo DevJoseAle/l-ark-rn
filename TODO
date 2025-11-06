@@ -568,17 +568,17 @@ serve(async (req)=>{
   }
   try {
     const body = await req.text();
-    console.log('📥 Webhook received');
+    //console.log('📥 Webhook received');
     const event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret, undefined, Stripe.createSubtleCryptoProvider());
-    console.log('✅ Event verified:', event.type);
+    //console.log('✅ Event verified:', event.type);
     const supabase = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '');
     switch(event.type){
       case 'checkout.session.completed':
         {
           const session = event.data.object;
-          console.log('💳 Checkout completed');
-          console.log('📄 Session ID:', session.id);
-          console.log('💰 Amount:', session.amount_total);
+          //console.log('💳 Checkout completed');
+          //console.log('📄 Session ID:', session.id);
+          //console.log('💰 Amount:', session.amount_total);
           const campaignId = session.metadata?.campaign_id;
           const amountTotal = session.amount_total || 0;
           const currency = session.currency?.toUpperCase() || 'USD';
@@ -587,7 +587,7 @@ serve(async (req)=>{
             break;
           }
           const amountInUnits = amountTotal / 100;
-          console.log('💾 Saving donation...');
+          //console.log('💾 Saving donation...');
           // ✅ INSERTAR SEGÚN TU SCHEMA
           const { data: donation, error: donationError } = await supabase.from('donations').insert({
             campaign_id: campaignId,
@@ -607,7 +607,7 @@ serve(async (req)=>{
             console.error('❌ Error details:', JSON.stringify(donationError, null, 2));
             throw donationError;
           }
-          console.log('✅ Donation saved:', donation.id);
+          //console.log('✅ Donation saved:', donation.id);
           // ✅ ACTUALIZAR TOTAL DE LA CAMPAÑA
           const { data: campaign, error: campaignError } = await supabase.from('campaigns').select('total_raised').eq('id', campaignId).single();
           if (campaignError) {
@@ -615,7 +615,7 @@ serve(async (req)=>{
             throw campaignError;
           }
           const newTotal = (campaign.total_raised || 0) + amountInUnits;
-          console.log('📊 Updating campaign total:', newTotal);
+          //console.log('📊 Updating campaign total:', newTotal);
           const { error: updateError } = await supabase.from('campaigns').update({
             total_raised: newTotal,
             updated_at: new Date().toISOString()
@@ -624,21 +624,21 @@ serve(async (req)=>{
             console.error('❌ Error updating campaign:', updateError);
             throw updateError;
           }
-          console.log('✅✅✅ WEBHOOK COMPLETED SUCCESSFULLY ✅✅✅');
+          //console.log('✅✅✅ WEBHOOK COMPLETED SUCCESSFULLY ✅✅✅');
           break;
         }
       case 'payment_intent.succeeded':
         {
-          console.log('✅ Payment intent succeeded');
+          //console.log('✅ Payment intent succeeded');
           break;
         }
       case 'payment_intent.payment_failed':
         {
-          console.log('❌ Payment intent failed');
+          //console.log('❌ Payment intent failed');
           break;
         }
       default:
-        console.log(`⚠️ Unhandled event: ${event.type}`);
+        //console.log(`⚠️ Unhandled event: ${event.type}`);
     }
     return new Response(JSON.stringify({
       received: true

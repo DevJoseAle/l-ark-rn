@@ -138,7 +138,7 @@ export default function ProfileScreen() {
   };
 
   // Determine if should show KYC alert
-  const shouldShowKYCAlert = () => {
+  const  shouldShowKYCAlert = () => {
     if (!user) return false;
     
     const hasActivities = ownedCampaigns.length > 0 || beneficiaryCampaigns.length > 0;

@@ -10,7 +10,7 @@ interface CampaignState {
   error: string | null;
   lastFetchedAt: number | null;
   amountVisibility: boolean;
-
+  
   // Actions
   fetchCampaign: () => Promise<void>;
   createCampaign: (data: CreateCampaignDTO) => Promise<Campaign>;

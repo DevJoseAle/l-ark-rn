@@ -7,9 +7,10 @@ import DonationItem from '@/src/components/home/DonationItem';
 import EmptyState from '@/src/components/home/EmptyState';
 import ErrorState from '@/src/components/home/ErrorState';
 import { useHomeData } from '@/src/features/home/useHomeData';
+import { SharingService } from '@/src/services/share.service';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Platform, RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Platform, RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export default function ArkHomePage() {
   const router = useRouter();
@@ -19,6 +20,7 @@ export default function ArkHomePage() {
   const {
     viewState,
     campaignData,
+    campaign,
     donations,
     handleRetry,
     handleToggleVisibility,
@@ -43,9 +45,12 @@ export default function ArkHomePage() {
     //console.log('Share pressed');
   };
 
-  const handleSendLink = () => {
-    // TODO: Abrir modal de compartir
-    //console.log('Send link pressed');
+  const handleSendLink = async () => {
+    try {
+      await SharingService.shareCampaign(campaign!);
+    } catch (error) {
+      Alert.alert('Error', 'No se pudo compartir la campaña');
+    }
   };
 
   const handleViewCampaign = () => {

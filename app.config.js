@@ -10,8 +10,8 @@ export default {
     scheme: "lark",
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
-        splash: {
-      image: "./assets/Logo_lark.png",
+    splash: {
+      image: "./assets/images/Logo_lark.png",
       resizeMode: "contain",
       backgroundColor: "#F8FBFF"
     },
@@ -19,15 +19,20 @@ export default {
     ios: {
       supportsTablet: true,
       bundleIdentifier: "com.devjoseale.lark",
+      // ✅ Universal Links para iOS
+      associatedDomains: [
+        "applinks:l-ark.app",
+        "applinks:www.l-ark.app"
+      ],
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false
       },
       splash: {
-        image: "./assets/Logo_lark.png",
+        image: "./assets/images/Logo_lark.png",
         resizeMode: "contain",
         backgroundColor: "#F8FBFF",
         dark: {
-          image: "./assets/Logo_lark.png",
+          image: "./assets/images/Logo_lark.png",
           resizeMode: "contain",
           backgroundColor: "#1E2A36"
         }
@@ -37,17 +42,18 @@ export default {
     android: {
       adaptiveIcon: {
         backgroundColor: "#E6F4FE",
-        foregroundImage: "./assets/images/android-icon-foreground.png",
-        backgroundImage: "./assets/images/android-icon-background.png",
-        monochromeImage: "./assets/images/android-icon-monochrome.png"
+        foregroundImage: "./assets/images/icon.png",
+        backgroundImage: "./assets/images/icon.png",
+        monochromeImage: "./assets/images/icon.png"
       },
       edgeToEdgeEnabled: true,
       predictiveBackGestureEnabled: false,
       package: "com.devjoseale.lark",
+      // ✅ Intent Filters actualizados con Universal Links
       intentFilters: [
+        // Scheme personalizado (lark://)
         {
           action: "VIEW",
-          autoVerify: true,
           data: [
             {
               scheme: "lark",
@@ -56,14 +62,31 @@ export default {
           ],
           category: ["BROWSABLE", "DEFAULT"],
         },
+        // ✅ Universal Links (https://)
+        {
+          action: "VIEW",
+          autoVerify: true,
+          data: [
+            {
+              scheme: "https",
+              host: "l-ark.app",
+              pathPrefix: "/campaign"
+            },
+            {
+              scheme: "https",
+              host: "www.l-ark.app",
+              pathPrefix: "/campaign"
+            }
+          ],
+          category: ["BROWSABLE", "DEFAULT"],
+        },
       ],
-      // ✅ Splash específico para Android
       splash: {
-        image: "./assets/Logo_lark.png",
+        image: "./assets/images/Logo_lark.png",
         resizeMode: "contain",
         backgroundColor: "#F8FBFF",
         dark: {
-          image: "./assets/Logo_lark.png",
+          image: "./assets/images/Logo_lark.png",
           resizeMode: "contain",
           backgroundColor: "#1E2A36"
         }
@@ -73,9 +96,8 @@ export default {
     web: {
       output: "static",
       favicon: "./assets/images/favicon.png",
-      // ✅ Splash para web
       splash: {
-        image: "./assets/Logo_lark.png",
+        image: "./assets/images/Logo_lark.png",
         resizeMode: "contain",
         backgroundColor: "#F8FBFF"
       }
@@ -92,13 +114,12 @@ export default {
       [
         "expo-splash-screen",
         {
-          // ✅ Plugin usa el mismo logo que la config principal
-          image: "./assets/Logo_lark.png",
+          image: "./assets/images/Logo_lark.png",
           imageWidth: 200,
           resizeMode: "contain",
           backgroundColor: "#F8FBFF",
           dark: {
-            image: "./assets/Logo_lark.png",
+            image: "./assets/images/Logo_lark.png",
             backgroundColor: "#1E2A36"
           }
         }

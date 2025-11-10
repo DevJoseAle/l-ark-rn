@@ -5,6 +5,7 @@ import FloatingDonateButton from '@/src/components/common/FloatingDonatingButton
 import { GradientBackground } from '@/src/components/common/GradiendBackground';
 import { ImageGalleryViewer, ImageGridViewer } from '@/src/components/common/ImageGalleryViewer';
 import { CampaignService } from '@/src/services/campaign.service';
+import { SharingService } from '@/src/services/share.service';
 import { useAuthStore } from '@/src/stores/authStore';
 import { CampaignDetail } from '@/src/types/campaign.types';
 import { Formatters } from '@/src/utils/formatters';
@@ -15,6 +16,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   Dimensions,
   Image,
   ScrollView,
@@ -50,9 +52,14 @@ export default function CampaignDetailScreen() {
 
 
   const campaignId = params.id as string;
-  const handleDonate = () => {
-    // Navegar a pantalla de donación
-    //console.log("Donate");
+  const handleBackPress = () => {
+    if (router.canGoBack()) {
+      // Si hay historia, ir atrás
+      router.back();
+    } else {
+      // Si no hay historia (llegó por deep link), ir al home
+      router.replace('/(auth)/(tabs)/arkHome');
+    }
   };
 
   // Determinar si es campaña propia
@@ -87,14 +94,12 @@ export default function CampaignDetailScreen() {
   const handleShare = async () => {
     if (!campaign) return;
     try {
-      await Share.share({
-        message: `Apoya mi campaña: ${campaign.title}`,
-        // url: `https://lark.app/campaign/${campaign.id}`, // TODO: deep link
-      });
+      await SharingService.shareCampaign(campaign);
     } catch (error) {
-      console.error('Error sharing:', error);
+      Alert.alert('Error', 'No se pudo compartir la campaña');
     }
   };
+  
   if (isLoading) {
     return (
       <GradientBackground>
@@ -181,7 +186,7 @@ export default function CampaignDetailScreen() {
             <View style={styles.headerButtons}>
               <TouchableOpacity
                 style={[styles.headerButton, { backgroundColor: 'rgba(0,0,0,0.5)' }]}
-                onPress={() => router.back()}
+                onPress={handleBackPress}
               >
                 <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
               </TouchableOpacity>

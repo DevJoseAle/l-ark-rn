@@ -240,6 +240,8 @@ export class CampaignService {
    * Obtener campaña por ID
    */
   static async getCampaignById(campaignId: string): Promise<CampaignDetail | null> {
+
+    const isLongOrLargeId = campaignId.length > 7 ? 'id' : 'short_code'; 
     try {
       const { data, error } = await supabase
         .from('campaigns')
@@ -267,7 +269,7 @@ export class CampaignService {
           )
         )
       `)
-        .eq('id', campaignId)
+        .eq(isLongOrLargeId, campaignId)
         .single();
 
       if (error) {

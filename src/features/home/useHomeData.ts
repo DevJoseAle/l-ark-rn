@@ -15,7 +15,6 @@ export function useHomeData() {
   const campaignError = useCampaignStore((state) => state.error);
   const fetchCampaign = useCampaignStore((state) => state.fetchCampaign);
   const toggleVisibility = useCampaignStore((state) => state.toggleVisibility);
-
   // Donation store
   const donations = useDonationStore((state) => state.donations);
   const donationsLoading = useDonationStore((state) => state.isLoading);

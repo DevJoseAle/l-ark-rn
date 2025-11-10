@@ -117,7 +117,7 @@ const handleViewCampaign = async () => {
           style={styles.secondaryButton}
           onPress={onSendLink}
         >
-          <Text style={styles.secondaryButtonText}>Enviar Link</Text>
+          <Text style={styles.secondaryButtonText}>Enviar Campaña</Text>
           <Ionicons name="link-outline" size={18} color="#0f1c3a" />
         </TouchableOpacity>
       </View>
@@ -240,7 +240,7 @@ const cardCampaignStyles = (color: ThemeColors) => StyleSheet.create({
   secondaryButtonText: {
     color: '#0f1c3a',
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '500',
     marginRight: 6,
   },
 });

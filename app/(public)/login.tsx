@@ -27,7 +27,7 @@ export default function LoginScreen() {
     handleDeclineTerms,
   } = useLogin(router);
 
-
+  console.log(showTermsModal);
   return (
     <GradientBackground>
       <View style={styles.container}>

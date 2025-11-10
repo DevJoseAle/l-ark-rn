@@ -41,17 +41,21 @@ export const useLogin = (router: any) => {
       if (error && error.code !== 'PGRST116') {
         throw error;
       }
-
+      console.log(error);
       hideLoading();
 
       if (existingUser) {
         // Usuario existe → Verificar si aceptó la versión actual
-        const { data: acceptance } = await supabase
+        const { data: acceptance, error: accError } = await supabase
           .from('user_terms_acceptances')
           .select('id')
           .eq('user_id', existingUser.id)
           .eq('terms_version', CURRENT_TERMS_VERSION)
           .maybeSingle();
+
+        if (accError) {
+          console.log('Error verificando aceptación de términos:', accError);
+        }
 
         if (acceptance) {
           // Ya aceptó términos actuales → Enviar OTP
@@ -59,7 +63,7 @@ export const useLogin = (router: any) => {
           await sendOTP(cleanEmail);
         } else {
           // Debe aceptar nueva versión
-          //console.log('📝 Usuario debe aceptar términos actualizados');
+          console.log('📝 Usuario debe aceptar términos actualizados');
           setPendingEmail(cleanEmail);
           setShowTermsModal(true);
         }

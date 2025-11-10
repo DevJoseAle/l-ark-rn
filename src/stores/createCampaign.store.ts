@@ -59,7 +59,7 @@ const initialFormData: CreateCampaignFormData = {
   goalAmount: '',
   softCap: '',
   hardCap: '',
-  currency: 'CLP',
+  currency: 'USD',
   startDate: new Date(),
   endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // +3 meses
   visibility: 'public',

@@ -675,6 +675,39 @@ export type Database = {
           },
         ]
       }
+      exchange_rates: {
+        Row: {
+          clp_rate: number
+          cop_rate: number
+          created_at: string | null
+          date: string
+          id: string
+          mxn_rate: number
+          source: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          clp_rate: number
+          cop_rate: number
+          created_at?: string | null
+          date: string
+          id?: string
+          mxn_rate: number
+          source?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          clp_rate?: number
+          cop_rate?: number
+          created_at?: string | null
+          date?: string
+          id?: string
+          mxn_rate?: number
+          source?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       fund_ledger: {
         Row: {
           amount: number
@@ -945,6 +978,41 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "user_devices_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_terms_acceptances: {
+        Row: {
+          accepted_at: string | null
+          id: string
+          ip_address: string | null
+          terms_version: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          accepted_at?: string | null
+          id?: string
+          ip_address?: string | null
+          terms_version: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          accepted_at?: string | null
+          id?: string
+          ip_address?: string | null
+          terms_version?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_terms_acceptances_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
@@ -1319,6 +1387,13 @@ export type Database = {
       generate_short_code: { Args: never; Returns: string }
       get_available_balance: {
         Args: { p_campaign_id: string }
+        Returns: number
+      }
+      get_exchange_rate: {
+        Args: {
+          p_country?: Database["public"]["Enums"]["country_code"]
+          p_date?: string
+        }
         Returns: number
       }
       is_connect_supported: { Args: { p_country: string }; Returns: boolean }

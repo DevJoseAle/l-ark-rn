@@ -16,10 +16,10 @@ import { useDebounce } from '@/src/features/home/useDebounce';
 import { supabase } from '@/src/lib/supabaseClient';
 import { UserSearchService } from '@/src/services/searchUsers.service';
 import { useCreateCampaignStore } from '@/src/stores/createCampaign.store';
-import { 
-    BeneficiaryShareType, 
-    BeneficiaryUser, 
-    CampaignBeneficiary, 
+import {
+    BeneficiaryShareType,
+    BeneficiaryUser,
+    CampaignBeneficiary,
     COUNTRIES,
     CountryCode,
     getPayoutMode // 👈 Importar helper
@@ -92,8 +92,8 @@ export const BeneficiariesSection = () => {
 
         // Calcular porcentaje automático
         const currentCount = formData.beneficiaries.length;
-        const newShareValue = currentCount === 0 
-            ? 100 
+        const newShareValue = currentCount === 0
+            ? 100
             : Math.floor(100 / (currentCount + 1));
 
         const newBeneficiary: CampaignBeneficiary = {
@@ -154,53 +154,53 @@ export const BeneficiariesSection = () => {
                 </View>
 
                 {/* 👇 SELECTOR DE PAÍS - MOVIDO AQUÍ ARRIBA */}
-<View style={styles.countrySection}>
-    <Text style={[styles.countryTitle, { color: colors.text }]}>
-        País de entrega del beneficio *
-    </Text>
-    <Text style={[styles.countrySubtitle, { color: colors.secondaryText }]}>
-        Todos los beneficiarios deben estar en el mismo país
-    </Text>
-    
-    <View style={styles.countriesRow}>
-        {COUNTRIES.map((cty) => (
-            <CountryButton
-                fn={() => setCountry(cty.code)} // 👈 CORRECCIÓN: Pasar directamente cty.code
-                key={cty.code}
-                country={`${cty.flag} ${cty.code}`} // Mostrar flag + código
-                isSelected={selectedCountry === cty.code}
-            />
-        ))}
-    </View>
-
-    {/* Badge de modo de pago */}
-    {selectedCountry && payoutMode && (
-        <View style={styles.payoutInfo}>
-            {payoutMode === 'connect' ? (
-                <View style={[styles.payoutBadge, { backgroundColor: colors.success + '20' }]}>
-                    <Text style={styles.badgeIcon}>✓</Text>
-                    <Text style={[styles.badgeText, { color: colors.success }]}>
-                        Pago automático vía Stripe Connect
+                <View style={styles.countrySection}>
+                    <Text style={[styles.countryTitle, { color: colors.text }]}>
+                        País de entrega del beneficio *
                     </Text>
-                </View>
-            ) : (
-                <View style={[styles.payoutBadge, { backgroundColor: colors.warning + '20' }]}>
-                    <Text style={styles.badgeIcon}>⚠️</Text>
-                    <Text style={[styles.badgeText, { color: colors.warning }]}>
-                        Pago manual requerido (transferencia bancaria)
+                    <Text style={[styles.countrySubtitle, { color: colors.secondaryText }]}>
+                        Todos los beneficiarios deben estar en el mismo país
                     </Text>
-                </View>
-            )}
-        </View>
-    )}
 
-    {/* Error de país */}
-    {countryError && (
-        <Text style={[styles.errorText, { color: colors.error }]}>
-            {countryError.message}
-        </Text>
-    )}
-</View>
+                    <View style={styles.countriesRow}>
+                        {COUNTRIES.map((cty) => (
+                            <CountryButton
+                                fn={() => setCountry(cty.code)} // 👈 CORRECCIÓN: Pasar directamente cty.code
+                                key={cty.code}
+                                country={`${cty.flag} ${cty.code}`} // Mostrar flag + código
+                                isSelected={selectedCountry === cty.code}
+                            />
+                        ))}
+                    </View>
+
+                    {/* Badge de modo de pago */}
+                    {selectedCountry && payoutMode && (
+                        <View style={styles.payoutInfo}>
+                            {payoutMode === 'connect' ? (
+                                <View style={[styles.payoutBadge, { backgroundColor: colors.success + '20' }]}>
+                                    <Text style={styles.badgeIcon}>✓</Text>
+                                    <Text style={[styles.badgeText, { color: colors.success }]}>
+                                        Pago automático vía Stripe Connect
+                                    </Text>
+                                </View>
+                            ) : (
+                                <View style={[styles.payoutBadge, { backgroundColor: colors.warning + '20' }]}>
+                                    <Text style={styles.badgeIcon}>⚠️</Text>
+                                    <Text style={[styles.badgeText, { color: colors.warning }]}>
+                                        Pago manual requerido (transferencia bancaria)
+                                    </Text>
+                                </View>
+                            )}
+                        </View>
+                    )}
+
+                    {/* Error de país */}
+                    {countryError && (
+                        <Text style={[styles.errorText, { color: colors.error }]}>
+                            {countryError.message}
+                        </Text>
+                    )}
+                </View>
 
                 {/* SEARCH BAR */}
                 <View
@@ -324,7 +324,7 @@ export const CountryButton = ({
         <TouchableOpacity
             onPress={() => fn(country)}
             style={{
-                width: 90, // 👈 Un poco más ancho para los flags
+                width: 70, // 👈 Un poco más ancho para los flags
                 height: 44,
                 borderColor: colors.separator,
                 borderWidth: 1,

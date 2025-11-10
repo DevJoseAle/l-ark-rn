@@ -36,6 +36,7 @@ export interface Campaign {
   end_at: string | null;
   total_raised: number; // Alias de current_amount
   beneficiary_rule: BeneficiaryRule | null;
+  short_code: string;
   created_at: string;
   updated_at: string;
   has_diagnosis: boolean;

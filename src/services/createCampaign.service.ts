@@ -90,19 +90,19 @@ export class CampaignCreateService {
     userId: string
   ): Promise<Campaign> {
     try {
+
+      console.log(formData.country, typeof formData.country);
       const { data, error } = await supabase
         .from('campaigns')
         .insert({
           owner_user_id: userId,
           title: formData.title.trim(),
           description: formData.description.trim(),
-          country: formData.country,
+          country: formData.country ,
           goal_amount: parseFloat(formData.goalAmount),
           soft_cap: parseFloat(formData.softCap),
           hard_cap: formData.hardCap ? parseFloat(formData.hardCap) : null,
           currency: formData.currency,
-          status: 'draft',
-          visibility: formData.visibility,
           start_at: formData.startDate.toISOString(),
           end_at: formData.endDate.toISOString(),
           has_diagnosis: formData.hasDiagnosis,

@@ -193,11 +193,7 @@ const handleCancel = () => {
             </View>
           )}
 
-          {/* ETAPA 3: Montos */}
-          <View style={styles.section}>
-            <AmountsSection />
-          </View>
-
+   
           {/* ETAPA 3: Fechas */}
           <View style={styles.section}>
             <DatesSection />
@@ -210,6 +206,12 @@ const handleCancel = () => {
           <View style={styles.section}>
             <BeneficiariesSection />
           </View>
+
+                 {/* ETAPA 3: Montos */}
+          <View style={styles.section}>
+            <AmountsSection />
+          </View>
+
           <View style={{ height: 100 }} />
         </ScrollView>
         {/* BOTÓN DE SUBMIT FIJO */}

@@ -8,6 +8,7 @@ import EmptyState from '@/src/components/home/EmptyState';
 import ErrorState from '@/src/components/home/ErrorState';
 import { useHomeData } from '@/src/features/home/useHomeData';
 import { SharingService } from '@/src/services/share.service';
+import { useExchangeRatesStore } from '@/src/stores/exchangeRates.store';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, Platform, RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';

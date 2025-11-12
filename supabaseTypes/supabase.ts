@@ -1622,4 +1622,5 @@ export const Constants = {
       vault_visibility: ["private", "beneficiaries", "public"],
     },
   },
-} as const
+}
+

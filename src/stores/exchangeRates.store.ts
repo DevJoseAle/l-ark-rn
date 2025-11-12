@@ -2,6 +2,7 @@
 import { create } from 'zustand';
 import { ExchangeService } from '../services/exchange.service';
 import { Alert } from 'react-native';
+import { useCampaignStore } from './campaign.store';
 
 interface ExchangeRatesStore {
   isLoading: boolean;
@@ -9,13 +10,18 @@ interface ExchangeRatesStore {
   mxnRate:  number;
   clpRate:  number;
   copRate:  number;
-  
+  goalInMxn: () => number;
+  goalInClp: () => number;
+  goalInCop: () => number;
+  //Setters
   setIsLoading: (isLoading: boolean) => void;
   setHasError: (hasError: boolean) => void;
   getExchangeRates: () => Promise<void>;
+
+
 }
 
-export const useExchangeRatesStore = create<ExchangeRatesStore>((set) => ({
+export const useExchangeRatesStore = create<ExchangeRatesStore>((set, get) => ({
     isLoading:false,
     hasError:false,
     mxnRate:0,
@@ -23,6 +29,33 @@ export const useExchangeRatesStore = create<ExchangeRatesStore>((set) => ({
     copRate:0,
     setIsLoading: (isLoading) => set({ isLoading }),
     setHasError: (hasError) => set({ hasError }),
+
+    goalInClp: () => { 
+        const clpRate = get().clpRate;
+        const goalAmount = useCampaignStore.getState().campaign?.goal_amount
+        if(clpRate == 0 || !goalAmount){
+            return 0
+        }
+        return clpRate * goalAmount
+    },
+    goalInMxn: () => { 
+        const mxnRate = get().mxnRate;
+        const goalAmount = useCampaignStore.getState().campaign?.goal_amount
+        if(mxnRate == 0 || !goalAmount){
+            return 0
+        }
+        return mxnRate * goalAmount
+     },
+    goalInCop: () => { 
+        const copRate = get().copRate;
+        const goalAmount = useCampaignStore.getState().campaign?.goal_amount
+        if(copRate == 0 || !goalAmount){
+            return 0
+        }
+        return copRate * goalAmount
+     },
+
+
     //Gets
     getExchangeRates: async () => {
         set({ isLoading: true, hasError: false });
@@ -31,12 +64,12 @@ export const useExchangeRatesStore = create<ExchangeRatesStore>((set) => ({
             if(response.error){
                 throw new Error
             }
-            const {mxnRate, clpRate, copRate} = response.data!;
-            set({
-                mxnRate,
-                copRate,
-                clpRate,
-            });
+            const {mxn_rate: mxnRate, clp_rate: clpRate, cop_rate: copRate} = response.data!;
+             set({
+                 mxnRate,
+                 copRate,
+                 clpRate,
+             });
             set({ isLoading: false, hasError: false });
         } catch (error) {
             set({ isLoading: false, hasError: true });

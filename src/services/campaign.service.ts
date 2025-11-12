@@ -19,8 +19,10 @@ export class CampaignService {
         .from('campaigns')
         .select('*')
         .eq('owner_user_id', user.id)
-        .single();
-
+        .maybeSingle();
+        console.log({
+          data, error, user: user.id
+        });
       if (error) {
         // Si no encuentra campaña, devolver null (no es error)
         if (error.code === 'PGRST116') {

@@ -2,6 +2,7 @@ import { UserService } from "@/src/services/user.service";
 import { useAuthStore } from "@/src/stores/authStore";
 import { useCampaignStore } from "@/src/stores/campaign.store";
 import { useDonationStore } from "@/src/stores/donation.store";
+import { useExchangeRatesStore } from "@/src/stores/exchangeRates.store";
 import { useState, useEffect, useCallback } from "react";
 
 export type HomeViewState = 'loading' | 'error' | 'empty' | 'success';
@@ -22,9 +23,14 @@ export function useHomeData() {
   const fetchDonations = useDonationStore((state) => state.fetchDonations);
   const refreshDonations = useDonationStore((state) => state.refreshDonations);
 
+  //Exchange rates
+  const getExchangeRates = useExchangeRatesStore(state => state.getExchangeRates)
+
   // Load initial data
   useEffect(() => {
+    console.log('Antes de load');
     loadData();
+    console.log('Despues de load');
 
   }, []);
 
@@ -50,6 +56,8 @@ export function useHomeData() {
       if (currentCampaign) {
         await fetchDonations(currentCampaign.id);
       }
+      // Cargar tasas de cambio
+      await getExchangeRates()
     } catch (error) {
       console.error('Error loading home data:', error);
       // El error ya está en el store, solo loguear

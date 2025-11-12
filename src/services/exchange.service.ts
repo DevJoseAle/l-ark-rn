@@ -16,8 +16,8 @@ export class ExchangeService {
                 .from('exchange_rates')
                 .select('*')
                 .order('date', { ascending: false })
+                .limit(1)
                 .single()
-
             if (error) {
                 throw new Error('Error al consultar Tasa de cambio')
             }

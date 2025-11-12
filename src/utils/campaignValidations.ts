@@ -1,9 +1,16 @@
 // src/utils/campaignValidations.ts
 
-import { CreateCampaignFormData, ValidationError, ValidationResult } from "../types/campaign-create.types";
+import { useCampaignStore } from "../stores/campaign.store";
+import { useCreateCampaignStore } from "../stores/createCampaign.store";
+import { CountryCode, CreateCampaignFormData, ValidationError, ValidationResult } from "../types/campaign-create.types";
+import { MAX_AMOUNTS_BY_COUNTRY, MIN_AMOUNTS_BY_COUNTRY } from "./campaingConstants";
+import { fromUSDtoCurrencyNumber } from "./ratesUtils";
 
 export class CampaignValidations {
   // Constantes de validación
+  private static readonly min_goal_amounts_by_country: Record<string, number> = {
+
+  }
   private static readonly MIN_GOAL_AMOUNT = 3_000_000; // 3 millones CLP
   private static readonly MAX_GOAL_AMOUNT = 50_000_000; // 50 millones CLP
   private static readonly MIN_TITLE_LENGTH = 12;
@@ -60,9 +67,11 @@ export class CampaignValidations {
   /**
    * Validar meta de recaudación
    */
-  static validateGoalAmount(amount: string): ValidationError | null {
+  static validateGoalAmount(amount: string, country?: CountryCode): ValidationError | null {
     const numAmount = parseFloat(amount);
-
+    const maxAmount = fromUSDtoCurrencyNumber(MAX_AMOUNTS_BY_COUNTRY[country || 'US'], country || 'US')
+    const minAmount = fromUSDtoCurrencyNumber(MIN_AMOUNTS_BY_COUNTRY[country || 'US'], country || 'US')
+    console.log('VALIDATEGOAL----', country, '->', {minAmount, maxAmount, numAmount});
     if (isNaN(numAmount) || numAmount <= 0) {
       return {
         field: 'goalAmount',
@@ -70,17 +79,17 @@ export class CampaignValidations {
       };
     }
 
-    if (numAmount < this.MIN_GOAL_AMOUNT) {
+    if (numAmount < minAmount) {
       return {
         field: 'goalAmount',
-        message: `El monto mínimo es $${this.MIN_GOAL_AMOUNT.toLocaleString('es-CL')}`,
+        message: `El monto mínimo es $${minAmount.toLocaleString('es-CL')}`,
       };
     }
 
-    if (numAmount > this.MAX_GOAL_AMOUNT) {
+    if (numAmount > maxAmount) {
       return {
         field: 'goalAmount',
-        message: `El monto máximo es $${this.MAX_GOAL_AMOUNT.toLocaleString('es-CL')}`,
+        message: `El monto máximo es $${maxAmount.toLocaleString('es-CL')}`,
       };
     }
 
@@ -93,7 +102,17 @@ export class CampaignValidations {
   static validateSoftCap(softCap: string, goalAmount: string): ValidationError | null {
     const numSoftCap = parseFloat(softCap);
     const numGoalAmount = parseFloat(goalAmount);
+    const country = useCreateCampaignStore.getState().formData.country;
+    const maxAmount = fromUSDtoCurrencyNumber(MAX_AMOUNTS_BY_COUNTRY[country || 'US'], country || 'US')
+    const minAmount = fromUSDtoCurrencyNumber(MIN_AMOUNTS_BY_COUNTRY[country || 'US'], country || 'US')
 
+        console.log('ValidateSoftCap',{
+      numSoftCap,
+      numGoalAmount,
+      country,
+      maxAmount,
+      minAmount,
+    });
     if (isNaN(numSoftCap) || numSoftCap <= 0) {
       return {
         field: 'softCap',
@@ -105,6 +124,12 @@ export class CampaignValidations {
       return {
         field: 'softCap',
         message: 'La meta mínima debe ser menor que la meta total',
+      };
+    }
+    if (numSoftCap < minAmount) {
+      return {
+        field: 'softCap',
+        message: 'La meta mínima debe ser mayor al mínimo de recaudación',
       };
     }
 
@@ -121,7 +146,17 @@ export class CampaignValidations {
 
     const numHardCap = parseFloat(hardCap);
     const numGoalAmount = parseFloat(goalAmount);
+    const country = useCreateCampaignStore.getState().formData.country;
+    const maxAmount = fromUSDtoCurrencyNumber(MAX_AMOUNTS_BY_COUNTRY[country || 'US'], country || 'US')
+    const minAmount = fromUSDtoCurrencyNumber(MIN_AMOUNTS_BY_COUNTRY[country || 'US'], country || 'US')
 
+    console.log('ValidateHardCap',{
+      numHardCap,
+      numGoalAmount,
+      country,
+      maxAmount,
+      minAmount,
+    });
     if (isNaN(numHardCap) || numHardCap <= 0) {
       return {
         field: 'hardCap',
@@ -129,6 +164,12 @@ export class CampaignValidations {
       };
     }
 
+    if (numHardCap <= minAmount) {
+      return {
+        field: 'hardCap',
+        message: 'La meta media debe ser mayor que la meta mínima',
+      };
+    }
     if (numHardCap >= numGoalAmount) {
       return {
         field: 'hardCap',
@@ -234,8 +275,8 @@ export class CampaignValidations {
   }
 
   static validateCountry(country: string): ValidationError | null {
-    const validCountries = ['US', 'ES', 'MX', 'CL'];
-    
+    const validCountries = ['US', 'CO', 'MX', 'CL'];
+    console.log('VALIDATE COUNTRY ----', country);
     if (!country || country.trim().length === 0) {
       return {
         field: 'country',
@@ -310,7 +351,7 @@ export class CampaignValidations {
   /**
    * Validar formulario completo
    */
-  static validateForm(formData: CreateCampaignFormData): ValidationResult {
+  static validateForm(formData: CreateCampaignFormData, country?: CountryCode): ValidationResult {
     const errors: ValidationError[] = [];
 
     // Validar título
@@ -322,7 +363,7 @@ export class CampaignValidations {
     if (descError) errors.push(descError);
 
     // Validar meta total
-    const goalError = this.validateGoalAmount(formData.goalAmount);
+    const goalError = this.validateGoalAmount(formData.goalAmount, country);
     if (goalError) errors.push(goalError);
 
     // Validar meta mínima

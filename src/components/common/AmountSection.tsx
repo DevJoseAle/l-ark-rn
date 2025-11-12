@@ -12,6 +12,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/theme';
 import { useCreateCampaignStore } from '@/src/stores/createCampaign.store';
 import { Formatters } from '@/src/utils/formatters';
+import { getCurrencyCode } from '@/src/types/campaign-create.types';
+import { HARD_CAP_AMOUNTS_BY_COUNTRY, MAX_AMOUNTS_BY_COUNTRY, SOFT_CAP_AMOUNTS_BY_COUNTRY } from '@/src/utils/campaingConstants';
+import { fromUSDtoCurrencyString } from '@/src/utils/ratesUtils';
 
 export const AmountsSection = () => {
   const colorScheme = useColorScheme();
@@ -23,8 +26,14 @@ export const AmountsSection = () => {
     setSoftCap,
     setHardCap,
     errors,
+    maxGoalAmount,
+    minGoalAmount
   } = useCreateCampaignStore();
-
+  const selectedCountry = formData.country;
+  const minAndMaxAmountsGoal = () => `Entre ${Formatters.formatCLPInput((minGoalAmount()))} ${getCurrencyCode(selectedCountry)} y ${Formatters.formatCLPInput(maxGoalAmount())} ${getCurrencyCode(selectedCountry)}`
+  const softCapPlaceholder = fromUSDtoCurrencyString(SOFT_CAP_AMOUNTS_BY_COUNTRY[selectedCountry], selectedCountry);
+  const hardCapPlaceholder = fromUSDtoCurrencyString(HARD_CAP_AMOUNTS_BY_COUNTRY[selectedCountry], selectedCountry);
+  const totalAmountPlaceholder = fromUSDtoCurrencyString(MAX_AMOUNTS_BY_COUNTRY[selectedCountry], selectedCountry);
   // Estado local para formateo
   const [goalDisplay, setGoalDisplay] = useState('');
   const [softCapDisplay, setSoftCapDisplay] = useState('');
@@ -42,10 +51,16 @@ export const AmountsSection = () => {
       setHardCapDisplay(Formatters.formatCLPInput(formData.hardCap));
     }
   }, []);
-
+  useEffect(() => {
+    setGoalDisplay('')
+    setSoftCapDisplay('')
+    setHardCapDisplay('')
+  }, [formData.country])
+  
   // Handlers con formateo
   const handleGoalChange = (text: string) => {
     const cleaned = Formatters.unformatCLP(text);
+    console.log('formateo', cleaned);
     setGoalDisplay(Formatters.formatCLPInput(cleaned));
     setGoalAmount(cleaned);
   };
@@ -66,7 +81,18 @@ export const AmountsSection = () => {
   const goalError = errors.find((e) => e.field === 'goalAmount');
   const softCapError = errors.find((e) => e.field === 'softCap');
   const hardCapError = errors.find((e) => e.field === 'hardCap');
-
+  const actualCurrencyText = () => {
+    switch (selectedCountry) {
+      case 'US':
+        return 'USD - Dólares Americanos';
+      case 'CL':
+        return 'CLP - Pesos Chilenos';
+      case 'MX':
+        return 'MXN - Pesos Mexicanos';
+      case 'CO':
+        return 'COP - Pesos Colombianos';
+    }
+  }
   return (
     <View style={styles.container}>
       <View
@@ -97,7 +123,11 @@ export const AmountsSection = () => {
             </Text>
             <Text style={[styles.required, { color: colors.error }]}> *</Text>
           </View>
-
+          <View>
+            <Text style={[styles.hintText, { color: colors.secondaryText }]}>
+              {minAndMaxAmountsGoal()}
+            </Text>
+          </View>
           <View
             style={[
               styles.inputWrapper,
@@ -118,7 +148,7 @@ export const AmountsSection = () => {
             />
             <TextInput
               style={[styles.input, { color: colors.text }]}
-              placeholder="10.000.000"
+              placeholder={totalAmountPlaceholder}
               placeholderTextColor={colors.secondaryText}
               value={goalDisplay}
               onChangeText={handleGoalChange}
@@ -132,9 +162,9 @@ export const AmountsSection = () => {
             </Text>
           )}
 
-          <Text style={[styles.hintText, { color: colors.secondaryText }]}>
-            Entre $3.000.000 y $50.000.000 CLP
-          </Text>
+          {selectedCountry !== 'US' && <Text style={[styles.hintText, { color: colors.secondaryText }]}>
+            El cálculo se realiza en la moneda seleccionada a la tasa del momento
+          </Text>}
         </View>
 
         {/* META MÍNIMA Y MEDIA EN ROW */}
@@ -158,7 +188,7 @@ export const AmountsSection = () => {
             >
               <TextInput
                 style={[styles.input, { color: colors.text }]}
-                placeholder="5.000.000"
+                placeholder={softCapPlaceholder}
                 placeholderTextColor={colors.secondaryText}
                 value={softCapDisplay}
                 onChangeText={handleSoftCapChange}
@@ -191,7 +221,7 @@ export const AmountsSection = () => {
             >
               <TextInput
                 style={[styles.input, { color: colors.text }]}
-                placeholder="20.000.000"
+                placeholder={hardCapPlaceholder}
                 placeholderTextColor={colors.secondaryText}
                 value={hardCapDisplay}
                 onChangeText={handleHardCapChange}
@@ -221,7 +251,7 @@ export const AmountsSection = () => {
             ]}
           >
             <Text style={[styles.currencyText, { color: colors.text }]}>
-              CLP - Peso Chileno
+              {actualCurrencyText()}
             </Text>
           </View>
         </View>

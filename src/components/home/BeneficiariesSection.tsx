@@ -31,7 +31,7 @@ export const BeneficiariesSection = () => {
     const colors = Colors[colorScheme ?? 'light'];
 
     // 👇 CAMBIO: Obtener country y setCountry del STORE
-    const { formData, addBeneficiary, errors, setCountry } = useCreateCampaignStore();
+    const { formData, addBeneficiary, errors, setCountry, resetAmounts } = useCreateCampaignStore();
 
     // Estados de búsqueda
     const [searchQuery, setSearchQuery] = useState('');
@@ -42,7 +42,10 @@ export const BeneficiariesSection = () => {
     const debouncedSearch = useDebounce(searchQuery, 300);
     const selectedCountry = formData.country;
     const payoutMode = selectedCountry ? getPayoutMode(selectedCountry) : null;
-
+    const handleChangeCountry = (code : CountryCode) =>{
+      setCountry(code);
+      resetAmounts();
+    }
     useEffect(() => {
         const fetchCurrentUser = async () => {
             const { data: { user } } = await supabase.auth.getUser();
@@ -165,9 +168,9 @@ export const BeneficiariesSection = () => {
                     <View style={styles.countriesRow}>
                         {COUNTRIES.map((cty) => (
                             <CountryButton
-                                fn={() => setCountry(cty.code)} // 👈 CORRECCIÓN: Pasar directamente cty.code
+                                fn={() => handleChangeCountry(cty.code)} 
                                 key={cty.code}
-                                country={`${cty.flag} ${cty.code}`} // Mostrar flag + código
+                                country={`${cty.flag} ${cty.code}`}
                                 isSelected={selectedCountry === cty.code}
                             />
                         ))}
@@ -398,7 +401,6 @@ const styles = StyleSheet.create({
     countriesRow: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        marginBottom: 12,
     },
     payoutInfo: {
         marginTop: 8,

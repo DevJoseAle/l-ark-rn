@@ -159,10 +159,10 @@ export interface CreateCampaignState {
 }
 
 export const COUNTRIES = [
-  { code: 'US', name: 'Estados Unidos', flag: '🇺🇸' },
-  { code: 'CO', name: 'Colombia', flag: '🇨🇴' },
-  { code: 'MX', name: 'México', flag: '🇲🇽' },
-  { code: 'CL', name: 'Chile', flag: '🇨🇱' },
+  { code: 'US', name: 'Estados Unidos', flag: '🇺🇸', currencyCode: 'USD' },
+  { code: 'CO', name: 'Colombia', flag: '🇨🇴', currencyCode: 'COP' },
+  { code: 'MX', name: 'México', flag: '🇲🇽', currencyCode: 'MXN' },
+  { code: 'CL', name: 'Chile', flag: '🇨🇱', currencyCode: 'CLP' },
 ] as const;
 
 export type CountryCode = typeof COUNTRIES[number]['code'];
@@ -174,6 +174,7 @@ export const getCountryName = (code: CountryCode): string => {
 export const getCountryFlag = (code: CountryCode): string => {
   return COUNTRIES.find(c => c.code === code)?.flag || '';
 };
+export const getCurrencyCode = (code: CountryCode): string => COUNTRIES.find(c => c.code === code)?.currencyCode || 'USD'
 
 export const isConnectSupported = (code: CountryCode): boolean => {
   return ['US', 'CO', 'MX'].includes(code);

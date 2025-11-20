@@ -53,13 +53,7 @@ export default function CampaignDetailScreen() {
 
   const campaignId = params.id as string;
   const handleBackPress = () => {
-    if (router.canGoBack()) {
-      // Si hay historia, ir atrás
-      router.back();
-    } else {
-      // Si no hay historia (llegó por deep link), ir al home
       router.replace('/(auth)/(tabs)/arkHome');
-    }
   };
 
   // Determinar si es campaña propia

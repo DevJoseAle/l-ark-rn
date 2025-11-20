@@ -130,3 +130,40 @@ yarn-error.*
 # PROJECT SPECIFIC
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 app-example
+.expo/
+.expo-shared/
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# Supabase
+supabase/functions/node_modules/
+
+# Config files
+*.config.js
+*.config.ts
+metro.config.js
+
+# Assets
+assets/
+
+# Coverage
+coverage/
+*.lcov
+
+# Environment
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

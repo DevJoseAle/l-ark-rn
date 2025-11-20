@@ -16,6 +16,7 @@ import { useThemeColors } from '@/hooks/use-theme-color';
 import { ThemeColors } from '@/constants/theme';
 import { DonationService } from '@/src/services/donation.service';
 import { useAuthStore } from '@/src/stores/authStore';
+import CheckBox from './CheckBox';
 
 interface DonateModalProps {
   visible: boolean;
@@ -43,7 +44,7 @@ export default function DonateModal({
   const [selectedAmount, setSelectedAmount] = useState(1000); // $10 por defecto (en centavos)
   const [customAmount, setCustomAmount] = useState('');
   const [showCustomInput, setShowCustomInput] = useState(false);
-
+  const [isAnonymous, setIsAnonymous] = useState(false)
   // Montos predefinidos (en centavos)
   const presetAmounts = [
     { label: '$10', value: 1000 },
@@ -215,6 +216,14 @@ export default function DonateModal({
             <Text style={styles.minAmount}>Mínimo: $5 USD</Text>
           </View>
 
+          {/* CHECKBOX */}
+          <View >
+              <CheckBox
+              setFn={()=> setIsAnonymous(!isAnonymous)}
+              isValid={isAnonymous}
+              text='Donacion Anónima'
+              />
+          </View>
           {/* Action Buttons */}
           <View style={styles.actions}>
             {/* Donar Ahora */}

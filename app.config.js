@@ -49,9 +49,7 @@ export default {
       edgeToEdgeEnabled: true,
       predictiveBackGestureEnabled: false,
       package: "com.devjoseale.lark",
-      // ✅ Intent Filters actualizados con Universal Links
       intentFilters: [
-        // Scheme personalizado (lark://)
         {
           action: "VIEW",
           data: [
@@ -62,7 +60,6 @@ export default {
           ],
           category: ["BROWSABLE", "DEFAULT"],
         },
-        // ✅ Universal Links (https://)
         {
           action: "VIEW",
           autoVerify: true,

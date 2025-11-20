@@ -165,7 +165,7 @@ export default function CampaignDetailScreen() {
         {/* HERO IMAGE */}
         <ImageGalleryViewer
           images={mainImage ? [{ uri: mainImage }] : []}
-          style={styles.heroContainer}
+          style={[styles.heroContainer,]}
         >
           <View style={styles.heroContainer}>
             {mainImage ? (
@@ -635,7 +635,7 @@ const styles = StyleSheet.create({
   // Content
   content: {
     paddingHorizontal: 16,
-    marginTop: -20,
+    marginTop: 10,
   },
   titleSection: {
     marginBottom: 20,

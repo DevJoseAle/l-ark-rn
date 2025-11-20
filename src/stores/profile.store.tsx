@@ -72,7 +72,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
   fetchProfile: async () => {
     // Verificar si necesitamos refetch
     if (!get()._shouldRefetch()) {
-      //console.log('📦 Using cached profile data');
+      console.log('📦 Using cached profile data');
       return;
     }
 

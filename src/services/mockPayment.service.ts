@@ -50,7 +50,7 @@ export const MockPaymentService = {
    * @returns Resultado de la compra simulada
    */
   async purchasePro(interval: BillingInterval): Promise<MockPurchaseResult> {
-    //console.log('🎭 [MOCK] Iniciando compra simulada:', interval);
+    console.log('🎭 [MOCK] Iniciando compra simulada:', interval);
 
     // Simula delay de procesamiento
     await simulateNetworkDelay(2000);
@@ -61,14 +61,14 @@ export const MockPaymentService = {
     if (shouldSucceed) {
       const transactionId = generateMockTransactionId();
       
-      //console.log('✅ [MOCK] Compra exitosa:', transactionId);
+      console.log('✅ [MOCK] Compra exitosa:', transactionId);
       
       return {
         success: true,
         transactionId,
       };
     } else {
-      //console.log('❌ [MOCK] Compra fallida (simulación de error)');
+      console.log('❌ [MOCK] Compra fallida (simulación de error)');
       
       return {
         success: false,
@@ -82,7 +82,7 @@ export const MockPaymentService = {
    * En producción, esto consultaría RevenueCat o el store de Apple/Google
    */
   async getSubscriptionInfo(): Promise<MockSubscriptionInfo> {
-    //console.log('🎭 [MOCK] Obteniendo info de suscripción');
+    console.log('🎭 [MOCK] Obteniendo info de suscripción');
 
     await simulateNetworkDelay(500);
 
@@ -101,7 +101,7 @@ export const MockPaymentService = {
    * Simula restaurar compras anteriores
    */
   async restorePurchases(): Promise<MockPurchaseResult> {
-    //console.log('🎭 [MOCK] Restaurando compras');
+    console.log('🎭 [MOCK] Restaurando compras');
 
     await simulateNetworkDelay(1500);
 
@@ -116,7 +116,7 @@ export const MockPaymentService = {
    * Simula cancelar la suscripción
    */
   async cancelSubscription(): Promise<{ success: boolean }> {
-    //console.log('🎭 [MOCK] Cancelando suscripción');
+    console.log('🎭 [MOCK] Cancelando suscripción');
 
     await simulateNetworkDelay(1000);
 
@@ -132,7 +132,7 @@ export const MockPaymentService = {
     campaignId: string,
     interval: BillingInterval = 'monthly'
   ): Promise<MockPurchaseResult> {
-    //console.log('🔧 [DEV] Activando PRO manualmente para testing');
+    console.log('🔧 [DEV] Activando PRO manualmente para testing');
 
     const transactionId = generateMockTransactionId();
 
@@ -152,7 +152,7 @@ export const MockPaymentService = {
     userId: string,
     campaignId: string
   ): Promise<{ success: boolean }> {
-    //console.log('🔧 [DEV] Desactivando PRO (volver a FREE)');
+    console.log('🔧 [DEV] Desactivando PRO (volver a FREE)');
 
     // Aquí llamarías a tu SubscriptionService para actualizar la DB
     

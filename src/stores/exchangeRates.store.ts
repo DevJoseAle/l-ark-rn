@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { ExchangeService } from '../services/exchange.service';
 import { Alert } from 'react-native';
 import { useCampaignStore } from './campaign.store';
+import { CountryCode } from '../types/campaign-create.types';
 
 interface ExchangeRatesStore {
   isLoading: boolean;
@@ -10,6 +11,7 @@ interface ExchangeRatesStore {
   mxnRate:  number;
   clpRate:  number;
   copRate:  number;
+  country: CountryCode;
   goalInMxn: () => number;
   goalInClp: () => number;
   goalInCop: () => number;
@@ -17,6 +19,7 @@ interface ExchangeRatesStore {
   setIsLoading: (isLoading: boolean) => void;
   setHasError: (hasError: boolean) => void;
   getExchangeRates: () => Promise<void>;
+  setCountry: (country: CountryCode) => void;
 
 
 }
@@ -27,6 +30,7 @@ export const useExchangeRatesStore = create<ExchangeRatesStore>((set, get) => ({
     mxnRate:0,
     clpRate:0,
     copRate:0,
+    country: 'US',
     setIsLoading: (isLoading) => set({ isLoading }),
     setHasError: (hasError) => set({ hasError }),
 
@@ -80,6 +84,8 @@ export const useExchangeRatesStore = create<ExchangeRatesStore>((set, get) => ({
                 clpRate: 0,
             });
         }
-    }
+    },
+
+    setCountry: (country: CountryCode) => set({ country }),
 
 }));

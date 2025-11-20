@@ -65,7 +65,7 @@ export function useFilePicker() {
       });
 
       if (result.canceled) {
-        //console.log('Usuario canceló la selección');
+        console.log('Usuario canceló la selección');
         return null;
       }
 
@@ -86,7 +86,7 @@ export function useFilePicker() {
         return null;
       }
 
-      //console.log('✅ Archivo seleccionado desde galería:', file.name);
+      console.log('✅ Archivo seleccionado desde galería:', file.name);
       return file;
 
     } catch (error) {
@@ -116,7 +116,7 @@ export function useFilePicker() {
       });
 
       if (result.canceled) {
-        //console.log('Usuario canceló la selección');
+        console.log('Usuario canceló la selección');
         return null;
       }
 
@@ -137,7 +137,7 @@ export function useFilePicker() {
         return null;
       }
 
-      //console.log('✅ Documento seleccionado:', file.name);
+      console.log('✅ Documento seleccionado:', file.name);
       return file;
 
     } catch (error) {

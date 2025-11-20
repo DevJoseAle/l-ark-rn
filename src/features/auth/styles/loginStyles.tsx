@@ -76,6 +76,7 @@ export const createLoginStyles = (colors: ThemeColors) => StyleSheet.create({
     alignItems: 'flex-start',
     marginBottom: 32,
     paddingHorizontal: 4,
+    
   },
   checkbox: {
     width: 20,

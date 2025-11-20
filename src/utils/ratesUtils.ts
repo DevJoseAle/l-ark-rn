@@ -16,6 +16,20 @@ export const fromUSDtoCurrencyString = (amount: number, country: CountryCode): s
             return Formatters.formatCLPInput(`${amount}`);
     }
 }
+export const fromUSDNumberToCurrencyString = (amount: string, country: CountryCode): string => {
+    const {mxnRate, clpRate, copRate} = useExchangeRatesStore.getState()
+    const newAmount = Number(Formatters.unformatCLP(amount))
+    switch (country) {
+        case 'CL':
+            return Formatters.formatCLPInput(`${newAmount * clpRate}`);
+        case 'MX':
+            return Formatters.formatCLPInput(`${newAmount * mxnRate}`);
+        case 'CO':
+            return Formatters.formatCLPInput(`${newAmount * copRate}`);
+        case 'US':
+            return Formatters.formatCLPInput(`${newAmount}`);
+    }
+}
 export const fromUSDtoCurrencyNumber = (amount: number, country: CountryCode): number => {
     const {mxnRate, clpRate, copRate} = useExchangeRatesStore.getState()
     switch (country) {

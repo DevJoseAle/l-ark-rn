@@ -6,18 +6,18 @@ import CampaignCard from '@/src/components/home/CampaignCard';
 import DonationItem from '@/src/components/home/DonationItem';
 import EmptyState from '@/src/components/home/EmptyState';
 import ErrorState from '@/src/components/home/ErrorState';
+import SelectCountryBottomSheet from '@/src/components/home/SelectCountryBottomSheet';
 import { useHomeData } from '@/src/features/home/useHomeData';
 import { SharingService } from '@/src/services/share.service';
-import { useExchangeRatesStore } from '@/src/stores/exchangeRates.store';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Alert, Platform, RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export default function ArkHomePage() {
   const router = useRouter();
   const colors = useThemeColors();
   const styles = arkHomeStyles(colors);
-  
   const {
     viewState,
     campaignData,
@@ -29,7 +29,6 @@ export default function ArkHomePage() {
   } = useHomeData();
 
   const [refreshing, setRefreshing] = useState(false);
-
   const onRefresh = async () => {
     setRefreshing(true);
     try {
@@ -40,10 +39,15 @@ export default function ArkHomePage() {
       setRefreshing(false);
     }
   };
+  const bottomSheetRef = React.useRef<BottomSheetModal | null>(null);
 
+  const handleBottomSheetOpen = useCallback(() => {
+    bottomSheetRef.current?.present();
+     // 👈 en modals se usa present()
+  }, []);
   const handleShare = async () => {
     // TODO: Implementar share con Expo Sharing
-    //console.log('Share pressed');
+    console.log('Share pressed');
   };
 
   const handleSendLink = async () => {
@@ -109,6 +113,7 @@ export default function ArkHomePage() {
               onShare={handleShare}
               onSendLink={handleSendLink}
               onToggleVisibility={handleToggleVisibility}
+              handleBottomSheetOpen={handleBottomSheetOpen}
             />
 
             {/* Donations Section */}
@@ -152,6 +157,7 @@ export default function ArkHomePage() {
           </View>
           {renderContent()}
         </View>
+        <SelectCountryBottomSheet ref={bottomSheetRef} />
       </SafeAreaView>
     </GradientBackground>
   );

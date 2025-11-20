@@ -165,8 +165,8 @@ export class CampaignCreateService {
     try {
       for (const beneficiary of beneficiaries) {
         // 👇 AGREGA ESTE LOG AQUÍ
-        //console.log('🔍 DEBUG en service - beneficiary.shareType:', beneficiary.shareType);
-        //console.log('🔍 DEBUG en service - beneficiary completo:', JSON.stringify(beneficiary, null, 2));
+        console.log('🔍 DEBUG en service - beneficiary.shareType:', beneficiary.shareType);
+        console.log('🔍 DEBUG en service - beneficiary completo:', JSON.stringify(beneficiary, null, 2));
 
         // 1. Crear beneficiario
         const { data: beneficiaryData, error: beneficiaryError } = await supabase
@@ -240,7 +240,7 @@ export class CampaignCreateService {
 
   private static async processConnectBeneficiaries(campaignId: string): Promise<void> {
     try {
-      //console.log('🔄 Procesando Connect beneficiaries para campaign:', campaignId);
+      console.log('🔄 Procesando Connect beneficiaries para campaign:', campaignId);
 
       const { data, error } = await supabase.functions.invoke(
         'process-campaign-beneficiaries',
@@ -254,7 +254,7 @@ export class CampaignCreateService {
         return;
       }
 
-      //console.log('✅ Beneficiarios Connect procesados:', data);
+      console.log('✅ Beneficiarios Connect procesados:', data);
     } catch (error) {
       console.error('❌ Error en processConnectBeneficiaries:', error);
     }

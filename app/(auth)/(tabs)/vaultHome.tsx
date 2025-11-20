@@ -29,7 +29,7 @@ import { VaultService } from '@/src/services/vault.service';
 import { useAuthStore } from '@/src/stores/authStore';
 import { useStorageStatus, useVaultStore } from '@/src/stores/vault.store';
 import { FileToUpload } from '@/src/types/vault.types';
-import { SafeAreaInsetsContext, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 export default function VaultHomeScreen() {
@@ -87,13 +87,13 @@ export default function VaultHomeScreen() {
    * Inicializar el store al montar la pantalla
    */
   useEffect(() => {
-    //console.log('📱 VaultHomeScreen montado');
+    console.log('📱 VaultHomeScreen montado');
     if (userId) {
       initialize(userId);
     }
 
     return () => {
-      //console.log('📱 VaultHomeScreen desmontado');
+      console.log('📱 VaultHomeScreen desmontado');
     };
   }, [userId]);
 
@@ -140,7 +140,7 @@ export default function VaultHomeScreen() {
     const result = await uploadFile(file);
 
     if (result.success) {
-      //console.log('✅ Upload exitoso');
+      console.log('✅ Upload exitoso');
       setUploadSuccess(true);
     } else {
       console.error('❌ Upload fallido:', result.error);
@@ -176,7 +176,7 @@ export default function VaultHomeScreen() {
    * Handler para abrir preview de un archivo
    */
   const handlePreviewFile = async (file: any) => {
-    //console.log('👁️ Abriendo preview:', file.file_name);
+    console.log('👁️ Abriendo preview:', file.file_name);
 
     // Si es imagen, obtener URL
     if (file.file_type === 'image') {
@@ -192,7 +192,7 @@ export default function VaultHomeScreen() {
    * Handler para descargar un archivo
    */
   const handleDownloadFile = async (file: any) => {
-    //console.log('⬇️ Descargando:', file.file_name);
+    console.log('⬇️ Descargando:', file.file_name);
 
     const result = await VaultService.downloadFile(file);
 

@@ -33,7 +33,7 @@ const STATUS_CONFIG = {
 };
 
 export default function CampaignDetailScreen() {
-  //console.log("Abri1");
+  console.log("Abri1");
   const router = useRouter();
   const params = useLocalSearchParams();
   const colorScheme = useColorScheme();

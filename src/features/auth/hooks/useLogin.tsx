@@ -51,15 +51,15 @@ export const useLogin = (router: any) => {
           .select('id')
           .eq('user_id', existingUser.id)
           .eq('terms_version', CURRENT_TERMS_VERSION)
-          .maybeSingle();
-
+        console.log('Acceptance',acceptance)
         if (accError) {
           console.log('Error verificando aceptación de términos:', accError);
         }
 
         if (acceptance) {
           // Ya aceptó términos actuales → Enviar OTP
-          //console.log('✅ Usuario existente con términos aceptados');
+          console.log('Caí aqui');
+          console.log('✅ Usuario existente con términos aceptados');
           await sendOTP(cleanEmail);
         } else {
           // Debe aceptar nueva versión
@@ -69,7 +69,7 @@ export const useLogin = (router: any) => {
         }
       } else {
         // Usuario nuevo → Mostrar modal de T&C
-        //console.log('📝 Usuario nuevo, mostrando T&C...');
+        console.log('📝 Usuario nuevo, mostrando T&C...');
         setPendingEmail(cleanEmail);
         setShowTermsModal(true);
       }
@@ -150,9 +150,9 @@ const handleConfirm = async () => {
     try {
       // Lógica de verificación
      const response = await authService.verifyOTP(email, code);
-     //console.log(email, code);
-      //console.log('✅ Código verificado:');
-      //console.log("response",response);
+     console.log(email, code);
+      console.log('✅ Código verificado:');
+      console.log("response",response);
       router.replace('/(auth)/(tabs)/arkHome');
       hideLoading();
       Alert.alert('Éxito', 'Código verificado exitosamente');      

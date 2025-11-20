@@ -10,6 +10,7 @@ import { GradientBackground } from '@/src/components/common/GradiendBackground';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useLogin } from '@/src/features/auth/hooks/useLogin';
 import TermsModal from '@/src/components/common/TermsModal';
+import CheckBox from '@/src/components/common/CheckBox';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -71,23 +72,11 @@ export default function LoginScreen() {
         </View>
 
         {/* Checkbox */}
-        <TouchableOpacity
-          style={styles.checkboxContainer}
-          onPress={() => setIsChecked(!isChecked)}
-          activeOpacity={0.7}
-        >
-          <View style={[
-            styles.checkbox,
-            isChecked && styles.checkboxChecked
-          ]}>
-            {isChecked && (
-              <Ionicons name="checkmark" size={16} color={colors.invertedText} />
-            )}
-          </View>
-          <Text style={styles.checkboxText}>
-            Entiendo que, si no existe una cuenta con este correo, se registrará una nueva
-          </Text>
-        </TouchableOpacity>
+        <CheckBox
+          setFn={() => setIsChecked(!isChecked)}
+          isValid={isChecked}
+          text="Entiendo que, si no existe una cuenta con este correo, se registrará una nueva"
+        />
 
         {/* Botón continuar */}
         <TouchableOpacity

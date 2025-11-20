@@ -46,6 +46,7 @@ export const Colors = {
     error: '#F44336',
     warning: '#FF9800',
     info: '#2196F3',
+    disabled: '#a0a0a0ff'
   },
   
   dark: {
@@ -91,6 +92,7 @@ export const Colors = {
     error: '#EF5350',
     warning: '#FFA726',
     info: '#42A5F5',
+    disabled: '#a0a0a0ff'
   },
 };
 

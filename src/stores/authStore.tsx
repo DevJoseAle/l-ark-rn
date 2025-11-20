@@ -43,16 +43,16 @@ export const useAuthStore = create<AuthStore>()(
       }),
       setEmail: (email: string) => set({email}),
       initialize: async () => {
-        //console.log('🔵 Inicializando auth...');
+        console.log('🔵 Inicializando auth...');
         set({ isLoading: true });
         
         try {
           // Supabase recupera la sesión de AsyncStorage automáticamente
           const response = await authService.getSession();
-          //console.log("RESPONSE", {response});
+          console.log("RESPONSE", {response});
           if (response.success && response.data) {
             const session = response.data;
-            //console.log('✅ Sesión encontrada:', session.user.email);
+            console.log('✅ Sesión encontrada:', session.user.email);
             const {kyc_status}  = await UserService.getUserInfo(session.user.id);
             get().setKYCStatus(kyc_status as KYCUserStatus);
             set({ 
@@ -68,18 +68,18 @@ export const useAuthStore = create<AuthStore>()(
             // ✅ Listener para cambios en auth
             authService.onAuthStateChange((session) => {
               if (session?.user) {
-                //console.log('🔄 Auth state cambió:', session.user.email);
+                console.log('🔄 Auth state cambió:', session.user.email);
                 get().setUser({
                   id: session.user.id,
                   email: session.user.email!,
                 });
               } else {
-                //console.log('🔄 Auth state cambió: logout');
+                console.log('🔄 Auth state cambió: logout');
                 get().setUser(null);
               }
             });
           } else {
-            //console.log('❌ No hay sesión activa');
+            console.log('❌ No hay sesión activa');
             set({ isLoading: false });
           }
         } catch (error) {

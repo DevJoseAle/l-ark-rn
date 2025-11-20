@@ -1,5 +1,5 @@
 // src/components/home/CampaignCard.tsx
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,6 +8,9 @@ import { useThemeColors } from '@/hooks/use-theme-color';
 import { CampaignService } from '@/src/services/campaign.service';
 import { useRouter } from 'expo-router';
 import { useCampaignStore } from '@/src/stores/campaign.store';
+import { CountryCode, getCountryFlag, getCurrencyCode } from '@/src/types/campaign-create.types';
+import { useExchangeRatesStore } from '@/src/stores/exchangeRates.store';
+import { fromUSDNumberToCurrencyString } from '@/src/utils/ratesUtils';
 
 interface CampaignCardProps {
   totalRaised: string;
@@ -19,6 +22,7 @@ interface CampaignCardProps {
   onShare?: () => void;
   onSendLink?: () => void;
   onToggleVisibility?: () => void;
+  handleBottomSheetOpen: () => void;
 }
 
 export default function CampaignCard({
@@ -27,23 +31,24 @@ export default function CampaignCard({
   goalAmount,
   percentage,
   isVisible = true,
-  onViewCampaign,
   onShare,
   onSendLink,
-  onToggleVisibility,
+  handleBottomSheetOpen
 }: CampaignCardProps) {
   const theme = useThemeColors();
   const styles = cardCampaignStyles(theme);
   const router = useRouter();
+
+  const country = useExchangeRatesStore(state => state.country)
   const [isBtnActive, setIsBtnActive] = useState(true);
   const {campaign} = useCampaignStore();
   const ownCampaignId = campaign?.id;
-
-const handleViewCampaign = async () => {
-  setIsBtnActive(false);
-  router.push(`/(auth)/campaign/${ownCampaignId}`);
-  setIsBtnActive(true);
-};
+  const handleViewCampaign = async () => {
+    setIsBtnActive(false);
+    router.push(`/(auth)/campaign/${ownCampaignId}`);
+    setIsBtnActive(true);
+  };
+  
   return (
     <LinearGradient
       colors={['#1e3a8a', '#2563eb', '#1e40af']}
@@ -60,20 +65,21 @@ const handleViewCampaign = async () => {
             <Text style={styles.headerLabel}>Estatus Campaña:</Text> 
             <Text style={styles.headerLabel}>{isVisible ? "Visible" : "Oculta"}</Text>
           </View>
-          <Text style={styles.totalAmount}>
-            CLP: {totalRaised}
+            <View style={{flexDirection: 'row'}}>
+            <Text style={styles.totalAmountCode}>
+            {getCurrencyCode(country)}
           </Text>
+          <Text style={styles.totalAmount}>
+            : {fromUSDNumberToCurrencyString(totalRaised, country)}
+          </Text>
+            </View>
         </View>
         
         <TouchableOpacity 
           style={styles.visibilityButton}
-          onPress={onToggleVisibility}
+          onPress={handleBottomSheetOpen}
         >
-          <Ionicons 
-            name={isVisible ? "eye-outline" : "eye-off-outline"} 
-            size={24} 
-            color="rgba(255, 255, 255, 0.8)" 
-          />
+          <Text style={{fontSize: 20, marginLeft: -2}}> {getCountryFlag(country)}</Text>
         </TouchableOpacity>
       </View>
 
@@ -82,8 +88,8 @@ const handleViewCampaign = async () => {
         <Text style={styles.progressLabel}>Tu meta:</Text>
         
         <View style={styles.progressAmounts}>
-          <Text style={styles.currentAmount}>CLP: {currentAmount}</Text>
-          <Text style={styles.goalAmount}>CLP: {goalAmount}</Text>
+          <Text style={styles.currentAmount}>{getCurrencyCode(country)}: {fromUSDNumberToCurrencyString(currentAmount, country)}</Text>
+          <Text style={styles.goalAmount}>{getCurrencyCode(country)}: {fromUSDNumberToCurrencyString(goalAmount, country)}</Text>
         </View>
 
         {/* Progress Bar */}
@@ -141,7 +147,7 @@ const cardCampaignStyles = (color: ThemeColors) => StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   headerLabel: {
     color: color.customWhite,
@@ -151,9 +157,15 @@ const cardCampaignStyles = (color: ThemeColors) => StyleSheet.create({
   },
   totalAmount: {
     color: '#FFFFFF',
-    fontSize: 42,
-    fontWeight: '700',
+    fontSize: 32,
+    fontWeight: '500',
     letterSpacing: -1,
+  },
+  totalAmountCode: {
+    color: '#FFFFFF',
+    fontSize: 32,
+    fontWeight: '500',
+    letterSpacing: 1,
   },
   visibilityButton: {
     width: 44,

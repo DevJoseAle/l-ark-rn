@@ -17,7 +17,6 @@ import { Colors } from '@/constants/theme';
 import { useCreateCampaignStore } from '@/src/stores/createCampaign.store';
 import { Formatters } from '@/src/utils/formatters';
 
-
 type PickerType = 'start' | 'end' | null;
 
 export const DatesSection = () => {

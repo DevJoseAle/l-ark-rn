@@ -2,7 +2,6 @@ import { create } from "zustand";
 import { CampaignService } from "../services/campaign.service";
 import { Campaign, CreateCampaignDTO, UpdateCampaignDTO } from "../types/campaign.types";
 
-
 interface CampaignState {
   // State
   campaign: Campaign | null;
@@ -10,7 +9,7 @@ interface CampaignState {
   error: string | null;
   lastFetchedAt: number | null;
   amountVisibility: boolean;
-  
+
   // Actions
   fetchCampaign: () => Promise<void>;
   createCampaign: (data: CreateCampaignDTO) => Promise<Campaign>;
@@ -31,21 +30,19 @@ export const useCampaignStore = create<CampaignState>((set, get) => ({
 
   // Fetch user campaign
   fetchCampaign: async () => {
-    console.log('fetchCampaign called');
-    set({ isLoading: true, error: null });
-    
+set({ isLoading: true, error: null });
+
     try {
       const campaign = await CampaignService.getUserCampaign();
-      console.log('Campaña',campaign);
-      set({ 
-        campaign, 
+set({
+        campaign,
         isLoading: false,
         lastFetchedAt: Date.now(),
         error: null,
       });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Error al cargar campaña';
-      set({ 
+      set({
         campaign: null,
         isLoading: false,
         error: errorMessage,
@@ -57,10 +54,10 @@ export const useCampaignStore = create<CampaignState>((set, get) => ({
   // Create campaign
   createCampaign: async (data: CreateCampaignDTO) => {
     set({ isLoading: true, error: null });
-    
+
     try {
       const campaign = await CampaignService.createCampaign(data);
-      set({ 
+      set({
         campaign,
         isLoading: false,
         lastFetchedAt: Date.now(),
@@ -69,7 +66,7 @@ export const useCampaignStore = create<CampaignState>((set, get) => ({
       return campaign;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Error al crear campaña';
-      set({ 
+      set({
         isLoading: false,
         error: errorMessage,
       });
@@ -80,24 +77,24 @@ export const useCampaignStore = create<CampaignState>((set, get) => ({
   // Update campaign
   updateCampaign: async (campaignId: string, data: UpdateCampaignDTO) => {
     const previousCampaign = get().campaign;
-    
+
     // Optimistic update
     if (previousCampaign) {
-      set({ 
+      set({
         campaign: { ...previousCampaign, ...data } as Campaign,
       });
     }
-    
+
     try {
       const updatedCampaign = await CampaignService.updateCampaign(campaignId, data);
-      set({ 
+      set({
         campaign: updatedCampaign,
         error: null,
       });
     } catch (error) {
       // Revert on error
       set({ campaign: previousCampaign });
-      
+
       const errorMessage = error instanceof Error ? error.message : 'Error al actualizar campaña';
       set({ error: errorMessage });
       throw error;
@@ -114,18 +111,18 @@ export const useCampaignStore = create<CampaignState>((set, get) => ({
   //   if (!campaign) return;
 
   //   const newVisibility = campaign.visibility === 'public' ? 'private' : 'public';
-    
+
   //   // Optimistic update
-  //   set({ 
+  //   set({
   //     campaign: { ...campaign, visibility: newVisibility },
   //   });
-    
+
   //   try {
   //     await CampaignService.updateVisibility(campaignId, newVisibility);
   //   } catch (error) {
   //     // Revert on error
   //     set({ campaign });
-      
+
   //     const errorMessage = error instanceof Error ? error.message : 'Error al cambiar visibilidad';
   //     set({ error: errorMessage });
   //     throw error;
@@ -135,17 +132,17 @@ export const useCampaignStore = create<CampaignState>((set, get) => ({
   // Delete campaign
   deleteCampaign: async (campaignId: string) => {
     set({ isLoading: true, error: null });
-    
+
     try {
       await CampaignService.deleteCampaign(campaignId);
-      set({ 
+      set({
         campaign: null,
         isLoading: false,
         error: null,
       });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Error al eliminar campaña';
-      set({ 
+      set({
         isLoading: false,
         error: errorMessage,
       });
@@ -155,7 +152,7 @@ export const useCampaignStore = create<CampaignState>((set, get) => ({
 
   // Clear campaign
   clearCampaign: () => {
-    set({ 
+    set({
       campaign: null,
       isLoading: false,
       error: null,

@@ -1,16 +1,13 @@
 // app/(public)/login.tsx
-import { View, Text, TouchableOpacity, TextInput } from 'react-native';
-import React, { useState } from 'react';
-import { useRouter } from 'expo-router';
-import { useThemeColors } from '@/hooks/use-theme-color';
-import { createLoginStyles } from '@/src/features/auth/styles/loginStyles';
-import { useLoadingStore } from '@/src/stores/LoadingStore';
-import { LarkLogo } from '@/src/components/common/LarkLogo';
-import { GradientBackground } from '@/src/components/common/GradiendBackground';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { useLogin } from '@/src/features/auth/hooks/useLogin';
-import TermsModal from '@/src/components/common/TermsModal';
 import CheckBox from '@/src/components/common/CheckBox';
+import { GradientBackground } from '@/src/components/common/GradiendBackground';
+import { LarkLogo } from '@/src/components/common/LarkLogo';
+import TermsModal from '@/src/components/common/TermsModal';
+import { useLogin } from '@/src/features/auth/hooks/useLogin';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { useRouter } from 'expo-router';
+import React from 'react';
+import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -28,8 +25,7 @@ export default function LoginScreen() {
     handleDeclineTerms,
   } = useLogin(router);
 
-  console.log(showTermsModal);
-  return (
+return (
     <GradientBackground>
       <View style={styles.container}>
         {/* Header con botón atrás */}

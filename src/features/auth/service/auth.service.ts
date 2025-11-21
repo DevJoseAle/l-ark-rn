@@ -25,15 +25,14 @@ interface UserExist {
 
 export const authService = {
   loginSendOTP: async (email: string): Promise<AuthServiceResponse<SendOTPData>> => {
-    console.log("SendOTPData email:", email);
-    try {
+try {
       const { data, error } = await supabase.auth.signInWithOtp({
         email,
         options: {
           shouldCreateUser: true,
         },
       });
-      
+
       if (error) throw error;
 
       return {
@@ -52,9 +51,7 @@ export const authService = {
   },
 
   verifyOTP: async (email: string, token: string): Promise<AuthServiceResponse<VerifyOTPData>> => {
-    console.log("Verificando OTP para:", email);
-
-    try {
+try {
       // 1. Verificar OTP
       const { data, error } = await supabase.auth.verifyOtp({
         email,
@@ -67,8 +64,7 @@ export const authService = {
       if (!data.user) {
         throw new Error('No se obtuvo información del usuario');
       }
-      console.log("✅ OTP verificado, usuario autenticado");
-      await authService.ensureUserExists(data.user.id, data.user.email!);
+await authService.ensureUserExists(data.user.id, data.user.email!);
       try {
         // Obtener versión actual de términos
         const { data: currentTerms } = await supabase
@@ -101,17 +97,14 @@ export const authService = {
             // Si aún falla, loguear pero no fallar el login
             console.error('⚠️ Error guardando aceptación de términos:', acceptanceError);
           } else {
-            console.log('✅ Términos aceptados:', currentVersion);
-
-            // Actualizar columna helper en users
+// Actualizar columna helper en users
             await supabase
               .from('users')
               .update({ current_terms_version: currentVersion })
               .eq('id', data.user.id);
           }
         } else {
-          console.log('✅ Usuario ya aceptó términos:', currentVersion);
-        }
+}
       } catch (termsError) {
         // No fallar el login si hay error con términos
         console.error('⚠️ Error procesando términos:', termsError);
@@ -143,24 +136,19 @@ export const authService = {
     const delayMs = 500;
 
     for (let i = 0; i < maxAttempts; i++) {
-      console.log(`🔍 Intento ${i + 1}/${maxAttempts}: Verificando usuario en public.users...`);
-
-      const { data: user, error } = await supabase
+const { data: user, error } = await supabase
         .from('users')
         .select('id')
         .eq('id', userId)
         .maybeSingle();
 
       if (user) {
-        console.log('✅ Usuario encontrado en public.users');
-        return;
+return;
       }
 
       if (i === maxAttempts - 1) {
         // Último intento: crear manualmente
-        console.log('⚠️ Trigger no creó el usuario, creando manualmente...');
-        
-        const { error: insertError } = await supabase
+const { error: insertError } = await supabase
           .from('users')
           .insert({
             id: userId,
@@ -176,8 +164,7 @@ export const authService = {
           throw new Error('No se pudo crear el usuario en la base de datos');
         }
 
-        console.log('✅ Usuario creado manualmente en public.users');
-        return;
+return;
       }
 
       // Esperar antes del siguiente intento

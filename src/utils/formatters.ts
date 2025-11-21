@@ -28,9 +28,8 @@ export class Formatters {
   static formatCLPInput(value: string): string {
 
     const cleaned = this.unformatCLP(value);
-    console.log('desde cleaned',cleaned)
-    if (!cleaned) return '';
-    
+if (!cleaned) return '';
+
     const num = parseInt(cleaned, 10);
     return num.toLocaleString('es-CL');
   }

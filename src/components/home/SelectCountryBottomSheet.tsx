@@ -77,9 +77,6 @@ const styles = StyleSheet.create({
 
 export default SelectCountryBottomSheet;
 
-
-
-
 interface ListItemProps {
   country: any,
   setCty: any,

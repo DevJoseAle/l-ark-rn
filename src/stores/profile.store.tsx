@@ -4,15 +4,15 @@ import { create } from 'zustand';
 import { supabase } from '../lib/supabaseClient';
 import { ProfileService } from '../services/profile.service';
 import {
-    BeneficiaryAccount,
-    KYCDocument,
-    ProfileAlerts,
-    ProfileBeneficiaryCampaign,
-    ProfileCampaign,
-    ProfileStats,
-    ProfileSummary,
-    UpdateProfileDTO,
-    UserProfile,
+  BeneficiaryAccount,
+  KYCDocument,
+  ProfileAlerts,
+  ProfileBeneficiaryCampaign,
+  ProfileCampaign,
+  ProfileStats,
+  ProfileSummary,
+  UpdateProfileDTO,
+  UserProfile,
 } from '../types/profile.types';
 
 interface ProfileState {
@@ -22,22 +22,22 @@ interface ProfileState {
   beneficiaryAccount: BeneficiaryAccount | null;
   ownedCampaigns: ProfileCampaign[];
   beneficiaryCampaigns: ProfileBeneficiaryCampaign[];
-  
+
   // Computed
   alerts: ProfileAlerts | null;
   stats: ProfileStats | null;
-  
+
   // Loading states
   isLoading: boolean;
   isUpdating: boolean;
   isRefreshing: boolean;
-  
+
   // Error
   error: string | null;
-  
+
   // Cache
   lastFetch: number | null;
-  
+
   // Actions
   fetchProfile: () => Promise<void>;
   updateProfile: (updates: UpdateProfileDTO) => Promise<boolean>;
@@ -45,7 +45,7 @@ interface ProfileState {
   refreshConnectStatus: () => Promise<void>;
   logout: () => Promise<void>;
   clearError: () => void;
-  
+
   // Internal
   _setProfileData: (summary: ProfileSummary) => void;
   _shouldRefetch: () => boolean;
@@ -72,8 +72,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
   fetchProfile: async () => {
     // Verificar si necesitamos refetch
     if (!get()._shouldRefetch()) {
-      console.log('📦 Using cached profile data');
-      return;
+return;
     }
 
     set({ isLoading: true, error: null });
@@ -90,9 +89,9 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
       }
     } catch (error: any) {
       console.error('❌ Error fetching profile:', error);
-      set({ 
+      set({
         error: error.message || 'Error al cargar el perfil',
-        isLoading: false 
+        isLoading: false
       });
     }
   },
@@ -121,7 +120,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
 
       if (data) {
         // Actualizar con data del servidor
-        set({ 
+        set({
           user: data,
           isUpdating: false,
         });
@@ -131,14 +130,14 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
       return false;
     } catch (error: any) {
       console.error('❌ Error updating profile:', error);
-      
+
       // Rollback optimistic update
       set({
         user: previousUser,
         error: error.message || 'Error al actualizar el perfil',
         isUpdating: false,
       });
-      
+
       return false;
     }
   },
@@ -166,7 +165,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
           ownedCampaigns: owned,
           beneficiaryCampaigns: beneficiary,
         };
-        
+
         const newStats = ProfileService.calculateStats(summary);
         set({ stats: newStats });
       }
@@ -183,7 +182,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
   refreshConnectStatus: async () => {
     try {
       const account = await ProfileService.getConnectStatus();
-      
+
       set({ beneficiaryAccount: account });
 
       // Recalcular alerts
@@ -196,7 +195,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
           ownedCampaigns: currentState.ownedCampaigns,
           beneficiaryCampaigns: currentState.beneficiaryCampaigns,
         };
-        
+
         const newAlerts = ProfileService.calculateAlerts(summary);
         set({ alerts: newAlerts });
       }
@@ -209,7 +208,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
   logout: async () => {
     try {
       await supabase.auth.signOut();
-      
+
       // Limpiar todo el state
       set({
         user: null,
@@ -257,13 +256,13 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
   // Internal: Check if should refetch
   _shouldRefetch: () => {
     const { lastFetch, isLoading } = get();
-    
+
     // No refetch si ya está cargando
     if (isLoading) return false;
-    
+
     // Refetch si nunca ha cargado
     if (!lastFetch) return true;
-    
+
     // Refetch si el cache está stale
     const now = Date.now();
     return now - lastFetch > CACHE_DURATION;
@@ -274,34 +273,34 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
 export const profileSelectors = {
   // Verificar si necesita completar KYC
   needsKYC: (state: ProfileState) => state.alerts?.needsKYC || false,
-  
+
   // Verificar si necesita completar Connect
   needsConnect: (state: ProfileState) => state.alerts?.needsConnect || false,
-  
+
   // Verificar si KYC fue rechazado
   isKYCRejected: (state: ProfileState) => state.alerts?.kycRejected || false,
-  
+
   // Verificar si Connect fue rechazado
   isConnectRejected: (state: ProfileState) => state.alerts?.connectRejected || false,
-  
+
   // Obtener status de KYC
   kycStatus: (state: ProfileState) => state.user?.kyc_status || 'kyc_pending',
-  
+
   // Obtener status de Connect
-  connectStatus: (state: ProfileState) => 
+  connectStatus: (state: ProfileState) =>
     state.beneficiaryAccount?.connect_status || null,
-  
+
   // Verificar si es beneficiario
-  isBeneficiary: (state: ProfileState) => 
+  isBeneficiary: (state: ProfileState) =>
     state.beneficiaryCampaigns.length > 0,
-  
+
   // Verificar si tiene campañas
-  hasOwnedCampaigns: (state: ProfileState) => 
+  hasOwnedCampaigns: (state: ProfileState) =>
     state.ownedCampaigns.length > 0,
-  
+
   // Obtener país
   country: (state: ProfileState) => state.user?.country || null,
-  
+
   // Verificar si el país soporta Connect
   countrySupportsConnect: (state: ProfileState) => {
     const country = state.user?.country;

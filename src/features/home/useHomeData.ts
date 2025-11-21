@@ -1,9 +1,7 @@
-import { UserService } from "@/src/services/user.service";
-import { useAuthStore } from "@/src/stores/authStore";
 import { useCampaignStore } from "@/src/stores/campaign.store";
 import { useDonationStore } from "@/src/stores/donation.store";
 import { useExchangeRatesStore } from "@/src/stores/exchangeRates.store";
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export type HomeViewState = 'loading' | 'error' | 'empty' | 'success';
 
@@ -28,11 +26,8 @@ export function useHomeData() {
 
   // Load initial data
   useEffect(() => {
-    console.log('Antes de load');
-    loadData();
-    console.log('Despues de load');
-
-  }, []);
+loadData();
+}, []);
 
   // Update view state based on campaign and loading states
   useEffect(() => {
@@ -83,7 +78,7 @@ export function useHomeData() {
       await loadData();
       return;
     }
-    
+
     try {
       await Promise.all([
         fetchCampaign(),

@@ -9,7 +9,6 @@ import { LarkLogo } from '@/src/components/common/LarkLogo';
 import { createOTPStyles } from '@/src/features/auth/styles/otpStyles';
 import { useOTPForm } from '@/src/features/auth/hooks/useLogin';
 
-
 export default function OTPScreen() {
   const router = useRouter();
   const colors = useThemeColors();

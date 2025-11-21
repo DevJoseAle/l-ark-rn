@@ -41,7 +41,6 @@ export const useLogin = (router: any) => {
       if (error && error.code !== 'PGRST116') {
         throw error;
       }
-      console.log(error);
       hideLoading();
 
       if (existingUser) {
@@ -51,25 +50,19 @@ export const useLogin = (router: any) => {
           .select('id')
           .eq('user_id', existingUser.id)
           .eq('terms_version', CURRENT_TERMS_VERSION)
-        console.log('Acceptance',acceptance)
         if (accError) {
-          console.log('Error verificando aceptación de términos:', accError);
         }
 
         if (acceptance) {
           // Ya aceptó términos actuales → Enviar OTP
-          console.log('Caí aqui');
-          console.log('✅ Usuario existente con términos aceptados');
-          await sendOTP(cleanEmail);
+await sendOTP(cleanEmail);
         } else {
           // Debe aceptar nueva versión
-          console.log('📝 Usuario debe aceptar términos actualizados');
           setPendingEmail(cleanEmail);
           setShowTermsModal(true);
         }
       } else {
         // Usuario nuevo → Mostrar modal de T&C
-        console.log('📝 Usuario nuevo, mostrando T&C...');
         setPendingEmail(cleanEmail);
         setShowTermsModal(true);
       }
@@ -129,18 +122,17 @@ export const useLogin = (router: any) => {
 };
 // src/features/auth/hooks/useAuthForm.ts
 
-
 export function useOTPForm(length: number = 6, router: Router) {
-     const { showLoading, hideLoading } = useLoadingStore();
-     const {email} = useAuthStore();
+  const { showLoading, hideLoading } = useLoadingStore();
+  const { email } = useAuthStore();
   const [otp, setOtp] = useState<string[]>(Array(length).fill(''));
   const inputRefs = useRef<Array<TextInput | null>>([]);
   const isCodeComplete = useMemo(() => {
     return isValidOTPArray(otp);
   }, [otp]);
-const handleConfirm = async () => {
+  const handleConfirm = async () => {
     const code = otp.join('');
-    
+
     if (code.length !== 6) {
       Alert.alert('Error', 'Por favor ingresa el código completo');
       return;
@@ -149,13 +141,10 @@ const handleConfirm = async () => {
     showLoading('Verificando código...');
     try {
       // Lógica de verificación
-     const response = await authService.verifyOTP(email, code);
-     console.log(email, code);
-      console.log('✅ Código verificado:');
-      console.log("response",response);
-      router.replace('/(auth)/(tabs)/arkHome');
+      const response = await authService.verifyOTP(email, code);
+router.replace('/(auth)/(tabs)/arkHome');
       hideLoading();
-      Alert.alert('Éxito', 'Código verificado exitosamente');      
+      Alert.alert('Éxito', 'Código verificado exitosamente');
     } catch (error) {
       console.error('❌ Error:', error);
       Alert.alert('Error', 'Código inválido');
@@ -163,7 +152,7 @@ const handleConfirm = async () => {
     }
   };
 
-    const handleResend = async () => {
+  const handleResend = async () => {
     showLoading('Reenviando código...');
     try {
       await authService.loginSendOTP(email);
@@ -211,5 +200,4 @@ const handleConfirm = async () => {
     handleOtpChange
   };
 }
-
 

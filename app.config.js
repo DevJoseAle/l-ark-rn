@@ -1,155 +1,154 @@
-// app.config.js
-console.log("Cargando configuración de Expo...");
+
 export default {
   expo: {
-    name: "L-ark",
-    slug: "L-ark",
-    version: "1.0.0",
-    orientation: "portrait",
-    icon: "./assets/images/icon.png",
-    scheme: "lark",
-    userInterfaceStyle: "automatic",
+    name: 'L-ark',
+    slug: 'L-ark',
+    version: '1.0.0',
+    orientation: 'portrait',
+    icon: './assets/images/icon.png',
+    scheme: 'lark',
+    userInterfaceStyle: 'automatic',
     newArchEnabled: true,
     splash: {
-      image: "./assets/images/Logo_lark.png",
-      resizeMode: "contain",
-      backgroundColor: "#F8FBFF"
+      image: './assets/images/Logo_lark.png',
+      resizeMode: 'contain',
+      backgroundColor: '#F8FBFF'
     },
     
     ios: {
       supportsTablet: true,
-      bundleIdentifier: "com.devjoseale.lark",
-      // ✅ Universal Links para iOS
+      bundleIdentifier: 'com.devjoseale.lark',
+      
       associatedDomains: [
-        "applinks:l-ark.app",
-        "applinks:www.l-ark.app"
+        'applinks:l-ark.app',
+        'applinks:www.l-ark.app'
       ],
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false
       },
       splash: {
-        image: "./assets/images/Logo_lark.png",
-        resizeMode: "contain",
-        backgroundColor: "#F8FBFF",
+        image: './assets/images/Logo_lark.png',
+        resizeMode: 'contain',
+        backgroundColor: '#F8FBFF',
         dark: {
-          image: "./assets/images/Logo_lark.png",
-          resizeMode: "contain",
-          backgroundColor: "#1E2A36"
+          image: './assets/images/Logo_lark.png',
+          resizeMode: 'contain',
+          backgroundColor: '#1E2A36'
         }
       }
     },
     
     android: {
       adaptiveIcon: {
-        backgroundColor: "#E6F4FE",
-        foregroundImage: "./assets/images/icon.png",
-        backgroundImage: "./assets/images/icon.png",
-        monochromeImage: "./assets/images/icon.png"
+        backgroundColor: '#E6F4FE',
+        foregroundImage: './assets/images/icon.png',
+        backgroundImage: './assets/images/icon.png',
+        monochromeImage: './assets/images/icon.png'
       },
       edgeToEdgeEnabled: true,
       predictiveBackGestureEnabled: false,
-      package: "com.devjoseale.lark",
+      package: 'com.devjoseale.lark',
       intentFilters: [
         {
-          action: "VIEW",
+          action: 'VIEW',
           data: [
             {
-              scheme: "lark",
-              host: "campaign",
+              scheme: 'lark',
+              host: 'campaign',
             },
           ],
-          category: ["BROWSABLE", "DEFAULT"],
+          category: ['BROWSABLE', 'DEFAULT'],
         },
         {
-          action: "VIEW",
+          action: 'VIEW',
           autoVerify: true,
           data: [
             {
-              scheme: "https",
-              host: "l-ark.app",
-              pathPrefix: "/campaign"
+              scheme: 'https',
+              host: 'l-ark.app',
+              pathPrefix: '/campaign'
             },
             {
-              scheme: "https",
-              host: "www.l-ark.app",
-              pathPrefix: "/campaign"
+              scheme: 'https',
+              host: 'www.l-ark.app',
+              pathPrefix: '/campaign'
             }
           ],
-          category: ["BROWSABLE", "DEFAULT"],
+          category: ['BROWSABLE', 'DEFAULT'],
         },
       ],
       splash: {
-        image: "./assets/images/Logo_lark.png",
-        resizeMode: "contain",
-        backgroundColor: "#F8FBFF",
+        image: './assets/images/Logo_lark.png',
+        resizeMode: 'contain',
+        backgroundColor: '#F8FBFF',
         dark: {
-          image: "./assets/images/Logo_lark.png",
-          resizeMode: "contain",
-          backgroundColor: "#1E2A36"
+          image: './assets/images/Logo_lark.png',
+          resizeMode: 'contain',
+          backgroundColor: '#1E2A36'
         }
       }
     },
     
     web: {
-      output: "static",
-      favicon: "./assets/images/favicon.png",
+      output: 'static',
+      favicon: './assets/images/favicon.png',
       splash: {
-        image: "./assets/images/Logo_lark.png",
-        resizeMode: "contain",
-        backgroundColor: "#F8FBFF"
+        image: './assets/images/Logo_lark.png',
+        resizeMode: 'contain',
+        backgroundColor: '#F8FBFF'
       }
     },
     
     plugins: [
-      "expo-router",
+      'expo-router',
       [
-        "expo-web-browser",
+        'expo-web-browser',
         {
           experimentalLauncherActivity: true
         }
       ],
       [
-        "expo-splash-screen",
+        'expo-splash-screen',
         {
-          image: "./assets/images/Logo_lark.png",
+          image: './assets/images/Logo_lark.png',
           imageWidth: 200,
-          resizeMode: "contain",
-          backgroundColor: "#F8FBFF",
+          resizeMode: 'contain',
+          backgroundColor: '#F8FBFF',
           dark: {
-            image: "./assets/images/Logo_lark.png",
-            backgroundColor: "#1E2A36"
+            image: './assets/images/Logo_lark.png',
+            backgroundColor: '#1E2A36'
           }
         }
       ],
       [
-        "expo-camera",
+        'expo-camera',
         {
-          cameraPermission: "Necesitamos acceso a tu cámara para verificar tu identidad mediante fotos de tu documento y selfie",
+          cameraPermission: 'Necesitamos acceso a tu cámara para verificar tu identidad mediante fotos de tu documento y selfie',
           microphonePermission: false
         }
       ],
       [
-        "expo-image-picker",
+        'expo-image-picker',
         {
-          photosPermission: "Necesitamos acceso a tus fotos para subir imágenes a campañas y la Bóveda"
+          photosPermission: 'Necesitamos acceso a tus fotos para subir imágenes a campañas y la Bóveda'
         }
       ],
       [
-        "expo-document-picker",
+        'expo-document-picker',
         {
-          iCloudContainerEnvironment: "Production"
+          iCloudContainerEnvironment: 'Production'
         }
       ],
       [
-        "expo-local-authentication",
+        'expo-local-authentication',
         {
-          faceIDPermission: "Usamos Face ID para proteger tu Bóveda"
+          faceIDPermission: 'Usamos Face ID para proteger tu Bóveda'
         }
       ],
       [
-        "expo-iap",
+        'expo-iap',
         {
-          appleTeamId: "G2VZD86Z48"
+          appleTeamId: 'G2VZD86Z48'
         }
       ]
     ],
@@ -164,7 +163,7 @@ export default {
       supabaseAnonKey: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY,
       router: {},
       eas: {
-        projectId: "476ac01a-5600-4fa9-9c91-1689daa93e04"
+        projectId: '476ac01a-5600-4fa9-9c91-1689daa93e04'
       }
     }
   }

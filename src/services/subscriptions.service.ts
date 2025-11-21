@@ -17,8 +17,6 @@ export const SubscriptionService = {
     campaignId: string
   ): Promise<VaultSubscription | null> {
     try {
-      console.log('🔍 Buscando suscripción para:', { userId, campaignId });
-
       // 1. Intentar obtener suscripción existente
       const { data: existing, error: fetchError } = await supabase
         .from('vault_subscriptions')
@@ -34,13 +32,10 @@ export const SubscriptionService = {
 
       // 2. Si existe, retornarla
       if (existing) {
-        console.log('✅ Suscripción encontrada:', existing.plan_type);
         return existing as VaultSubscription;
       }
 
       // 3. Si no existe, crear una FREE automáticamente
-      console.log('📝 Creando suscripción FREE automática...');
-
       const { data: newSubscription, error: createError } = await supabase
         .from('vault_subscriptions')
         .insert({
@@ -62,7 +57,6 @@ export const SubscriptionService = {
         throw createError;
       }
 
-      console.log('✅ Suscripción FREE creada:', newSubscription.id);
       return newSubscription as VaultSubscription;
     } catch (error) {
       console.error('❌ Error en getOrCreateSubscription:', error);
@@ -79,7 +73,6 @@ export const SubscriptionService = {
     interval: BillingInterval
   ): Promise<{ success: boolean; error?: string }> {
     try {
-      console.log('⬆️ Actualizando a PRO:', { subscriptionId, interval });
 
       // 1. Procesar pago (mock o real)
       let transactionId: string | undefined;
@@ -87,7 +80,7 @@ export const SubscriptionService = {
       if (IS_MOCK_PAYMENTS_ENABLED) {
         // Modo desarrollo: usar mock
         const mockResult = await MockPaymentService.purchasePro(interval);
-        
+
         if (!mockResult.success) {
           return {
             success: false,
@@ -108,7 +101,7 @@ export const SubscriptionService = {
       // 2. Actualizar suscripción en la DB
       const periodStart = new Date();
       const periodEnd = new Date();
-      
+
       if (interval === 'monthly') {
         periodEnd.setMonth(periodEnd.getMonth() + 1);
       } else {
@@ -135,7 +128,6 @@ export const SubscriptionService = {
         throw error;
       }
 
-      console.log('✅ Suscripción actualizada a PRO:', data.id);
 
       return { success: true };
     } catch (error: any) {
@@ -152,7 +144,6 @@ export const SubscriptionService = {
    */
   async cancelSubscription(subscriptionId: string): Promise<{ success: boolean; error?: string }> {
     try {
-      console.log('🚫 Cancelando suscripción:', subscriptionId);
 
       // 1. Si es mock, usar el método de cancelación mock
       if (IS_MOCK_PAYMENTS_ENABLED) {
@@ -177,8 +168,6 @@ export const SubscriptionService = {
         console.error('❌ Error cancelando suscripción:', error);
         throw error;
       }
-
-      console.log('✅ Suscripción cancelada (downgrade a FREE)');
 
       return { success: true };
     } catch (error: any) {
@@ -208,13 +197,12 @@ export const SubscriptionService = {
    */
   async hasCampaign(userId: string): Promise<{ hasCampaign: boolean; campaignId?: string }> {
     try {
-        console.log("entre");
       const { data, error } = await supabase
         .from('campaigns')
         .select('id')
         .eq('owner_user_id', userId)
         .maybeSingle();
-        
+
       if (error) throw error;
 
       if (data) {
@@ -285,11 +273,9 @@ export const SubscriptionService = {
       return { success: false };
     }
 
-    console.log('🔧 [DEV] Activando PRO sin pago...');
-
     const periodStart = new Date();
     const periodEnd = new Date();
-    
+
     if (interval === 'monthly') {
       periodEnd.setMonth(periodEnd.getMonth() + 1);
     } else {
@@ -313,8 +299,6 @@ export const SubscriptionService = {
       console.error('❌ Error activando PRO (dev):', error);
       return { success: false };
     }
-
-    console.log('✅ [DEV] PRO activado manualmente');
     return { success: true };
   },
 };

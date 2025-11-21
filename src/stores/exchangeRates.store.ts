@@ -21,7 +21,6 @@ interface ExchangeRatesStore {
   getExchangeRates: () => Promise<void>;
   setCountry: (country: CountryCode) => void;
 
-
 }
 
 export const useExchangeRatesStore = create<ExchangeRatesStore>((set, get) => ({
@@ -58,7 +57,6 @@ export const useExchangeRatesStore = create<ExchangeRatesStore>((set, get) => ({
         }
         return copRate * goalAmount
      },
-
 
     //Gets
     getExchangeRates: async () => {

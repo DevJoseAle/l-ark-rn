@@ -17,7 +17,6 @@ import { Colors } from '@/constants/theme';
 import { ImageUploadService } from '@/src/services/imageUpload.service';
 import { LocalImage } from '@/src/types/campaign-create.types';
 
-
 interface ImagePickerSectionProps {
   title: string;
   images: LocalImage[];

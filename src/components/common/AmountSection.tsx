@@ -1,20 +1,19 @@
 // src/components/campaign/AmountsSection.tsx
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  useColorScheme,
-  TouchableOpacity,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/theme';
 import { useCreateCampaignStore } from '@/src/stores/createCampaign.store';
-import { Formatters } from '@/src/utils/formatters';
 import { getCurrencyCode } from '@/src/types/campaign-create.types';
 import { HARD_CAP_AMOUNTS_BY_COUNTRY, MAX_AMOUNTS_BY_COUNTRY, SOFT_CAP_AMOUNTS_BY_COUNTRY } from '@/src/utils/campaingConstants';
+import { Formatters } from '@/src/utils/formatters';
 import { fromUSDtoCurrencyString } from '@/src/utils/ratesUtils';
+import { Ionicons } from '@expo/vector-icons';
+import React, { useEffect, useState } from 'react';
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  useColorScheme,
+  View
+} from 'react-native';
 
 export const AmountsSection = () => {
   const colorScheme = useColorScheme();
@@ -56,12 +55,11 @@ export const AmountsSection = () => {
     setSoftCapDisplay('')
     setHardCapDisplay('')
   }, [formData.country])
-  
+
   // Handlers con formateo
   const handleGoalChange = (text: string) => {
     const cleaned = Formatters.unformatCLP(text);
-    console.log('formateo', cleaned);
-    setGoalDisplay(Formatters.formatCLPInput(cleaned));
+setGoalDisplay(Formatters.formatCLPInput(cleaned));
     setGoalAmount(cleaned);
   };
 

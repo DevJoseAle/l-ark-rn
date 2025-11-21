@@ -37,25 +37,22 @@ export const useAuthStore = create<AuthStore>()(
       kycStatus: KYCUserStatus.PENDING,
 
       setKYCStatus: (status: KYCUserStatus) => set({ kycStatus: status }),
-      setUser: (user) => set({ 
-        user, 
-        isAuthenticated: !!user 
+      setUser: (user) => set({
+        user,
+        isAuthenticated: !!user
       }),
       setEmail: (email: string) => set({email}),
       initialize: async () => {
-        console.log('🔵 Inicializando auth...');
-        set({ isLoading: true });
-        
+set({ isLoading: true });
+
         try {
           // Supabase recupera la sesión de AsyncStorage automáticamente
           const response = await authService.getSession();
-          console.log("RESPONSE", {response});
-          if (response.success && response.data) {
+if (response.success && response.data) {
             const session = response.data;
-            console.log('✅ Sesión encontrada:', session.user.email);
-            const {kyc_status}  = await UserService.getUserInfo(session.user.id);
+const {kyc_status}  = await UserService.getUserInfo(session.user.id);
             get().setKYCStatus(kyc_status as KYCUserStatus);
-            set({ 
+            set({
               user: {
                 id: session.user.id,
                 email: session.user.email!,
@@ -68,19 +65,16 @@ export const useAuthStore = create<AuthStore>()(
             // ✅ Listener para cambios en auth
             authService.onAuthStateChange((session) => {
               if (session?.user) {
-                console.log('🔄 Auth state cambió:', session.user.email);
-                get().setUser({
+get().setUser({
                   id: session.user.id,
                   email: session.user.email!,
                 });
               } else {
-                console.log('🔄 Auth state cambió: logout');
-                get().setUser(null);
+get().setUser(null);
               }
             });
           } else {
-            console.log('❌ No hay sesión activa');
-            set({ isLoading: false });
+set({ isLoading: false });
           }
         } catch (error) {
           console.error('❌ Error inicializando auth:', error);
@@ -90,16 +84,16 @@ export const useAuthStore = create<AuthStore>()(
 
       logout: async () => {
         await authService.signOut();
-        set({ 
-          user: null, 
-          isAuthenticated: false 
+        set({
+          user: null,
+          isAuthenticated: false
         });
       },
     }),
     {
       name: 'auth-storage',
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: (state) => ({ 
+      partialize: (state) => ({
         user: state.user,
         isAuthenticated: state.isAuthenticated,
         kycStatus: state.kycStatus

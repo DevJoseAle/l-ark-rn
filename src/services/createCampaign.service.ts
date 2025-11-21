@@ -3,7 +3,6 @@ import { CreateCampaignFormData, UploadedImage } from "../types/campaign-create.
 import { Campaign } from "../types/campaign.types";
 import { ImageUploadService } from "./imageUpload.service";
 
-
 export class CampaignCreateService {
   /**
    * Crear campaña completa (con imágenes y beneficiarios)
@@ -59,7 +58,7 @@ export class CampaignCreateService {
 
             if (formData.country === 'US' || formData.country === 'CO' || formData.country === 'MX') {
       onProgress?.('Configurando pagos automáticos', 85);
-      
+
       // Fire-and-forget (no esperamos resultado)
       this.processConnectBeneficiaries(campaign.id).catch((err) => {
         console.error('Error background processing Connect:', err);
@@ -81,7 +80,6 @@ export class CampaignCreateService {
     }
   }
 
-
   /**
    * Insertar campaña en la base de datos
    */
@@ -91,8 +89,7 @@ export class CampaignCreateService {
   ): Promise<Campaign> {
     try {
 
-      console.log(formData.country, typeof formData.country);
-      const { data, error } = await supabase
+const { data, error } = await supabase
         .from('campaigns')
         .insert({
           owner_user_id: userId,
@@ -165,8 +162,7 @@ export class CampaignCreateService {
     try {
       for (const beneficiary of beneficiaries) {
         // 👇 AGREGA ESTE LOG AQUÍ
-        console.log('🔍 DEBUG en service - beneficiary.shareType:', beneficiary.shareType);
-        console.log('🔍 DEBUG en service - beneficiary completo:', JSON.stringify(beneficiary, null, 2));
+
 
         // 1. Crear beneficiario
         const { data: beneficiaryData, error: beneficiaryError } = await supabase
@@ -240,9 +236,7 @@ export class CampaignCreateService {
 
   private static async processConnectBeneficiaries(campaignId: string): Promise<void> {
     try {
-      console.log('🔄 Procesando Connect beneficiaries para campaign:', campaignId);
-
-      const { data, error } = await supabase.functions.invoke(
+const { data, error } = await supabase.functions.invoke(
         'process-campaign-beneficiaries',
         {
           body: { campaignId },
@@ -254,12 +248,10 @@ export class CampaignCreateService {
         return;
       }
 
-      console.log('✅ Beneficiarios Connect procesados:', data);
-    } catch (error) {
+} catch (error) {
       console.error('❌ Error en processConnectBeneficiaries:', error);
     }
   }
-
 
 }
 

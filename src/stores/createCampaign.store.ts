@@ -7,7 +7,6 @@ import { useExchangeRatesStore } from "./exchangeRates.store";
 import { fromCurrencyToUSDNumber } from "../utils/ratesUtils";
 import { Formatters } from "../utils/formatters";
 
-
 interface CreateCampaignStore {
   // State
   formData: CreateCampaignFormData;
@@ -361,7 +360,6 @@ export const useCreateCampaignStore = create<CreateCampaignStore>((set, get) => 
       case 'CO': return `${MIN_AMOUNTS_BY_COUNTRY.CO * copRate}`;
     }
   },
-
 
   // Reset
   reset: () => {

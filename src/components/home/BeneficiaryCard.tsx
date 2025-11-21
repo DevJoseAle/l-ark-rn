@@ -19,7 +19,6 @@ import { ImageUploadService } from '@/src/services/imageUpload.service';
 import { useCreateCampaignStore } from '@/src/stores/createCampaign.store';
 import { CampaignBeneficiary, LocalImage } from '@/src/types/campaign-create.types';
 
-
 interface BeneficiaryCardProps {
     beneficiary: CampaignBeneficiary;
 }

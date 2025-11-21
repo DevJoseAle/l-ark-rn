@@ -15,7 +15,6 @@ import { CreateCampaignFormData } from '@/src/types/campaign-create.types';
 import { Colors } from '@/constants/theme';
 import { useCreateCampaignStore } from '@/src/stores/createCampaign.store';
 
-
 type VisibilityOption = CreateCampaignFormData['visibility'];
 type DistributionOption = CreateCampaignFormData['distributionRule'];
 

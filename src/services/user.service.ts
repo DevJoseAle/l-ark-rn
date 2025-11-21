@@ -1,6 +1,5 @@
 import { supabase } from "../lib/supabaseClient";
 
-
 export class UserService {
     static async getUserInfo(id: string) {
         try {

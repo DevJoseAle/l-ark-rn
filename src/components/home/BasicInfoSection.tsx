@@ -12,7 +12,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/theme';
 import { useCreateCampaignStore } from '@/src/stores/createCampaign.store';
 
-
 export const BasicInfoSection = () => {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];

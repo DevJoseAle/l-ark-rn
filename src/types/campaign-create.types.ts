@@ -167,7 +167,6 @@ export const COUNTRIES = [
 
 export type CountryCode = typeof COUNTRIES[number]['code'];
 
-
 export const getCountryName = (code: CountryCode): string => {
   return COUNTRIES.find(c => c.code === code)?.name || code;
 };

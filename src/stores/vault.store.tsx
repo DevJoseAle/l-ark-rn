@@ -72,16 +72,13 @@ export const useVaultStore = create<VaultState>((set, get) => ({
    */
   initialize: async (userId: string) => {
     try {
-      console.log('🚀 Inicializando VaultStore para:', userId);
-
-      // 1. Verificar si tiene campaña
+// 1. Verificar si tiene campaña
       const { hasCampaign, campaignId } = await SubscriptionService.hasCampaign(userId);
 
       set({ hasCampaign, campaignId });
 
       if (!hasCampaign || !campaignId) {
-        console.log('⚠️ Usuario sin campaña, no se puede cargar bóveda');
-        return;
+return;
       }
 
       // 2. Cargar suscripción
@@ -90,8 +87,7 @@ export const useVaultStore = create<VaultState>((set, get) => ({
       // 3. Cargar archivos
       await get().fetchFiles(userId, campaignId);
 
-      console.log('✅ VaultStore inicializado correctamente');
-    } catch (error) {
+} catch (error) {
       console.error('❌ Error inicializando VaultStore:', error);
       set({ error: 'Error al inicializar la bóveda' });
     }
@@ -101,8 +97,7 @@ export const useVaultStore = create<VaultState>((set, get) => ({
    * Resetea el store al estado inicial
    */
   reset: () => {
-    console.log('🔄 Reseteando VaultStore');
-    set(initialState);
+set(initialState);
   },
 
   /**
@@ -115,12 +110,11 @@ export const useVaultStore = create<VaultState>((set, get) => ({
       const files = await VaultService.getFiles(userId, campaignId);
 
       set({ files, isLoadingFiles: false });
-      console.log(`✅ ${files.length} archivos cargados`);
-    } catch (error) {
+} catch (error) {
       console.error('❌ Error cargando archivos:', error);
-      set({ 
-        error: 'Error al cargar los archivos', 
-        isLoadingFiles: false 
+      set({
+        error: 'Error al cargar los archivos',
+        isLoadingFiles: false
       });
     }
   },
@@ -163,8 +157,7 @@ export const useVaultStore = create<VaultState>((set, get) => ({
         // Refrescar suscripción para actualizar storage_used_bytes
         await get().refreshSubscription();
 
-        console.log('✅ Archivo subido exitosamente:', result.file.file_name);
-      } else {
+} else {
         set({ isUploading: false, error: result.error || 'Error al subir' });
       }
 
@@ -197,8 +190,7 @@ export const useVaultStore = create<VaultState>((set, get) => ({
         // Refrescar suscripción para actualizar storage_used_bytes
         await get().refreshSubscription();
 
-        console.log('✅ Archivo eliminado exitosamente');
-        return true;
+return true;
       } else {
         // Rollback: volver a cargar archivos si falló
         const state = get();
@@ -245,21 +237,20 @@ export const useVaultStore = create<VaultState>((set, get) => ({
           subscription.storage_quota_bytes
         );
 
-        set({ 
-          subscription, 
+        set({
+          subscription,
           storageQuota,
-          isLoadingSubscription: false 
+          isLoadingSubscription: false
         });
 
-        console.log('✅ Suscripción cargada:', subscription.plan_type);
-      } else {
+} else {
         throw new Error('No se pudo obtener la suscripción');
       }
     } catch (error) {
       console.error('❌ Error cargando suscripción:', error);
-      set({ 
-        error: 'Error al cargar la suscripción', 
-        isLoadingSubscription: false 
+      set({
+        error: 'Error al cargar la suscripción',
+        isLoadingSubscription: false
       });
     }
   },
@@ -287,8 +278,7 @@ export const useVaultStore = create<VaultState>((set, get) => ({
         // Refrescar suscripción para obtener datos actualizados
         await get().refreshSubscription();
 
-        console.log('✅ Actualizado a PRO exitosamente');
-        return true;
+return true;
       } else {
         set({ error: result.error || 'Error al actualizar a PRO' });
         return false;
@@ -322,8 +312,7 @@ export const useVaultStore = create<VaultState>((set, get) => ({
         // Refrescar suscripción para obtener datos actualizados
         await get().refreshSubscription();
 
-        console.log('✅ Suscripción cancelada exitosamente');
-        return true;
+return true;
       } else {
         set({ error: result.error || 'Error al cancelar la suscripción' });
         return false;
@@ -363,10 +352,9 @@ export const useVaultStore = create<VaultState>((set, get) => ({
   },
 }));
 
-
 export const useVaultPlan = () => {
   const subscription = useVaultStore(state => state.subscription);
-  
+
   return {
     isFree: subscription?.plan_type === 'free',
     isPro: subscription?.plan_type === 'pro' || subscription?.plan_type === 'standard',
@@ -380,7 +368,7 @@ export const useVaultPlan = () => {
  */
 export const useStorageStatus = () => {
   const storageQuota = useVaultStore(state => state.storageQuota);
-  
+
   return {
     quota: storageQuota,
     isNearLimit: storageQuota?.isNearLimit || false,

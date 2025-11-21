@@ -50,7 +50,6 @@ export default function CampaignDetailScreen() {
   const [error, setError] = useState<string | null>(null);
   const [showDonateModal, setShowDonateModal] = useState(false);
 
-
   const campaignId = params.id as string;
   const handleBackPress = () => {
       router.replace('/(auth)/(tabs)/arkHome');
@@ -209,7 +208,6 @@ export default function CampaignDetailScreen() {
             </View>
           </View>
         </ImageGalleryViewer>
-
 
         {/* CONTENT */}
         <View style={styles.content}>

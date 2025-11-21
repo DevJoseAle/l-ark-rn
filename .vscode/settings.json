@@ -24,7 +24,6 @@
     "source.organizeImports": "explicit",
     "source.sortMembers": "explicit"
   },
-  {
   "editor.formatOnSave": true,
   "editor.formatOnPaste": true,
   "eslint.validate": [
@@ -57,4 +56,4 @@
   "eslint.alwaysShowStatus": true,
   "eslint.format.enable": true
 }
-}
+

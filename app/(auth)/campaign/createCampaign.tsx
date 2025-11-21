@@ -70,12 +70,7 @@ const handleCancel = () => {
 };
 
   const handleSubmit = async () => {
-      console.log('🔍 Beneficiarios en store:', 
-    formData.beneficiaries.map(b => ({
-      name: b.user.display_name,
-      shareType: b.shareType, // 👈 Debe ser 'percent' o 'fixed_amount'
-    }))
-  );
+     
     // Validar formulario
     const isValid = validateForm();
     if (!isValid) {
@@ -98,7 +93,7 @@ const handleCancel = () => {
             try {
               setSubmitError(null);
               await submitCampaign();
-              
+
               // Success - navegar a home o a la campaña
               Alert.alert(
                 '¡Campaña creada!',
@@ -193,7 +188,6 @@ const handleCancel = () => {
             </View>
           )}
 
-   
           {/* ETAPA 3: Fechas */}
           <View style={styles.section}>
             <DatesSection />
@@ -254,7 +248,7 @@ const handleCancel = () => {
         onCancel={handleCancelSubmit}
       />
       {/* {__DEV__ && (
-  <TouchableOpacity 
+  <TouchableOpacity
     onPress={() => {
       reset();
       Alert.alert('Reset', 'Formulario reseteado');

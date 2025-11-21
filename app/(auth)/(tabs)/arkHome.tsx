@@ -47,8 +47,7 @@ export default function ArkHomePage() {
   }, []);
   const handleShare = async () => {
     // TODO: Implementar share con Expo Sharing
-    console.log('Share pressed');
-  };
+};
 
   const handleSendLink = async () => {
     try {
@@ -86,7 +85,7 @@ export default function ArkHomePage() {
         if (!campaignData) return null;
 
         return (
-          <ScrollView 
+          <ScrollView
             style={styles.scrollView}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={[
@@ -120,7 +119,7 @@ export default function ArkHomePage() {
             {donations.length > 0 && (
               <View style={styles.donationsSection}>
                 <Text style={styles.donationsTitle}>Donaciones:</Text>
-                
+
                 {donations.map((donation) => (
                   <DonationItem
                     key={donation.id}
@@ -171,47 +170,47 @@ function formatAmount(amount: number): string {
 }
 
 const arkHomeStyles = (color: ThemeColors) => StyleSheet.create({
-  safeArea: { 
-    flex: 1 
+  safeArea: {
+    flex: 1
   },
-  container: { 
-    flex: 1 
+  container: {
+    flex: 1
   },
-  header: { 
-    paddingHorizontal: 20, 
-    paddingTop: 20, 
-    paddingBottom: 10 
+  header: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 10
   },
-  headerTitle: { 
-    color: color.text, 
-    fontSize: 34, 
+  headerTitle: {
+    color: color.text,
+    fontSize: 34,
     fontWeight: '700',
     letterSpacing: -0.5,
   },
-  scrollView: { 
-    flex: 1 
+  scrollView: {
+    flex: 1
   },
-  scrollContent: { 
+  scrollContent: {
     // paddingBottom agregado dinámicamente
   },
-  donationsSection: { 
-    paddingHorizontal: 20, 
-    marginTop: 32 
+  donationsSection: {
+    paddingHorizontal: 20,
+    marginTop: 32
   },
-  donationsTitle: { 
-    color: color.text, 
-    fontSize: 22, 
-    fontWeight: '700', 
-    marginBottom: 16 
+  donationsTitle: {
+    color: color.text,
+    fontSize: 22,
+    fontWeight: '700',
+    marginBottom: 16
   },
-  centerContent: { 
-    flex: 1, 
-    justifyContent: 'center', 
-    alignItems: 'center' 
+  centerContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
-  loadingText: { 
-    color: color.text, 
-    fontSize: 16 
+  loadingText: {
+    color: color.text,
+    fontSize: 16
   },
   emptyDonations: {
     paddingHorizontal: 20,

@@ -246,9 +246,9 @@ PODS:
   - ExpoHead (6.0.10):
     - ExpoModulesCore
     - RNScreens
-  - ExpoIap (3.1.35):
+  - ExpoIap (3.1.26):
     - ExpoModulesCore
-    - openiap (~> 1.2.39)
+    - openiap (~> 1.2.32)
   - ExpoImage (3.0.9):
     - ExpoModulesCore
     - libavif/libdav1d
@@ -2797,7 +2797,7 @@ SPEC CHECKSUMS:
   ExpoFont: 86ceec09ffed1c99cfee36ceb79ba149074901b5
   ExpoHaptics: 807476b0c39e9d82b7270349d6487928ce32df84
   ExpoHead: b1843315be5ef6751b4ecb2404b3effffbb33d96
-  ExpoIap: 805b71b800e6199ac8130de657b05decf535a29f
+  ExpoIap: 132a58b025ec12516923db2eda39739e54b584e9
   ExpoImage: 6356eb13d3a076a991cf191e4bb22cca91a8f317
   ExpoImageManipulator: ead6e7cca441603bfaecc898a69a093adef8b4ef
   ExpoImagePicker: d251aab45a1b1857e4156fed88511b278b4eee1c

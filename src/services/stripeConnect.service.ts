@@ -1,6 +1,5 @@
 import { supabase } from "../lib/supabaseClient";
 
-
 export class StripeConnectService {
   /**
    * Crear Connected Account para un beneficiario
@@ -55,11 +54,5 @@ export class StripeConnectService {
     throw error;
   }
 }
-
-
-
-
-
-
 
 }

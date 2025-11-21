@@ -5,7 +5,6 @@ import { getStorageBarColor, formatBytes } from '@/src/utils/vaultUtils';
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-
 /**
  * Barra de progreso que muestra el uso de almacenamiento
  */

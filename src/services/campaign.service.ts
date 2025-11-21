@@ -1,7 +1,6 @@
 import { supabase } from "../lib/supabaseClient";
 import { Campaign, CampaignDetail, CampaignSearchResult, CampaignStats, CreateCampaignDTO, UpdateCampaignDTO } from "../types/campaign.types";
 
-
 export class CampaignService {
   /**
    * Obtiene la campaña del usuario actual
@@ -20,10 +19,7 @@ export class CampaignService {
         .select('*')
         .eq('owner_user_id', user.id)
         .maybeSingle();
-        console.log({
-          data, error, user: user.id
-        });
-      if (error) {
+if (error) {
         // Si no encuentra campaña, devolver null (no es error)
         if (error.code === 'PGRST116') {
           return null;
@@ -113,8 +109,7 @@ export class CampaignService {
     visibility: Campaign['visibility']
   ): Promise<Campaign> {
     try {
-      console.log('pase');
-      return await this.updateCampaign(campaignId, { visibility });
+return await this.updateCampaign(campaignId, { visibility });
     } catch (error) {
       console.error('Error al actualizar visibilidad:', error);
       throw error;
@@ -188,8 +183,7 @@ export class CampaignService {
  * Obtener campaña del usuario actual
  */
   static async getCurrentUserCampaign(): Promise<CampaignDetail | null> {
-    console.log("Entré loco");
-    try {
+try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         throw new Error('Usuario no autenticado');
@@ -243,7 +237,7 @@ export class CampaignService {
    */
   static async getCampaignById(campaignId: string): Promise<CampaignDetail | null> {
 
-    const isLongOrLargeId = campaignId.length > 7 ? 'id' : 'short_code'; 
+    const isLongOrLargeId = campaignId.length > 7 ? 'id' : 'short_code';
     try {
       const { data, error } = await supabase
         .from('campaigns')

@@ -1,4 +1,4 @@
-// https://docs.expo.dev/guides/using-eslint/
+
 const { defineConfig } = require('eslint/config');
 const expoConfig = require('eslint-config-expo/flat');
 
@@ -22,16 +22,16 @@ module.exports = {
   },
   plugins: ['@typescript-eslint', 'react', 'react-hooks', 'react-native'],
   rules: {
-    // 🚫 Prohibir console.logs en producción
+    
     'no-console': ['warn', { allow: ['warn', 'error'] }],
     
-    // 🚫 Prohibir debugger
-    'no-debugger': 'error',
     
-    // 🚫 Prohibir alert
+    'no-': 'error',
+    
+    
     'no-alert': 'warn',
     
-    // ✅ TypeScript
+    
     '@typescript-eslint/no-unused-vars': [
       'error',
       {
@@ -43,19 +43,19 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/no-non-null-assertion': 'warn',
     
-    // ✅ React
+    
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
     'react/display-name': 'off',
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
     
-    // ✅ React Native
+    
     'react-native/no-unused-styles': 'warn',
     'react-native/no-inline-styles': 'warn',
     'react-native/no-color-literals': 'off',
     
-    // ✅ Mejores prácticas
+    
     'prefer-const': 'error',
     'no-var': 'error',
     'eqeqeq': ['error', 'always'],

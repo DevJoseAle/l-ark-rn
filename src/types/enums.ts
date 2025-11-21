@@ -2,7 +2,6 @@
 
 import { Constants } from "@/supabaseTypes/supabase";
 
-
 // Extraer todos los enums que necesites
 export type CountryCodeForInsert = typeof Constants.public.Enums.country_code[number];
 export type CampaignStatus = typeof Constants.public.Enums.campaign_status[number];

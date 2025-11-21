@@ -117,7 +117,6 @@ export default function EditProfileScreen() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
 
-
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}

@@ -1,15 +1,15 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    RefreshControl,
-    ScrollView,
-    Share,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  RefreshControl,
+  ScrollView,
+  Share,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 import { GradientBackground } from '@/src/components/common/GradiendBackground';
@@ -30,7 +30,6 @@ import { useAuthStore } from '@/src/stores/authStore';
 import { useStorageStatus, useVaultStore } from '@/src/stores/vault.store';
 import { FileToUpload } from '@/src/types/vault.types';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
 
 export default function VaultHomeScreen() {
   const {
@@ -87,14 +86,12 @@ export default function VaultHomeScreen() {
    * Inicializar el store al montar la pantalla
    */
   useEffect(() => {
-    console.log('📱 VaultHomeScreen montado');
-    if (userId) {
+if (userId) {
       initialize(userId);
     }
 
     return () => {
-      console.log('📱 VaultHomeScreen desmontado');
-    };
+};
   }, [userId]);
 
   /**
@@ -140,8 +137,7 @@ export default function VaultHomeScreen() {
     const result = await uploadFile(file);
 
     if (result.success) {
-      console.log('✅ Upload exitoso');
-      setUploadSuccess(true);
+setUploadSuccess(true);
     } else {
       console.error('❌ Upload fallido:', result.error);
       setUploadError(result.error || 'Error al subir el archivo');
@@ -176,9 +172,7 @@ export default function VaultHomeScreen() {
    * Handler para abrir preview de un archivo
    */
   const handlePreviewFile = async (file: any) => {
-    console.log('👁️ Abriendo preview:', file.file_name);
-
-    // Si es imagen, obtener URL
+// Si es imagen, obtener URL
     if (file.file_type === 'image') {
       const url = await VaultService.getFilePreviewUrl(file.storage_path);
       setPreviewImageUrl(url);
@@ -192,9 +186,7 @@ export default function VaultHomeScreen() {
    * Handler para descargar un archivo
    */
   const handleDownloadFile = async (file: any) => {
-    console.log('⬇️ Descargando:', file.file_name);
-
-    const result = await VaultService.downloadFile(file);
+const result = await VaultService.downloadFile(file);
 
     if (result.success && result.localUri) {
       Alert.alert(
@@ -314,7 +306,6 @@ export default function VaultHomeScreen() {
       {/* Error banner */}
       <SafeAreaView style={{ flex: 1 }}>
 
-     
       {error && (
         <View style={styles.errorBanner}>
           <Text style={styles.errorText}>⚠️ {error}</Text>

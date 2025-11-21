@@ -1,7 +1,7 @@
 // src/services/sharing.service.ts
 
-import { Share, Platform } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
+import { Platform, Share } from 'react-native';
 import { Campaign } from '../types/campaign.types';
 
 export interface CampaignShareData {
@@ -48,8 +48,6 @@ export class SharingService {
                 message += `Meta: ${this.formatAmount(data.goal_amount!, data.currency)}\n\n\n${url}`;
             }
 
-
-
             const result = await Share.share({
                 message: Platform.OS === 'ios' ? message : message,
                 url: Platform.OS === 'ios' ? url : undefined,
@@ -57,11 +55,9 @@ export class SharingService {
             });
 
             if (result.action === Share.sharedAction) {
-                console.log('✅ Campaña compartida exitosamente');
-                return true;
+return true;
             } else if (result.action === Share.dismissedAction) {
-                console.log('ℹ️ Usuario canceló el compartir');
-                return false;
+return false;
             }
 
             return false;
@@ -78,8 +74,7 @@ export class SharingService {
         try {
             const url = this.generateCampaignLink(shortCode);
             await Clipboard.setStringAsync(url);
-            console.log('✅ Link copiado al portapapeles');
-        } catch (error) {
+} catch (error) {
             console.error('❌ Error al copiar link:', error);
             throw new Error('No se pudo copiar el link');
         }
@@ -99,8 +94,7 @@ export class SharingService {
 
             // En tu app, abrirías esto con Linking.openURL(whatsappUrl)
             // pero aquí solo retornamos el URL para que lo uses
-            console.log('WhatsApp URL:', whatsappUrl);
-        } catch (error) {
+} catch (error) {
             console.error('❌ Error al compartir en WhatsApp:', error);
             throw new Error('No se pudo compartir en WhatsApp');
         }

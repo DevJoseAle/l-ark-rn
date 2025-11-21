@@ -2,7 +2,6 @@ import { useExchangeRatesStore } from "../stores/exchangeRates.store";
 import { CountryCode } from "../types/campaign-create.types";
 import { Formatters } from "./formatters";
 
-
 export const fromUSDtoCurrencyString = (amount: number, country: CountryCode): string => {
     const {mxnRate, clpRate, copRate} = useExchangeRatesStore.getState()
     switch (country) {

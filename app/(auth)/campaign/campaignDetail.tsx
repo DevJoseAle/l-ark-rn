@@ -10,16 +10,16 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    Dimensions,
-    Image,
-    ScrollView,
-    Share,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    useColorScheme,
-    View,
+  ActivityIndicator,
+  Dimensions,
+  Image,
+  ScrollView,
+  Share,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useColorScheme,
+  View,
 } from 'react-native';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -33,8 +33,7 @@ const STATUS_CONFIG = {
 };
 
 export default function CampaignDetailScreen() {
-  console.log("Abri1");
-  const router = useRouter();
+const router = useRouter();
   const params = useLocalSearchParams();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
@@ -53,8 +52,8 @@ export default function CampaignDetailScreen() {
     try {
       setIsLoading(true);
       setError(null);
-      
-      const data = campaignId 
+
+      const data = campaignId
         ? await CampaignService.getCampaignById(campaignId)
         : await CampaignService.getCurrentUserCampaign();
 

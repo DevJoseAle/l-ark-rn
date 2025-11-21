@@ -8,7 +8,6 @@ import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';
 import { Alert } from 'react-native';
 
-
 /**
  * Hook para manejar la selección de archivos desde galería o file picker
  */
@@ -65,8 +64,7 @@ export function useFilePicker() {
       });
 
       if (result.canceled) {
-        console.log('Usuario canceló la selección');
-        return null;
+return null;
       }
 
       const asset = result.assets[0];
@@ -86,8 +84,7 @@ export function useFilePicker() {
         return null;
       }
 
-      console.log('✅ Archivo seleccionado desde galería:', file.name);
-      return file;
+return file;
 
     } catch (error) {
       console.error('❌ Error abriendo galería:', error);
@@ -116,8 +113,7 @@ export function useFilePicker() {
       });
 
       if (result.canceled) {
-        console.log('Usuario canceló la selección');
-        return null;
+return null;
       }
 
       const doc = result.assets[0];
@@ -137,8 +133,7 @@ export function useFilePicker() {
         return null;
       }
 
-      console.log('✅ Documento seleccionado:', file.name);
-      return file;
+return file;
 
     } catch (error) {
       console.error('❌ Error abriendo document picker:', error);

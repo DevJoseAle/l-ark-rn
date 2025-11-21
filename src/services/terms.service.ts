@@ -2,7 +2,6 @@
 
 import { supabase } from "../lib/supabaseClient";
 
-
 export const TermsService = {
   /**
    * Guardar aceptación de términos
@@ -20,8 +19,7 @@ export const TermsService = {
       if (error) {
         // Si ya existe (UNIQUE constraint), está ok
         if (error.code === '23505') {
-          console.log('⚠️ Usuario ya aceptó esta versión');
-          return true;
+return true;
         }
         throw error;
       }
@@ -32,8 +30,7 @@ export const TermsService = {
         .update({ current_terms_version: version })
         .eq('id', userId);
 
-      console.log('✅ Términos aceptados:', version);
-      return true;
+return true;
     } catch (error) {
       console.error('Error guardando aceptación:', error);
       return false;

@@ -71,8 +71,7 @@ export class CampaignValidations {
     const numAmount = parseFloat(amount);
     const maxAmount = fromUSDtoCurrencyNumber(MAX_AMOUNTS_BY_COUNTRY[country || 'US'], country || 'US')
     const minAmount = fromUSDtoCurrencyNumber(MIN_AMOUNTS_BY_COUNTRY[country || 'US'], country || 'US')
-    console.log('VALIDATEGOAL----', country, '->', {minAmount, maxAmount, numAmount});
-    if (isNaN(numAmount) || numAmount <= 0) {
+if (isNaN(numAmount) || numAmount <= 0) {
       return {
         field: 'goalAmount',
         message: 'Ingresa un monto válido',
@@ -106,14 +105,7 @@ export class CampaignValidations {
     const maxAmount = fromUSDtoCurrencyNumber(MAX_AMOUNTS_BY_COUNTRY[country || 'US'], country || 'US')
     const minAmount = fromUSDtoCurrencyNumber(MIN_AMOUNTS_BY_COUNTRY[country || 'US'], country || 'US')
 
-        console.log('ValidateSoftCap',{
-      numSoftCap,
-      numGoalAmount,
-      country,
-      maxAmount,
-      minAmount,
-    });
-    if (isNaN(numSoftCap) || numSoftCap <= 0) {
+if (isNaN(numSoftCap) || numSoftCap <= 0) {
       return {
         field: 'softCap',
         message: 'La meta mínima es requerida',
@@ -150,14 +142,7 @@ export class CampaignValidations {
     const maxAmount = fromUSDtoCurrencyNumber(MAX_AMOUNTS_BY_COUNTRY[country || 'US'], country || 'US')
     const minAmount = fromUSDtoCurrencyNumber(MIN_AMOUNTS_BY_COUNTRY[country || 'US'], country || 'US')
 
-    console.log('ValidateHardCap',{
-      numHardCap,
-      numGoalAmount,
-      country,
-      maxAmount,
-      minAmount,
-    });
-    if (isNaN(numHardCap) || numHardCap <= 0) {
+if (isNaN(numHardCap) || numHardCap <= 0) {
       return {
         field: 'hardCap',
         message: 'Ingresa un monto válido',
@@ -276,8 +261,7 @@ export class CampaignValidations {
 
   static validateCountry(country: string): ValidationError | null {
     const validCountries = ['US', 'CO', 'MX', 'CL'];
-    console.log('VALIDATE COUNTRY ----', country);
-    if (!country || country.trim().length === 0) {
+if (!country || country.trim().length === 0) {
       return {
         field: 'country',
         message: 'Debes seleccionar el país de la campaña',
@@ -329,7 +313,7 @@ export class CampaignValidations {
     // Validar que cada beneficiario tenga documentos
     for (let i = 0; i < beneficiaries.length; i++) {
       const beneficiary = beneficiaries[i];
-      
+
       if (!beneficiary.documents || beneficiary.documents.length === 0) {
         return {
           field: `beneficiaries[${i}].documents`,
@@ -387,7 +371,7 @@ export class CampaignValidations {
         // 👇 NUEVA: Validar país
     const countryError = this.validateCountry(formData.country);
     if (countryError) errors.push(countryError);
-    
+
     // Validar imágenes de diagnóstico
     const diagnosisError = this.validateDiagnosisImages(
       formData.hasDiagnosis,

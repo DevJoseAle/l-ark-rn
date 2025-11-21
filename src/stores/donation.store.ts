@@ -2,7 +2,6 @@ import { create } from "zustand";
 import { DonationService } from "../services/donation.service";
 import { DonationListItem } from "../types/donation.types";
 
-
 interface DonationState {
   // State
   donations: DonationListItem[];

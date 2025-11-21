@@ -3,7 +3,6 @@ import { getPayoutMode, COUNTRIES } from "@/src/types/campaign-create.types";
 import { View, ScrollView, Text, StyleSheet } from "react-native";
 import { CountryButton } from "./BeneficiariesSection";
 
-
 export const CountrySelector: React.FC = () => {
   const country = useCreateCampaignStore((state) => state.formData.country);
   const setCountry = useCreateCampaignStore((state) => state.setCountry);

@@ -2,7 +2,6 @@
 
 import { VaultPlanType, PlanDetails } from "../types/vault.types";
 
-
 /**
  * Límites y configuración de la bóveda
  */

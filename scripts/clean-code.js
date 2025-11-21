@@ -2,7 +2,7 @@
 
 /**
  * Script de limpieza de código para L-ark
- * Remueve: console.logs, comentarios, debuggers
+ * Remueve SOLO: console.logs marcados con "// erase"
  * Uso: node scripts/clean-code.js [--dry-run]
  */
 
@@ -16,19 +16,13 @@ const writeFile = promisify(fs.writeFile);
 // Configuración
 const CONFIG = {
   extensions: ['.ts', '.tsx', '.js', '.jsx'],
-  excludeDirs: ['node_modules', '.expo', 'dist', 'build', 'supabase/functions'],
-  removeConsole: true,
-  removeComments: true,
-  removeDebugger: true,
-  preserveComments: ['@ts-', '@eslint-', 'TODO:', 'FIXME:', 'NOTE:'],
+  excludeDirs: ['node_modules', '.expo', 'dist', 'build', 'supabase/functions', 'scripts'],
 };
 
 // Estadísticas
 const stats = {
   filesProcessed: 0,
-  consolesRemoved: 0,
-  commentsRemoved: 0,
-  debuggersRemoved: 0,
+  linesRemoved: 0,
 };
 
 // Colores para terminal
@@ -52,87 +46,26 @@ const log = {
 };
 
 /**
- * Remover console.logs
+ * Remover SOLO líneas con "// erase console.log(...)"
  */
-function removeConsoleLogs(content) {
+function removeMarkedConsoleLogs(content) {
   let removed = 0;
 
-  // console.log(...) - single line
-  content = content.replace(/console\.log\([^)]*\);?\s*/g, () => {
+  // Regex para encontrar líneas con: // erase console.log(...)
+  // Captura cualquier indentación y el comentario completo
+  const regex = /^[ \t]*\/\/\s*erase\s+console\.log\([^)]*\);?\s*[\r\n]*/gm;
+
+  content = content.replace(regex, () => {
     removed++;
     return '';
   });
 
-  // console.log(...) - multiline
-  content = content.replace(/console\.log\([^)]*[\s\S]*?\);?\s*/g, () => {
-    removed++;
-    return '';
-  });
-
-  stats.consolesRemoved += removed;
+  stats.linesRemoved += removed;
   return content;
 }
 
 /**
- * Remover comentarios preservando algunos importantes
- */
-function removeComments(content) {
-  let removed = 0;
-
-  // Guardar comentarios importantes
-  const preservedComments = [];
-  const preserveRegex = new RegExp(
-    CONFIG.preserveComments.map(p => `(${p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`).join('|')
-  );
-
-  // Single-line comments //
-  content = content.replace(/\/\/.*$/gm, (match) => {
-    if (preserveRegex.test(match)) {
-      const placeholder = `__PRESERVED_COMMENT_${preservedComments.length}__`;
-      preservedComments.push(match);
-      return placeholder;
-    }
-    removed++;
-    return '';
-  });
-
-  // Multi-line comments /* */
-  content = content.replace(/\/\*[\s\S]*?\*\//g, (match) => {
-    if (preserveRegex.test(match)) {
-      const placeholder = `__PRESERVED_COMMENT_${preservedComments.length}__`;
-      preservedComments.push(match);
-      return placeholder;
-    }
-    removed++;
-    return '';
-  });
-
-  // Restaurar comentarios preservados
-  preservedComments.forEach((comment, index) => {
-    content = content.replace(`__PRESERVED_COMMENT_${index}__`, comment);
-  });
-
-  stats.commentsRemoved += removed;
-  return content;
-}
-
-/**
- * Remover debuggers
- */
-function removeDebuggers(content) {
-  let removed = 0;
-
-  content = content.replace(/debugger;?\s*/g, () => {
-    removed++;
-    return '';
-  });
-
-  stats.debuggersRemoved += removed;
-  return content;
-}
-
-/**
- * Limpiar líneas vacías múltiples
+ * Limpiar líneas vacías múltiples (máximo 2 seguidas)
  */
 function cleanEmptyLines(content) {
   return content.replace(/\n{3,}/g, '\n\n');
@@ -146,20 +79,10 @@ async function processFile(filePath, dryRun = false) {
     let content = await readFile(filePath, 'utf8');
     const originalContent = content;
 
-    // Aplicar transformaciones
-    if (CONFIG.removeConsole) {
-      content = removeConsoleLogs(content);
-    }
+    // Remover líneas marcadas
+    content = removeMarkedConsoleLogs(content);
 
-    if (CONFIG.removeComments) {
-      content = removeComments(content);
-    }
-
-    if (CONFIG.removeDebugger) {
-      content = removeDebuggers(content);
-    }
-
-    // Limpiar líneas vacías
+    // Limpiar líneas vacías múltiples
     content = cleanEmptyLines(content);
 
     // Escribir si hay cambios
@@ -210,7 +133,7 @@ async function main() {
   const dryRun = args.includes('--dry-run');
   const targetDir = args.find(arg => !arg.startsWith('--')) || './';
 
-  console.log('\n🧹 L-ark Code Cleaner\n');
+  console.log('\n🧹 L-ark Code Cleaner - Modo Seguro\n');
 
   if (dryRun) {
     log.warning('Modo DRY RUN - No se modificarán archivos');
@@ -218,15 +141,7 @@ async function main() {
 
   log.info(`Buscando archivos en: ${path.resolve(targetDir)}`);
   log.info(`Extensiones: ${CONFIG.extensions.join(', ')}`);
-
-  console.log('\nConfiguraciones:');
-  log.stat('  Remover console.logs', CONFIG.removeConsole ? 'Sí' : 'No');
-  log.stat('  Remover comentarios', CONFIG.removeComments ? 'Sí' : 'No');
-  log.stat('  Remover debuggers', CONFIG.removeDebugger ? 'Sí' : 'No');
-
-  if (CONFIG.preserveComments.length > 0) {
-    log.stat('  Preservar comentarios', CONFIG.preserveComments.join(', '));
-  }
+  log.info(`Patrón a eliminar: "// erase console.log(...)"`);
 
   console.log('\n');
 
@@ -241,9 +156,7 @@ async function main() {
   console.log('='.repeat(50));
 
   log.stat('Archivos procesados', stats.filesProcessed);
-  log.stat('Console.logs removidos', stats.consolesRemoved);
-  log.stat('Comentarios removidos', stats.commentsRemoved);
-  log.stat('Debuggers removidos', stats.debuggersRemoved);
+  log.stat('Líneas eliminadas', stats.linesRemoved);
   log.stat('Tiempo total', `${(endTime - startTime) / 1000}s`);
 
   console.log('\n');

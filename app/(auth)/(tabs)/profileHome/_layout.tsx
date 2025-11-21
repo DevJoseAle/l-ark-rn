@@ -1,4 +1,3 @@
-
 import { Stack } from 'expo-router';
 
 export default function ProfileLayout() {
@@ -22,10 +21,10 @@ export default function ProfileLayout() {
         name="index"
         options={{
           title: 'Perfil',
-          headerShown: false
+          headerShown: false,
         }}
       />
-      
+
       <Stack.Screen
         name="edit"
         options={{
@@ -34,21 +33,20 @@ export default function ProfileLayout() {
           headerShown: false, // Usamos header custom en la pantalla
         }}
       />
-      
+
       <Stack.Screen
         name="kyc-details"
         options={{
           title: 'Verificación KYC',
         }}
       />
-      
+
       <Stack.Screen
         name="connect-details"
         options={{
           title: 'Stripe Connect',
         }}
       />
-      
     </Stack>
   );
 }

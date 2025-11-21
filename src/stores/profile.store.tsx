@@ -72,7 +72,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
   fetchProfile: async () => {
     // Verificar si necesitamos refetch
     if (!get()._shouldRefetch()) {
-return;
+      return;
     }
 
     set({ isLoading: true, error: null });
@@ -91,7 +91,7 @@ return;
       console.error('❌ Error fetching profile:', error);
       set({
         error: error.message || 'Error al cargar el perfil',
-        isLoading: false
+        isLoading: false,
       });
     }
   },
@@ -287,16 +287,13 @@ export const profileSelectors = {
   kycStatus: (state: ProfileState) => state.user?.kyc_status || 'kyc_pending',
 
   // Obtener status de Connect
-  connectStatus: (state: ProfileState) =>
-    state.beneficiaryAccount?.connect_status || null,
+  connectStatus: (state: ProfileState) => state.beneficiaryAccount?.connect_status || null,
 
   // Verificar si es beneficiario
-  isBeneficiary: (state: ProfileState) =>
-    state.beneficiaryCampaigns.length > 0,
+  isBeneficiary: (state: ProfileState) => state.beneficiaryCampaigns.length > 0,
 
   // Verificar si tiene campañas
-  hasOwnedCampaigns: (state: ProfileState) =>
-    state.ownedCampaigns.length > 0,
+  hasOwnedCampaigns: (state: ProfileState) => state.ownedCampaigns.length > 0,
 
   // Obtener país
   country: (state: ProfileState) => state.user?.country || null,

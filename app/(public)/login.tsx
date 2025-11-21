@@ -25,14 +25,11 @@ export default function LoginScreen() {
     handleDeclineTerms,
   } = useLogin(router);
 
-return (
+  return (
     <GradientBackground>
       <View style={styles.container}>
         {/* Header con botón atrás */}
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
+        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
           <Ionicons name="chevron-back" size={24} color={colors.primary} />
           <Text style={styles.backText}>Atrás</Text>
         </TouchableOpacity>
@@ -76,18 +73,14 @@ return (
 
         {/* Botón continuar */}
         <TouchableOpacity
-          style={[
-            styles.continueButton,
-            !isFormValid && styles.continueButtonDisabled
-          ]}
+          style={[styles.continueButton, !isFormValid && styles.continueButtonDisabled]}
           onPress={handleContinue}
           disabled={!isFormValid}
           activeOpacity={0.8}
         >
-          <Text style={[
-            styles.continueButtonText,
-            !isFormValid && styles.continueButtonTextDisabled
-          ]}>
+          <Text
+            style={[styles.continueButtonText, !isFormValid && styles.continueButtonTextDisabled]}
+          >
             Continuar
           </Text>
         </TouchableOpacity>

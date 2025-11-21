@@ -1,4 +1,4 @@
-import { supabase } from "../lib/supabaseClient";
+import { supabase } from '../lib/supabaseClient';
 
 export class StripeConnectService {
   /**
@@ -10,12 +10,9 @@ export class StripeConnectService {
     requiresOnboarding: boolean;
   }> {
     try {
-      const { data, error } = await supabase.functions.invoke(
-        'stripe-connect-create-account',
-        {
-          body: { userId },
-        }
-      );
+      const { data, error } = await supabase.functions.invoke('stripe-connect-create-account', {
+        body: { userId },
+      });
 
       if (error) {
         console.error('Error creando Connected Account:', error);
@@ -27,32 +24,30 @@ export class StripeConnectService {
       console.error('Error en createConnectedAccount:', error);
       throw error;
     }
-  } 
+  }
   static async getOnboardingLink(): Promise<string | null> {
-  try {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
-      throw new Error('Usuario no autenticado');
-    }
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-    // Llamar a la Edge Function
-    const { data, error } = await supabase.functions.invoke(
-      'stripe-connect-onboarding-link',
-      {
-        body: { userId: user.id },
+      if (!user) {
+        throw new Error('Usuario no autenticado');
       }
-    );
 
-    if (error) {
+      // Llamar a la Edge Function
+      const { data, error } = await supabase.functions.invoke('stripe-connect-onboarding-link', {
+        body: { userId: user.id },
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      return data?.url || null;
+    } catch (error: any) {
+      console.error('Error getting onboarding link:', error);
       throw error;
     }
-
-    return data?.url || null;
-  } catch (error: any) {
-    console.error('Error getting onboarding link:', error);
-    throw error;
   }
-}
-
 }

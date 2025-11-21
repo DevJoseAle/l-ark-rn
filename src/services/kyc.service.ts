@@ -1,6 +1,6 @@
 // src/services/kyc.service.ts
 import { supabase } from '../lib/supabaseClient';
-import * as FileSystem from 'expo-file-system/legacy'; 
+import * as FileSystem from 'expo-file-system/legacy';
 import { decode as base64Decode } from 'base64-arraybuffer';
 import { KYCDocument } from '../types/kyc.types';
 
@@ -47,9 +47,7 @@ export class KYCService {
       onProgress?.(90);
 
       // Obtener URL pública
-      const { data: urlData } = supabase.storage
-        .from('kyc_documents')
-        .getPublicUrl(storagePath);
+      const { data: urlData } = supabase.storage.from('kyc_documents').getPublicUrl(storagePath);
 
       onProgress?.(100);
 
@@ -72,7 +70,9 @@ export class KYCService {
     onProgress?: (step: string, progress: number) => void
   ): Promise<void> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         throw new Error('Usuario no autenticado');
       }
@@ -91,16 +91,14 @@ export class KYCService {
 
       // 4. Crear registro en la tabla kyc_verifications
       onProgress?.('Creando solicitud', 80);
-      const { error: insertError } = await supabase
-        .from('kyc_verifications')
-        .insert({
-          user_id: user.id,
-          id_front_url: frontUrl,
-          id_back_url: backUrl,
-          selfie_url: selfieUrl,
-          status: 'pending',
-          submitted_at: new Date().toISOString(),
-        });
+      const { error: insertError } = await supabase.from('kyc_verifications').insert({
+        user_id: user.id,
+        id_front_url: frontUrl,
+        id_back_url: backUrl,
+        selfie_url: selfieUrl,
+        status: 'pending',
+        submitted_at: new Date().toISOString(),
+      });
 
       if (insertError) {
         throw insertError;
@@ -132,7 +130,9 @@ export class KYCService {
     canCreateCampaign: boolean;
   }> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         throw new Error('Usuario no autenticado');
       }

@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
-import { 
-  View, 
-  Text, 
-  TouchableOpacity, 
-  StyleSheet, 
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
   Animated,
   Easing,
   Platform,
@@ -44,7 +44,7 @@ export default function WelcomeScreenAlt() {
           useNativeDriver: true,
         }),
       ]),
-      
+
       // Cards
       Animated.parallel([
         Animated.spring(cardsTranslateY, {
@@ -77,9 +77,7 @@ export default function WelcomeScreenAlt() {
         >
           <LarkLogo size={120} />
           <View style={styles.headerText}>
-            <Text style={[styles.appName, { color: colors.text }]}>
-              L-Ark
-            </Text>
+            <Text style={[styles.appName, { color: colors.text }]}>L-Ark</Text>
             <Text style={[styles.appSubtitle, { color: colors.secondaryText }]}>
               Digital Heritage
             </Text>
@@ -126,9 +124,7 @@ export default function WelcomeScreenAlt() {
 
           {/* Call to Action */}
           <View style={styles.ctaContainer}>
-            <Text style={[styles.ctaTitle, { color: colors.text }]}>
-              Protege tu legado hoy
-            </Text>
+            <Text style={[styles.ctaTitle, { color: colors.text }]}>Protege tu legado hoy</Text>
             <Text style={[styles.ctaDescription, { color: colors.secondaryText }]}>
               Únete a miles de usuarios que confían en L-Ark
             </Text>
@@ -175,20 +171,14 @@ function FeatureCard({ icon, title, description, colors, colorScheme }: FeatureC
         styles.featureCard,
         {
           backgroundColor:
-            colorScheme === 'dark'
-              ? 'rgba(255, 255, 255, 0.05)'
-              : 'rgba(255, 255, 255, 0.6)',
+            colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.6)',
           borderColor:
-            colorScheme === 'dark'
-              ? 'rgba(255, 255, 255, 0.1)'
-              : 'rgba(255, 255, 255, 0.8)',
+            colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.8)',
         },
       ]}
     >
       <Text style={styles.featureIcon}>{icon}</Text>
-      <Text style={[styles.featureTitle, { color: colors.text }]}>
-        {title}
-      </Text>
+      <Text style={[styles.featureTitle, { color: colors.text }]}>{title}</Text>
       <Text style={[styles.featureDescription, { color: colors.secondaryText }]}>
         {description}
       </Text>
@@ -259,11 +249,7 @@ function GlassButton({ onPress, colors, colorScheme, children, primary }: GlassB
           onPress={onPress}
         >
           <LinearGradient
-            colors={
-              colorScheme === 'dark'
-                ? ['#4BA3D9', '#3A8FC7']
-                : ['#5CB0E0', '#4BA3D9']
-            }
+            colors={colorScheme === 'dark' ? ['#4BA3D9', '#3A8FC7'] : ['#5CB0E0', '#4BA3D9']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.primaryGlassButton}
@@ -296,19 +282,13 @@ function GlassButton({ onPress, colors, colorScheme, children, primary }: GlassB
             styles.secondaryGlassButton,
             {
               backgroundColor:
-                colorScheme === 'dark'
-                  ? 'rgba(255, 255, 255, 0.05)'
-                  : 'rgba(255, 255, 255, 0.4)',
+                colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.4)',
               borderColor:
-                colorScheme === 'dark'
-                  ? 'rgba(255, 255, 255, 0.1)'
-                  : 'rgba(255, 255, 255, 0.6)',
+                colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.6)',
             },
           ]}
         >
-          <Text style={[styles.secondaryGlassButtonText, { color: colors.text }]}>
-            {children}
-          </Text>
+          <Text style={[styles.secondaryGlassButtonText, { color: colors.text }]}>{children}</Text>
         </View>
       </TouchableOpacity>
     </Animated.View>

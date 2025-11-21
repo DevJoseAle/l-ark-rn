@@ -1,7 +1,7 @@
-import { supabase } from "../lib/supabaseClient";
-import { CreateCampaignFormData, UploadedImage } from "../types/campaign-create.types";
-import { Campaign } from "../types/campaign.types";
-import { ImageUploadService } from "./imageUpload.service";
+import { supabase } from '../lib/supabaseClient';
+import { CreateCampaignFormData, UploadedImage } from '../types/campaign-create.types';
+import { Campaign } from '../types/campaign.types';
+import { ImageUploadService } from './imageUpload.service';
 
 export class CampaignCreateService {
   /**
@@ -14,7 +14,9 @@ export class CampaignCreateService {
     try {
       // 1. Obtener usuario actual
       onProgress?.('Verificando usuario', 10);
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         throw new Error('Usuario no autenticado');
       }
@@ -56,18 +58,17 @@ export class CampaignCreateService {
           formData.country
         );
 
-            if (formData.country === 'US' || formData.country === 'CO' || formData.country === 'MX') {
-      onProgress?.('Configurando pagos automáticos', 85);
+        if (formData.country === 'US' || formData.country === 'CO' || formData.country === 'MX') {
+          onProgress?.('Configurando pagos automáticos', 85);
 
-      // Fire-and-forget (no esperamos resultado)
-      this.processConnectBeneficiaries(campaign.id).catch((err) => {
-        console.error('Error background processing Connect:', err);
-      });
-    }
+          // Fire-and-forget (no esperamos resultado)
+          this.processConnectBeneficiaries(campaign.id).catch((err) => {
+            console.error('Error background processing Connect:', err);
+          });
+        }
 
         onProgress?.('Campaña creada exitosamente', 100);
         return campaign;
-
       } catch (error) {
         // Si algo falla después de crear la campaña, eliminarla
         console.error('Error en proceso de creación, eliminando campaña:', error);
@@ -88,14 +89,13 @@ export class CampaignCreateService {
     userId: string
   ): Promise<Campaign> {
     try {
-
-const { data, error } = await supabase
+      const { data, error } = await supabase
         .from('campaigns')
         .insert({
           owner_user_id: userId,
           title: formData.title.trim(),
           description: formData.description.trim(),
-          country: formData.country ,
+          country: formData.country,
           goal_amount: parseFloat(formData.goalAmount),
           soft_cap: parseFloat(formData.softCap),
           hard_cap: formData.hardCap ? parseFloat(formData.hardCap) : null,
@@ -103,7 +103,8 @@ const { data, error } = await supabase
           start_at: formData.startDate.toISOString(),
           end_at: formData.endDate.toISOString(),
           has_diagnosis: formData.hasDiagnosis,
-          beneficiary_rule: formData.beneficiaries.length > 1 ? 'fixed_shares' : 'single_beneficiary',
+          beneficiary_rule:
+            formData.beneficiaries.length > 1 ? 'fixed_shares' : 'single_beneficiary',
         })
         .select()
         .single();
@@ -137,9 +138,7 @@ const { data, error } = await supabase
         image_type: img.type,
       }));
 
-      const { error } = await supabase
-        .from('campaign_images')
-        .insert(rows);
+      const { error } = await supabase.from('campaign_images').insert(rows);
 
       if (error) {
         throw error;
@@ -162,7 +161,6 @@ const { data, error } = await supabase
     try {
       for (const beneficiary of beneficiaries) {
         // 👇 AGREGA ESTE LOG AQUÍ
-
 
         // 1. Crear beneficiario
         const { data: beneficiaryData, error: beneficiaryError } = await supabase
@@ -196,10 +194,7 @@ const { data, error } = await supabase
     try {
       // Las imágenes se eliminan automáticamente por CASCADE
       // Los beneficiarios se eliminan automáticamente por CASCADE
-      const { error } = await supabase
-        .from('campaigns')
-        .delete()
-        .eq('id', campaignId);
+      const { error } = await supabase.from('campaigns').delete().eq('id', campaignId);
 
       if (error) {
         console.error('Error deleting campaign on rollback:', error);
@@ -214,7 +209,9 @@ const { data, error } = await supabase
    */
   static async userHasCampaign(): Promise<boolean> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return false;
 
       const { data, error } = await supabase
@@ -236,22 +233,16 @@ const { data, error } = await supabase
 
   private static async processConnectBeneficiaries(campaignId: string): Promise<void> {
     try {
-const { data, error } = await supabase.functions.invoke(
-        'process-campaign-beneficiaries',
-        {
-          body: { campaignId },
-        }
-      );
+      const { data, error } = await supabase.functions.invoke('process-campaign-beneficiaries', {
+        body: { campaignId },
+      });
 
       if (error) {
         console.error('❌ Error invocando Edge Function:', error);
         return;
       }
-
-} catch (error) {
+    } catch (error) {
       console.error('❌ Error en processConnectBeneficiaries:', error);
     }
   }
-
 }
-

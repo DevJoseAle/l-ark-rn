@@ -1,13 +1,6 @@
 // src/components/campaign/BasicInfoSection.tsx
 import React from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  Switch,
-  StyleSheet,
-  useColorScheme,
-} from 'react-native';
+import { View, Text, TextInput, Switch, StyleSheet, useColorScheme } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/theme';
 import { useCreateCampaignStore } from '@/src/stores/createCampaign.store';
@@ -15,14 +8,8 @@ import { useCreateCampaignStore } from '@/src/stores/createCampaign.store';
 export const BasicInfoSection = () => {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
-  
-  const {
-    formData,
-    setTitle,
-    setDescription,
-    setHasDiagnosis,
-    errors,
-  } = useCreateCampaignStore();
+
+  const { formData, setTitle, setDescription, setHasDiagnosis, errors } = useCreateCampaignStore();
 
   // Encontrar errores específicos
   const titleError = errors.find((e) => e.field === 'title');
@@ -31,18 +18,19 @@ export const BasicInfoSection = () => {
   return (
     <View style={styles.container}>
       {/* TÍTULO */}
-      <View style={[styles.card, { 
-        backgroundColor: colorScheme === 'dark' 
-          ? 'rgba(30, 42, 54, 0.7)' 
-          : 'rgba(251, 252, 251, 0.7)',
-        borderColor: colorScheme === 'dark'
-          ? 'rgba(42, 63, 84, 0.5)'
-          : 'rgba(172, 202, 231, 0.3)',
-      }]}>
+      <View
+        style={[
+          styles.card,
+          {
+            backgroundColor:
+              colorScheme === 'dark' ? 'rgba(30, 42, 54, 0.7)' : 'rgba(251, 252, 251, 0.7)',
+            borderColor:
+              colorScheme === 'dark' ? 'rgba(42, 63, 84, 0.5)' : 'rgba(172, 202, 231, 0.3)',
+          },
+        ]}
+      >
         <View style={styles.labelContainer}>
-          <Text style={[styles.label, { color: colors.text }]}>
-            Título de la campaña
-          </Text>
+          <Text style={[styles.label, { color: colors.text }]}>Título de la campaña</Text>
           <Text style={[styles.required, { color: colors.error }]}> *</Text>
         </View>
 
@@ -50,9 +38,8 @@ export const BasicInfoSection = () => {
           style={[
             styles.input,
             {
-              backgroundColor: colorScheme === 'dark'
-                ? 'rgba(34, 51, 68, 0.5)'
-                : 'rgba(214, 228, 245, 0.3)',
+              backgroundColor:
+                colorScheme === 'dark' ? 'rgba(34, 51, 68, 0.5)' : 'rgba(214, 228, 245, 0.3)',
               color: colors.text,
               borderColor: titleError ? colors.error : 'transparent',
             },
@@ -70,10 +57,7 @@ export const BasicInfoSection = () => {
             style={[
               styles.charCounter,
               {
-                color:
-                  formData.title.length >= 12
-                    ? colors.success
-                    : colors.secondaryText,
+                color: formData.title.length >= 12 ? colors.success : colors.secondaryText,
               },
             ]}
           >
@@ -83,30 +67,30 @@ export const BasicInfoSection = () => {
 
         {/* Error message */}
         {titleError && (
-          <Text style={[styles.errorText, { color: colors.error }]}>
-            {titleError.message}
-          </Text>
+          <Text style={[styles.errorText, { color: colors.error }]}>{titleError.message}</Text>
         )}
       </View>
 
       {/* DESCRIPCIÓN */}
-      <View style={[styles.card, { 
-        backgroundColor: colorScheme === 'dark' 
-          ? 'rgba(30, 42, 54, 0.7)' 
-          : 'rgba(251, 252, 251, 0.7)',
-        borderColor: colorScheme === 'dark'
-          ? 'rgba(42, 63, 84, 0.5)'
-          : 'rgba(172, 202, 231, 0.3)',
-      }]}>
+      <View
+        style={[
+          styles.card,
+          {
+            backgroundColor:
+              colorScheme === 'dark' ? 'rgba(30, 42, 54, 0.7)' : 'rgba(251, 252, 251, 0.7)',
+            borderColor:
+              colorScheme === 'dark' ? 'rgba(42, 63, 84, 0.5)' : 'rgba(172, 202, 231, 0.3)',
+          },
+        ]}
+      >
         <Text style={[styles.label, { color: colors.text }]}>Descripción</Text>
 
         <TextInput
           style={[
             styles.textArea,
             {
-              backgroundColor: colorScheme === 'dark'
-                ? 'rgba(34, 51, 68, 0.5)'
-                : 'rgba(214, 228, 245, 0.3)',
+              backgroundColor:
+                colorScheme === 'dark' ? 'rgba(34, 51, 68, 0.5)' : 'rgba(214, 228, 245, 0.3)',
               color: colors.text,
               borderColor: descriptionError ? colors.error : 'transparent',
             },
@@ -127,10 +111,7 @@ export const BasicInfoSection = () => {
             style={[
               styles.charCounter,
               {
-                color:
-                  formData.description.length >= 90
-                    ? colors.success
-                    : colors.secondaryText,
+                color: formData.description.length >= 90 ? colors.success : colors.secondaryText,
               },
             ]}
           >
@@ -147,14 +128,18 @@ export const BasicInfoSection = () => {
       </View>
 
       {/* TOGGLE DE DIAGNÓSTICO */}
-      <View style={[styles.card, styles.toggleCard, { 
-        backgroundColor: colorScheme === 'dark' 
-          ? 'rgba(30, 42, 54, 0.7)' 
-          : 'rgba(251, 252, 251, 0.7)',
-        borderColor: colorScheme === 'dark'
-          ? 'rgba(42, 63, 84, 0.5)'
-          : 'rgba(172, 202, 231, 0.3)',
-      }]}>
+      <View
+        style={[
+          styles.card,
+          styles.toggleCard,
+          {
+            backgroundColor:
+              colorScheme === 'dark' ? 'rgba(30, 42, 54, 0.7)' : 'rgba(251, 252, 251, 0.7)',
+            borderColor:
+              colorScheme === 'dark' ? 'rgba(42, 63, 84, 0.5)' : 'rgba(172, 202, 231, 0.3)',
+          },
+        ]}
+      >
         <View style={styles.toggleContent}>
           <Ionicons
             name="medkit-outline"
@@ -170,9 +155,9 @@ export const BasicInfoSection = () => {
         <Switch
           value={formData.hasDiagnosis}
           onValueChange={setHasDiagnosis}
-          trackColor={{ 
-            false: colors.separator, 
-            true: colors.primary 
+          trackColor={{
+            false: colors.separator,
+            true: colors.primary,
           }}
           thumbColor={formData.hasDiagnosis ? colors.customWhite : colors.icon}
           ios_backgroundColor={colors.separator}

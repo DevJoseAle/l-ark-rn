@@ -26,9 +26,8 @@ export class Formatters {
    * "3000000" -> "3.000.000"
    */
   static formatCLPInput(value: string): string {
-
     const cleaned = this.unformatCLP(value);
-if (!cleaned) return '';
+    if (!cleaned) return '';
 
     const num = parseInt(cleaned, 10);
     return num.toLocaleString('es-CL');

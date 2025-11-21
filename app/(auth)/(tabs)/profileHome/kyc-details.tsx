@@ -1,13 +1,7 @@
 // app/(auth)/(tabs)/profile/kyc-details.tsx
 
 import React from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useProfileStore } from '../../../../src/stores/profile.store';
@@ -19,7 +13,10 @@ const DOCUMENT_LABELS: Record<string, string> = {
   proof_of_address: 'Comprobante de domicilio',
 };
 
-const STATUS_CONFIG: Record<string, { color: string; icon: keyof typeof Ionicons.glyphMap; label: string }> = {
+const STATUS_CONFIG: Record<
+  string,
+  { color: string; icon: keyof typeof Ionicons.glyphMap; label: string }
+> = {
   pending: {
     color: '#F59E0B',
     icon: 'hourglass-outline',
@@ -49,7 +46,8 @@ export default function KYCDetailsScreen() {
           backgroundColor: '#D1FAE5',
           icon: 'checkmark-circle' as const,
           title: '✅ Verificación Completada',
-          message: 'Tu identidad ha sido verificada exitosamente. Ya puedes crear campañas y recibir donaciones.',
+          message:
+            'Tu identidad ha sido verificada exitosamente. Ya puedes crear campañas y recibir donaciones.',
         };
       case 'kyc_review':
         return {
@@ -57,7 +55,8 @@ export default function KYCDetailsScreen() {
           backgroundColor: '#FEF3C7',
           icon: 'time-outline' as const,
           title: '⏳ En Revisión',
-          message: 'Estamos revisando tus documentos. Esto puede tomar 1-2 días hábiles. Te notificaremos cuando esté listo.',
+          message:
+            'Estamos revisando tus documentos. Esto puede tomar 1-2 días hábiles. Te notificaremos cuando esté listo.',
         };
       case 'kyc_rejected':
         return {
@@ -65,7 +64,8 @@ export default function KYCDetailsScreen() {
           backgroundColor: '#FEE2E2',
           icon: 'close-circle' as const,
           title: '❌ Verificación Rechazada',
-          message: 'Algunos de tus documentos fueron rechazados. Por favor, revisa los detalles y vuelve a subirlos.',
+          message:
+            'Algunos de tus documentos fueron rechazados. Por favor, revisa los detalles y vuelve a subirlos.',
         };
       default:
         return {
@@ -73,7 +73,8 @@ export default function KYCDetailsScreen() {
           backgroundColor: '#F3F4F6',
           icon: 'hourglass-outline' as const,
           title: '⏸️ Sin Verificar',
-          message: 'Completa tu verificación de identidad para poder crear campañas y recibir donaciones.',
+          message:
+            'Completa tu verificación de identidad para poder crear campañas y recibir donaciones.',
         };
     }
   };
@@ -87,9 +88,7 @@ export default function KYCDetailsScreen() {
       <View style={[styles.statusBanner, { backgroundColor: statusInfo.backgroundColor }]}>
         <Ionicons name={statusInfo.icon} size={32} color={statusInfo.color} />
         <View style={styles.statusTextContainer}>
-          <Text style={[styles.statusTitle, { color: statusInfo.color }]}>
-            {statusInfo.title}
-          </Text>
+          <Text style={[styles.statusTitle, { color: statusInfo.color }]}>{statusInfo.title}</Text>
           <Text style={styles.statusMessage}>{statusInfo.message}</Text>
         </View>
       </View>
@@ -117,11 +116,7 @@ export default function KYCDetailsScreen() {
                 <View key={doc.id} style={styles.documentCard}>
                   <View style={styles.documentHeader}>
                     <View style={styles.documentInfo}>
-                      <Ionicons
-                        name="document-text-outline"
-                        size={24}
-                        color="#1F2937"
-                      />
+                      <Ionicons name="document-text-outline" size={24} color="#1F2937" />
                       <View style={styles.documentTextContainer}>
                         <Text style={styles.documentTitle}>
                           {DOCUMENT_LABELS[doc.document_type] || doc.document_type}
@@ -133,16 +128,9 @@ export default function KYCDetailsScreen() {
                     </View>
 
                     <View
-                      style={[
-                        styles.statusBadge,
-                        { backgroundColor: `${statusConfig.color}20` },
-                      ]}
+                      style={[styles.statusBadge, { backgroundColor: `${statusConfig.color}20` }]}
                     >
-                      <Ionicons
-                        name={statusConfig.icon}
-                        size={14}
-                        color={statusConfig.color}
-                      />
+                      <Ionicons name={statusConfig.icon} size={14} color={statusConfig.color} />
                       <Text style={[styles.statusBadgeText, { color: statusConfig.color }]}>
                         {statusConfig.label}
                       </Text>
@@ -197,8 +185,8 @@ export default function KYCDetailsScreen() {
         <View style={styles.infoTextContainer}>
           <Text style={styles.infoTitle}>¿Por qué verificamos tu identidad?</Text>
           <Text style={styles.infoText}>
-            La verificación KYC (Know Your Customer) es un requisito legal para prevenir fraude
-            y lavado de dinero. Tus documentos están protegidos y encriptados.
+            La verificación KYC (Know Your Customer) es un requisito legal para prevenir fraude y
+            lavado de dinero. Tus documentos están protegidos y encriptados.
           </Text>
         </View>
       </View>

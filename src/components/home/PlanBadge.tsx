@@ -21,9 +21,7 @@ export function PlanBadge({ onUpgradePress }: PlanBadgeProps) {
         {/* Badge FREE */}
         <View style={[styles.badge, styles.freeBadge]}>
           <Ionicons name="gift-outline" size={16} color="#059669" />
-          <Text style={[styles.badgeText, styles.freeText]}>
-            Plan FREE
-          </Text>
+          <Text style={[styles.badgeText, styles.freeText]}>Plan FREE</Text>
         </View>
 
         {/* Botón de upgrade */}
@@ -47,15 +45,11 @@ export function PlanBadge({ onUpgradePress }: PlanBadgeProps) {
         {/* Badge PRO */}
         <View style={[styles.badge, styles.proBadge]}>
           <Ionicons name="star" size={16} color="#FBBF24" />
-          <Text style={[styles.badgeText, styles.proText]}>
-            Plan PRO
-          </Text>
+          <Text style={[styles.badgeText, styles.proText]}>Plan PRO</Text>
         </View>
 
         {/* Texto descriptivo */}
-        <Text style={styles.proDescription}>
-          Tienes acceso completo a todas las funciones
-        </Text>
+        <Text style={styles.proDescription}>Tienes acceso completo a todas las funciones</Text>
       </View>
     );
   }

@@ -13,12 +13,12 @@ interface SplashScreenProps {
 export function SplashScreen({ onAnimationComplete }: SplashScreenProps) {
   const colors = useThemeColors();
   const colorScheme = useColorScheme();
-  
+
   // Animated values
   const logoScale = useRef(new Animated.Value(0.5)).current;
   const logoOpacity = useRef(new Animated.Value(0)).current;
   const textOpacity = useRef(new Animated.Value(0)).current;
-  
+
   useEffect(() => {
     // Secuencia de animaciones
     Animated.sequence([
@@ -37,7 +37,7 @@ export function SplashScreen({ onAnimationComplete }: SplashScreenProps) {
           useNativeDriver: true,
         }),
       ]),
-      
+
       // 2. Text fade in
       Animated.timing(textOpacity, {
         toValue: 1,
@@ -45,7 +45,7 @@ export function SplashScreen({ onAnimationComplete }: SplashScreenProps) {
         easing: Easing.out(Easing.ease),
         useNativeDriver: true,
       }),
-      
+
       // 3. Pequeña pausa antes de completar
       Animated.delay(500),
     ]).start(() => {
@@ -78,12 +78,8 @@ export function SplashScreen({ onAnimationComplete }: SplashScreenProps) {
             },
           ]}
         >
-          <Text style={[styles.title, { color: colors.text }]}>
-            L-Ark
-          </Text>
-          <Text style={[styles.subtitle, { color: colors.secondaryText }]}>
-            Digital Heritage
-          </Text>
+          <Text style={[styles.title, { color: colors.text }]}>L-Ark</Text>
+          <Text style={[styles.subtitle, { color: colors.secondaryText }]}>Digital Heritage</Text>
         </Animated.View>
 
         {/* Shimmer/loading indicator minimalista */}

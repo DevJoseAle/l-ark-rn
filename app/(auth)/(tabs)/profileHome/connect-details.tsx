@@ -1,26 +1,14 @@
 // app/(auth)/(tabs)/profile/connect-details.tsx
 
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-  Linking,
-} from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useProfileStore, profileSelectors } from '../../../../src/stores/profile.store';
 import { StripeConnectService } from '../../../../src/services/stripeConnect.service';
 
 export default function ConnectDetailsScreen() {
-  const {
-    user,
-    beneficiaryAccount,
-    beneficiaryCampaigns,
-    refreshConnectStatus,
-  } = useProfileStore();
+  const { user, beneficiaryAccount, beneficiaryCampaigns, refreshConnectStatus } =
+    useProfileStore();
 
   const isBeneficiary = useProfileStore(profileSelectors.isBeneficiary);
   const countrySupportsConnect = useProfileStore(profileSelectors.countrySupportsConnect);
@@ -38,10 +26,10 @@ export default function ConnectDetailsScreen() {
       if (link) {
         // Open browser with the link
         const supported = await Linking.canOpenURL(link);
-        
+
         if (supported) {
           await Linking.openURL(link);
-          
+
           // Show info
           Alert.alert(
             'Completando verificación',
@@ -89,7 +77,8 @@ export default function ConnectDetailsScreen() {
         backgroundColor: '#F3F4F6',
         icon: 'information-circle-outline' as const,
         title: 'No eres beneficiario',
-        message: 'No estás registrado como beneficiario en ninguna campaña. Stripe Connect solo es necesario para recibir pagos automáticos como beneficiario.',
+        message:
+          'No estás registrado como beneficiario en ninguna campaña. Stripe Connect solo es necesario para recibir pagos automáticos como beneficiario.',
         showAction: false,
       };
     }
@@ -115,10 +104,11 @@ export default function ConnectDetailsScreen() {
           backgroundColor: '#D1FAE5',
           icon: 'checkmark-circle' as const,
           title: '✅ Verificación Completa',
-          message: 'Tu cuenta de Stripe Connect está verificada y activa. Puedes recibir pagos automáticamente cuando se active la causal.',
+          message:
+            'Tu cuenta de Stripe Connect está verificada y activa. Puedes recibir pagos automáticamente cuando se active la causal.',
           showAction: false,
         };
-      
+
       case 'onboarding':
         return {
           color: '#3B82F6',
@@ -129,7 +119,7 @@ export default function ConnectDetailsScreen() {
           showAction: true,
           actionLabel: 'Continuar verificación',
         };
-      
+
       case 'pending':
         return {
           color: '#F59E0B',
@@ -140,25 +130,27 @@ export default function ConnectDetailsScreen() {
           showAction: true,
           actionLabel: 'Revisar estado',
         };
-      
+
       case 'rejected':
         return {
           color: '#DC2626',
           backgroundColor: '#FEE2E2',
           icon: 'close-circle' as const,
           title: '❌ Rechazado',
-          message: 'Tu verificación fue rechazada por Stripe. Contacta a soporte para más información.',
+          message:
+            'Tu verificación fue rechazada por Stripe. Contacta a soporte para más información.',
           showAction: true,
           actionLabel: 'Contactar soporte',
         };
-      
+
       default:
         return {
           color: '#F59E0B',
           backgroundColor: '#FEF3C7',
           icon: 'warning-outline' as const,
           title: '⚠️ Verificación Requerida',
-          message: 'Completa tu verificación de Stripe Connect para recibir pagos automáticamente cuando se active la causal.',
+          message:
+            'Completa tu verificación de Stripe Connect para recibir pagos automáticamente cuando se active la causal.',
           showAction: true,
           actionLabel: 'Iniciar verificación',
         };
@@ -173,9 +165,7 @@ export default function ConnectDetailsScreen() {
       <View style={[styles.statusBanner, { backgroundColor: statusInfo.backgroundColor }]}>
         <Ionicons name={statusInfo.icon} size={32} color={statusInfo.color} />
         <View style={styles.statusTextContainer}>
-          <Text style={[styles.statusTitle, { color: statusInfo.color }]}>
-            {statusInfo.title}
-          </Text>
+          <Text style={[styles.statusTitle, { color: statusInfo.color }]}>{statusInfo.title}</Text>
           <Text style={styles.statusMessage}>{statusInfo.message}</Text>
         </View>
       </View>
@@ -202,7 +192,7 @@ export default function ConnectDetailsScreen() {
       {beneficiaryAccount && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Detalles de Cuenta</Text>
-          
+
           <View style={styles.detailCard}>
             <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>ID de Cuenta</Text>
@@ -217,9 +207,7 @@ export default function ConnectDetailsScreen() {
 
             <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>País</Text>
-              <Text style={styles.detailValue}>
-                {beneficiaryAccount.country}
-              </Text>
+              <Text style={styles.detailValue}>{beneficiaryAccount.country}</Text>
             </View>
 
             <View style={styles.separator} />
@@ -227,9 +215,7 @@ export default function ConnectDetailsScreen() {
             <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>Modo de Pago</Text>
               <Text style={styles.detailValue}>
-                {beneficiaryAccount.payout_mode === 'connect'
-                  ? 'Automático (Stripe)'
-                  : 'Manual'}
+                {beneficiaryAccount.payout_mode === 'connect' ? 'Automático (Stripe)' : 'Manual'}
               </Text>
             </View>
 
@@ -250,9 +236,7 @@ export default function ConnectDetailsScreen() {
                 <View style={styles.separator} />
                 <View style={styles.detailRow}>
                   <Text style={styles.detailLabel}>Banco</Text>
-                  <Text style={styles.detailValue}>
-                    {beneficiaryAccount.bank_name}
-                  </Text>
+                  <Text style={styles.detailValue}>{beneficiaryAccount.bank_name}</Text>
                 </View>
               </>
             )}
@@ -280,10 +264,8 @@ export default function ConnectDetailsScreen() {
             {beneficiaryCampaigns.map((bc) => (
               <View key={bc.id} style={styles.campaignCard}>
                 <Text style={styles.campaignTitle}>{bc.campaign.title}</Text>
-                <Text style={styles.campaignOwner}>
-                  por {bc.campaign.owner.display_name}
-                </Text>
-                
+                <Text style={styles.campaignOwner}>por {bc.campaign.owner.display_name}</Text>
+
                 <View style={styles.shareInfo}>
                   <Ionicons name="pie-chart-outline" size={16} color="#007AFF" />
                   <Text style={styles.shareText}>
@@ -304,23 +286,15 @@ export default function ConnectDetailsScreen() {
         <View style={styles.infoTextContainer}>
           <Text style={styles.infoTitle}>¿Qué es Stripe Connect?</Text>
           <Text style={styles.infoText}>
-            Stripe Connect permite recibir pagos automáticamente en tu cuenta bancaria cuando
-            se active la causal de la campaña. Es seguro, rápido y está regulado.
+            Stripe Connect permite recibir pagos automáticamente en tu cuenta bancaria cuando se
+            active la causal de la campaña. Es seguro, rápido y está regulado.
           </Text>
         </View>
       </View>
 
       {/* Refresh Button */}
-      <TouchableOpacity
-        style={styles.refreshButton}
-        onPress={handleRefresh}
-        disabled={isLoading}
-      >
-        <Ionicons
-          name="refresh-outline"
-          size={20}
-          color="#007AFF"
-        />
+      <TouchableOpacity style={styles.refreshButton} onPress={handleRefresh} disabled={isLoading}>
+        <Ionicons name="refresh-outline" size={20} color="#007AFF" />
         <Text style={styles.refreshText}>Actualizar estado</Text>
       </TouchableOpacity>
 

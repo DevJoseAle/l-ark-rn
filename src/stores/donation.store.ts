@@ -1,6 +1,6 @@
-import { create } from "zustand";
-import { DonationService } from "../services/donation.service";
-import { DonationListItem } from "../types/donation.types";
+import { create } from 'zustand';
+import { DonationService } from '../services/donation.service';
+import { DonationListItem } from '../types/donation.types';
 
 interface DonationState {
   // State
@@ -26,12 +26,12 @@ export const useDonationStore = create<DonationState>((set, get) => ({
   // Fetch donations
   fetchDonations: async (campaignId: string) => {
     set({ isLoading: true, error: null });
-    
+
     try {
       const rawDonations = await DonationService.getCampaignDonations(campaignId);
       const formattedDonations = DonationService.formatDonationsForUI(rawDonations);
-      
-      set({ 
+
+      set({
         donations: formattedDonations,
         isLoading: false,
         lastFetchedAt: Date.now(),
@@ -39,7 +39,7 @@ export const useDonationStore = create<DonationState>((set, get) => ({
       });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Error al cargar donaciones';
-      set({ 
+      set({
         donations: [],
         isLoading: false,
         error: errorMessage,
@@ -54,8 +54,8 @@ export const useDonationStore = create<DonationState>((set, get) => ({
     try {
       const rawDonations = await DonationService.getCampaignDonations(campaignId);
       const formattedDonations = DonationService.formatDonationsForUI(rawDonations);
-      
-      set({ 
+
+      set({
         donations: formattedDonations,
         lastFetchedAt: Date.now(),
         error: null,
@@ -69,7 +69,7 @@ export const useDonationStore = create<DonationState>((set, get) => ({
 
   // Clear donations
   clearDonations: () => {
-    set({ 
+    set({
       donations: [],
       isLoading: false,
       error: null,

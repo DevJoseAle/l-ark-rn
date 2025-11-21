@@ -86,12 +86,11 @@ export default function VaultHomeScreen() {
    * Inicializar el store al montar la pantalla
    */
   useEffect(() => {
-if (userId) {
+    if (userId) {
       initialize(userId);
     }
 
-    return () => {
-};
+    return () => {};
   }, [userId]);
 
   /**
@@ -137,7 +136,7 @@ if (userId) {
     const result = await uploadFile(file);
 
     if (result.success) {
-setUploadSuccess(true);
+      setUploadSuccess(true);
     } else {
       console.error('❌ Upload fallido:', result.error);
       setUploadError(result.error || 'Error al subir el archivo');
@@ -172,7 +171,7 @@ setUploadSuccess(true);
    * Handler para abrir preview de un archivo
    */
   const handlePreviewFile = async (file: any) => {
-// Si es imagen, obtener URL
+    // Si es imagen, obtener URL
     if (file.file_type === 'image') {
       const url = await VaultService.getFilePreviewUrl(file.storage_path);
       setPreviewImageUrl(url);
@@ -186,26 +185,20 @@ setUploadSuccess(true);
    * Handler para descargar un archivo
    */
   const handleDownloadFile = async (file: any) => {
-const result = await VaultService.downloadFile(file);
+    const result = await VaultService.downloadFile(file);
 
     if (result.success && result.localUri) {
-      Alert.alert(
-        'Descarga completa',
-        `El archivo se guardó exitosamente`,
-        [
-          {
-            text: 'Compartir',
-            onPress: () => handleShareFile(result.localUri!),
-          },
-          { text: 'OK' },
-        ]
-      );
+      Alert.alert('Descarga completa', `El archivo se guardó exitosamente`, [
+        {
+          text: 'Compartir',
+          onPress: () => handleShareFile(result.localUri!),
+        },
+        { text: 'OK' },
+      ]);
     } else {
-      Alert.alert(
-        'Error al descargar',
-        result.error || 'No se pudo descargar el archivo',
-        [{ text: 'OK' }]
-      );
+      Alert.alert('Error al descargar', result.error || 'No se pudo descargar el archivo', [
+        { text: 'OK' },
+      ]);
     }
   };
 
@@ -246,17 +239,11 @@ const result = await VaultService.downloadFile(file);
     setDeleteFile(null);
 
     if (success) {
-      Alert.alert(
-        'Archivo eliminado',
-        'El archivo se eliminó correctamente de tu bóveda.',
-        [{ text: 'OK' }]
-      );
+      Alert.alert('Archivo eliminado', 'El archivo se eliminó correctamente de tu bóveda.', [
+        { text: 'OK' },
+      ]);
     } else {
-      Alert.alert(
-        'Error',
-        'No se pudo eliminar el archivo. Intenta nuevamente.',
-        [{ text: 'OK' }]
-      );
+      Alert.alert('Error', 'No se pudo eliminar el archivo. Intenta nuevamente.', [{ text: 'OK' }]);
     }
   };
 
@@ -305,107 +292,97 @@ const result = await VaultService.downloadFile(file);
     <GradientBackground>
       {/* Error banner */}
       <SafeAreaView style={{ flex: 1 }}>
-
-      {error && (
-        <View style={styles.errorBanner}>
-          <Text style={styles.errorText}>⚠️ {error}</Text>
-        </View>
-      )}
-
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
-        {/* Plan Badge */}
-        <PlanBadge onUpgradePress={() => setShowUpgradeModal(true)} />
-
-        {/* Storage Bar */}
-        <StorageBar />
-
-        {/* Lista de archivos con acciones */}
-        {isLoadingFiles ? (
-          <View style={styles.loadingFiles}>
-            <ActivityIndicator size="small" color="#4BA3D9" />
-            <Text style={styles.loadingFilesText}>Cargando archivos...</Text>
+        {error && (
+          <View style={styles.errorBanner}>
+            <Text style={styles.errorText}>⚠️ {error}</Text>
           </View>
-        ) : files.length === 0 ? (
-          <EmptyFilesList />
-        ) : (
-          <FileList
-            files={files}
-            onFilePress={handlePreviewFile}
-            onDownload={handleDownloadFile}
-            onDelete={handleDeleteFile}
+        )}
+
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        >
+          {/* Plan Badge */}
+          <PlanBadge onUpgradePress={() => setShowUpgradeModal(true)} />
+
+          {/* Storage Bar */}
+          <StorageBar />
+
+          {/* Lista de archivos con acciones */}
+          {isLoadingFiles ? (
+            <View style={styles.loadingFiles}>
+              <ActivityIndicator size="small" color="#4BA3D9" />
+              <Text style={styles.loadingFilesText}>Cargando archivos...</Text>
+            </View>
+          ) : files.length === 0 ? (
+            <EmptyFilesList />
+          ) : (
+            <FileList
+              files={files}
+              onFilePress={handlePreviewFile}
+              onDownload={handleDownloadFile}
+              onDelete={handleDeleteFile}
+            />
+          )}
+        </ScrollView>
+
+        {/* FAB para subir archivos */}
+        <TouchableOpacity style={styles.fab} onPress={handleUploadPress} activeOpacity={0.8}>
+          <Ionicons name="add" size={28} color="#FFFFFF" />
+        </TouchableOpacity>
+
+        {/* Modals */}
+        <UpgradeModal visible={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} />
+
+        <FilePickerSheet
+          visible={showFilePickerSheet}
+          onClose={() => setShowFilePickerSheet(false)}
+          onPickGallery={handlePickFromGallery}
+          onPickDocument={handlePickDocument}
+        />
+
+        {uploadingFile && (
+          <UploadProgressModal
+            visible={showUploadProgress}
+            fileName={uploadingFile.name}
+            fileSize={uploadingFile.size}
+            isUploading={isUploading}
+            isSuccess={uploadSuccess}
+            isError={!!uploadError}
+            errorMessage={uploadError || undefined}
           />
         )}
-      </ScrollView>
 
-      {/* FAB para subir archivos */}
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={handleUploadPress}
-        activeOpacity={0.8}
-      >
-        <Ionicons name="add" size={28} color="#FFFFFF" />
-      </TouchableOpacity>
-
-      {/* Modals */}
-      <UpgradeModal
-        visible={showUpgradeModal}
-        onClose={() => setShowUpgradeModal(false)}
-      />
-
-      <FilePickerSheet
-        visible={showFilePickerSheet}
-        onClose={() => setShowFilePickerSheet(false)}
-        onPickGallery={handlePickFromGallery}
-        onPickDocument={handlePickDocument}
-      />
-
-      {uploadingFile && (
-        <UploadProgressModal
-          visible={showUploadProgress}
-          fileName={uploadingFile.name}
-          fileSize={uploadingFile.size}
-          isUploading={isUploading}
-          isSuccess={uploadSuccess}
-          isError={!!uploadError}
-          errorMessage={uploadError || undefined}
-        />
-      )}
-
-      <FilePreviewModal
-        visible={showPreview}
-        file={previewFile}
-        imageUrl={previewImageUrl}
-        onClose={() => {
-          setShowPreview(false);
-          setPreviewFile(null);
-          setPreviewImageUrl(null);
-        }}
-        onDownload={() => previewFile && handleDownloadFile(previewFile)}
-        onDelete={() => {
-          if (previewFile) {
+        <FilePreviewModal
+          visible={showPreview}
+          file={previewFile}
+          imageUrl={previewImageUrl}
+          onClose={() => {
             setShowPreview(false);
-            handleDeleteFile(previewFile);
-          }
-        }}
-      />
+            setPreviewFile(null);
+            setPreviewImageUrl(null);
+          }}
+          onDownload={() => previewFile && handleDownloadFile(previewFile)}
+          onDelete={() => {
+            if (previewFile) {
+              setShowPreview(false);
+              handleDeleteFile(previewFile);
+            }
+          }}
+        />
 
-      <DeleteConfirmDialog
-        visible={showDeleteDialog}
-        file={deleteFile}
-        isDeleting={isDeleting}
-        onConfirm={executeDelete}
-        onCancel={() => {
-          setShowDeleteDialog(false);
-          setDeleteFile(null);
-        }}
-      />
-       </SafeAreaView>
+        <DeleteConfirmDialog
+          visible={showDeleteDialog}
+          file={deleteFile}
+          isDeleting={isDeleting}
+          onConfirm={executeDelete}
+          onCancel={() => {
+            setShowDeleteDialog(false);
+            setDeleteFile(null);
+          }}
+        />
+      </SafeAreaView>
     </GradientBackground>
   );
 }
@@ -475,4 +452,3 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
 });
-

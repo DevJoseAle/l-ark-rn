@@ -1,7 +1,7 @@
-import { useCampaignStore } from "@/src/stores/campaign.store";
-import { useDonationStore } from "@/src/stores/donation.store";
-import { useExchangeRatesStore } from "@/src/stores/exchangeRates.store";
-import { useCallback, useEffect, useState } from "react";
+import { useCampaignStore } from '@/src/stores/campaign.store';
+import { useDonationStore } from '@/src/stores/donation.store';
+import { useExchangeRatesStore } from '@/src/stores/exchangeRates.store';
+import { useCallback, useEffect, useState } from 'react';
 
 export type HomeViewState = 'loading' | 'error' | 'empty' | 'success';
 
@@ -22,12 +22,12 @@ export function useHomeData() {
   const refreshDonations = useDonationStore((state) => state.refreshDonations);
 
   //Exchange rates
-  const getExchangeRates = useExchangeRatesStore(state => state.getExchangeRates)
+  const getExchangeRates = useExchangeRatesStore((state) => state.getExchangeRates);
 
   // Load initial data
   useEffect(() => {
-loadData();
-}, []);
+    loadData();
+  }, []);
 
   // Update view state based on campaign and loading states
   useEffect(() => {
@@ -52,7 +52,7 @@ loadData();
         await fetchDonations(currentCampaign.id);
       }
       // Cargar tasas de cambio
-      await getExchangeRates()
+      await getExchangeRates();
     } catch (error) {
       console.error('Error loading home data:', error);
       // El error ya está en el store, solo loguear
@@ -80,23 +80,22 @@ loadData();
     }
 
     try {
-      await Promise.all([
-        fetchCampaign(),
-        refreshDonations(campaign.id),
-      ]);
+      await Promise.all([fetchCampaign(), refreshDonations(campaign.id)]);
     } catch (error) {
       console.error('Error refreshing data:', error);
     }
   }, [campaign, fetchCampaign, refreshDonations]);
 
   // Format campaign data for UI
-  const campaignData = campaign ? {
-    totalRaised: formatCurrency(campaign.total_raised),
-    currentAmount: formatCurrency(campaign.total_raised),
-    goalAmount: formatCurrency(campaign.goal_amount || 0),
-    percentage: calculatePercentage(campaign.total_raised, campaign.goal_amount || 0),
-    isVisible: campaign.visibility === 'public',
-  } : null;
+  const campaignData = campaign
+    ? {
+        totalRaised: formatCurrency(campaign.total_raised),
+        currentAmount: formatCurrency(campaign.total_raised),
+        goalAmount: formatCurrency(campaign.goal_amount || 0),
+        percentage: calculatePercentage(campaign.total_raised, campaign.goal_amount || 0),
+        isVisible: campaign.visibility === 'public',
+      }
+    : null;
 
   return {
     viewState,

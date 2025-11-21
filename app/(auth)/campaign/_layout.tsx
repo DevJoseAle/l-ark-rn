@@ -3,21 +3,21 @@ import { Stack } from 'expo-router';
 export default function CampaignLayout() {
   return (
     <Stack>
-      <Stack.Screen 
+      <Stack.Screen
         name="[id]"
         options={{
           headerShown: false,
           title: 'Detalle de Campaña',
         }}
       />
-      <Stack.Screen 
+      <Stack.Screen
         name="campaignDetail"
         options={{
           headerShown: false,
           title: 'Campaña',
         }}
       />
-      <Stack.Screen 
+      <Stack.Screen
         name="createCampaign"
         options={{
           headerShown: false,

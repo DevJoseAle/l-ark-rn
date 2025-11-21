@@ -1,4 +1,3 @@
-
 const { defineConfig } = require('eslint/config');
 const expoConfig = require('eslint-config-expo/flat');
 
@@ -22,16 +21,12 @@ module.exports = {
   },
   plugins: ['@typescript-eslint', 'react', 'react-hooks', 'react-native'],
   rules: {
-    
     'no-console': ['warn', { allow: ['warn', 'error'] }],
-    
-    
+
     'no-': 'error',
-    
-    
+
     'no-alert': 'warn',
-    
-    
+
     '@typescript-eslint/no-unused-vars': [
       'error',
       {
@@ -42,24 +37,21 @@ module.exports = {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/no-non-null-assertion': 'warn',
-    
-    
+
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
     'react/display-name': 'off',
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
-    
-    
+
     'react-native/no-unused-styles': 'warn',
     'react-native/no-inline-styles': 'warn',
     'react-native/no-color-literals': 'off',
-    
-    
+
     'prefer-const': 'error',
     'no-var': 'error',
-    'eqeqeq': ['error', 'always'],
-    'curly': ['error', 'all'],
+    eqeqeq: ['error', 'always'],
+    curly: ['error', 'all'],
     'no-unused-expressions': 'error',
     'no-useless-concat': 'error',
     'no-useless-return': 'error',

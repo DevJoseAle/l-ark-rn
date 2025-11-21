@@ -67,25 +67,25 @@ export interface CreateCampaignFormData {
   title: string;
   description: string;
   hasDiagnosis: boolean;
-  country: CountryCode; 
+  country: CountryCode;
   // Imágenes
   campaignImages: LocalImage[]; // Max 3
   diagnosisImages: LocalImage[]; // Max 3 (solo si hasDiagnosis = true)
-  
+
   // Montos
   goalAmount: string; // String para evitar problemas de formato
   softCap: string; // Meta mínima (required)
   hardCap: string; // Meta media (optional)
   currency: string; // Default: 'CLP'
-  
+
   // Fechas
   startDate: Date;
   endDate: Date;
-  
+
   // Configuración
   visibility: CampaignVisibility;
   distributionRule: DistributionRule;
-  
+
   // Beneficiarios
   beneficiaries: CampaignBeneficiary[]; // Max 3
 }
@@ -108,11 +108,11 @@ export interface CreateCampaignDTO {
   end_at: string; // ISO string
   has_diagnosis: boolean;
   beneficiary_rule: 'self' | 'third_party' | 'organization';
-  
+
   // Images (URLs después de subir)
   campaign_images: UploadedImage[];
   diagnosis_images?: UploadedImage[];
-  
+
   // Beneficiaries
   beneficiaries: {
     user_id: string;
@@ -165,15 +165,16 @@ export const COUNTRIES = [
   { code: 'CL', name: 'Chile', flag: '🇨🇱', currencyCode: 'CLP' },
 ] as const;
 
-export type CountryCode = typeof COUNTRIES[number]['code'];
+export type CountryCode = (typeof COUNTRIES)[number]['code'];
 
 export const getCountryName = (code: CountryCode): string => {
-  return COUNTRIES.find(c => c.code === code)?.name || code;
+  return COUNTRIES.find((c) => c.code === code)?.name || code;
 };
 export const getCountryFlag = (code: CountryCode): string => {
-  return COUNTRIES.find(c => c.code === code)?.flag || '';
+  return COUNTRIES.find((c) => c.code === code)?.flag || '';
 };
-export const getCurrencyCode = (code: CountryCode): string => COUNTRIES.find(c => c.code === code)?.currencyCode || 'USD'
+export const getCurrencyCode = (code: CountryCode): string =>
+  COUNTRIES.find((c) => c.code === code)?.currencyCode || 'USD';
 
 export const isConnectSupported = (code: CountryCode): boolean => {
   return ['US', 'CO', 'MX'].includes(code);

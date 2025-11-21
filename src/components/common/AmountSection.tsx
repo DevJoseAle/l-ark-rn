@@ -2,37 +2,38 @@
 import { Colors } from '@/constants/theme';
 import { useCreateCampaignStore } from '@/src/stores/createCampaign.store';
 import { getCurrencyCode } from '@/src/types/campaign-create.types';
-import { HARD_CAP_AMOUNTS_BY_COUNTRY, MAX_AMOUNTS_BY_COUNTRY, SOFT_CAP_AMOUNTS_BY_COUNTRY } from '@/src/utils/campaingConstants';
+import {
+  HARD_CAP_AMOUNTS_BY_COUNTRY,
+  MAX_AMOUNTS_BY_COUNTRY,
+  SOFT_CAP_AMOUNTS_BY_COUNTRY,
+} from '@/src/utils/campaingConstants';
 import { Formatters } from '@/src/utils/formatters';
 import { fromUSDtoCurrencyString } from '@/src/utils/ratesUtils';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  useColorScheme,
-  View
-} from 'react-native';
+import { StyleSheet, Text, TextInput, useColorScheme, View } from 'react-native';
 
 export const AmountsSection = () => {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
-  const {
-    formData,
-    setGoalAmount,
-    setSoftCap,
-    setHardCap,
-    errors,
-    maxGoalAmount,
-    minGoalAmount
-  } = useCreateCampaignStore();
+  const { formData, setGoalAmount, setSoftCap, setHardCap, errors, maxGoalAmount, minGoalAmount } =
+    useCreateCampaignStore();
   const selectedCountry = formData.country;
-  const minAndMaxAmountsGoal = () => `Entre ${Formatters.formatCLPInput((minGoalAmount()))} ${getCurrencyCode(selectedCountry)} y ${Formatters.formatCLPInput(maxGoalAmount())} ${getCurrencyCode(selectedCountry)}`
-  const softCapPlaceholder = fromUSDtoCurrencyString(SOFT_CAP_AMOUNTS_BY_COUNTRY[selectedCountry], selectedCountry);
-  const hardCapPlaceholder = fromUSDtoCurrencyString(HARD_CAP_AMOUNTS_BY_COUNTRY[selectedCountry], selectedCountry);
-  const totalAmountPlaceholder = fromUSDtoCurrencyString(MAX_AMOUNTS_BY_COUNTRY[selectedCountry], selectedCountry);
+  const minAndMaxAmountsGoal = () =>
+    `Entre ${Formatters.formatCLPInput(minGoalAmount())} ${getCurrencyCode(selectedCountry)} y ${Formatters.formatCLPInput(maxGoalAmount())} ${getCurrencyCode(selectedCountry)}`;
+  const softCapPlaceholder = fromUSDtoCurrencyString(
+    SOFT_CAP_AMOUNTS_BY_COUNTRY[selectedCountry],
+    selectedCountry
+  );
+  const hardCapPlaceholder = fromUSDtoCurrencyString(
+    HARD_CAP_AMOUNTS_BY_COUNTRY[selectedCountry],
+    selectedCountry
+  );
+  const totalAmountPlaceholder = fromUSDtoCurrencyString(
+    MAX_AMOUNTS_BY_COUNTRY[selectedCountry],
+    selectedCountry
+  );
   // Estado local para formateo
   const [goalDisplay, setGoalDisplay] = useState('');
   const [softCapDisplay, setSoftCapDisplay] = useState('');
@@ -51,15 +52,15 @@ export const AmountsSection = () => {
     }
   }, []);
   useEffect(() => {
-    setGoalDisplay('')
-    setSoftCapDisplay('')
-    setHardCapDisplay('')
-  }, [formData.country])
+    setGoalDisplay('');
+    setSoftCapDisplay('');
+    setHardCapDisplay('');
+  }, [formData.country]);
 
   // Handlers con formateo
   const handleGoalChange = (text: string) => {
     const cleaned = Formatters.unformatCLP(text);
-setGoalDisplay(Formatters.formatCLPInput(cleaned));
+    setGoalDisplay(Formatters.formatCLPInput(cleaned));
     setGoalAmount(cleaned);
   };
 
@@ -90,7 +91,7 @@ setGoalDisplay(Formatters.formatCLPInput(cleaned));
       case 'CO':
         return 'COP - Pesos Colombianos';
     }
-  }
+  };
   return (
     <View style={styles.container}>
       <View
@@ -98,27 +99,19 @@ setGoalDisplay(Formatters.formatCLPInput(cleaned));
           styles.card,
           {
             backgroundColor:
-              colorScheme === 'dark'
-                ? 'rgba(30, 42, 54, 0.7)'
-                : 'rgba(251, 252, 251, 0.7)',
+              colorScheme === 'dark' ? 'rgba(30, 42, 54, 0.7)' : 'rgba(251, 252, 251, 0.7)',
             borderColor:
-              colorScheme === 'dark'
-                ? 'rgba(42, 63, 84, 0.5)'
-                : 'rgba(172, 202, 231, 0.3)',
+              colorScheme === 'dark' ? 'rgba(42, 63, 84, 0.5)' : 'rgba(172, 202, 231, 0.3)',
           },
         ]}
       >
         {/* HEADER */}
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>
-          Montos
-        </Text>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>Montos</Text>
 
         {/* META TOTAL */}
         <View style={styles.inputGroup}>
           <View style={styles.labelContainer}>
-            <Text style={[styles.label, { color: colors.text }]}>
-              Meta de recaudación
-            </Text>
+            <Text style={[styles.label, { color: colors.text }]}>Meta de recaudación</Text>
             <Text style={[styles.required, { color: colors.error }]}> *</Text>
           </View>
           <View>
@@ -131,19 +124,12 @@ setGoalDisplay(Formatters.formatCLPInput(cleaned));
               styles.inputWrapper,
               {
                 backgroundColor:
-                  colorScheme === 'dark'
-                    ? 'rgba(34, 51, 68, 0.5)'
-                    : 'rgba(214, 228, 245, 0.3)',
+                  colorScheme === 'dark' ? 'rgba(34, 51, 68, 0.5)' : 'rgba(214, 228, 245, 0.3)',
                 borderColor: goalError ? colors.error : 'transparent',
               },
             ]}
           >
-            <Ionicons
-              name="cash-outline"
-              size={20}
-              color={colors.icon}
-              style={styles.inputIcon}
-            />
+            <Ionicons name="cash-outline" size={20} color={colors.icon} style={styles.inputIcon} />
             <TextInput
               style={[styles.input, { color: colors.text }]}
               placeholder={totalAmountPlaceholder}
@@ -155,31 +141,27 @@ setGoalDisplay(Formatters.formatCLPInput(cleaned));
           </View>
 
           {goalError && (
-            <Text style={[styles.errorText, { color: colors.error }]}>
-              {goalError.message}
-            </Text>
+            <Text style={[styles.errorText, { color: colors.error }]}>{goalError.message}</Text>
           )}
 
-          {selectedCountry !== 'US' && <Text style={[styles.hintText, { color: colors.secondaryText }]}>
-            El cálculo se realiza en la moneda seleccionada a la tasa del momento
-          </Text>}
+          {selectedCountry !== 'US' && (
+            <Text style={[styles.hintText, { color: colors.secondaryText }]}>
+              El cálculo se realiza en la moneda seleccionada a la tasa del momento
+            </Text>
+          )}
         </View>
 
         {/* META MÍNIMA Y MEDIA EN ROW */}
         <View style={styles.row}>
           {/* META MÍNIMA */}
           <View style={styles.halfWidth}>
-            <Text style={[styles.label, { color: colors.text }]}>
-              Meta Mínima
-            </Text>
+            <Text style={[styles.label, { color: colors.text }]}>Meta Mínima</Text>
             <View
               style={[
                 styles.inputWrapper,
                 {
                   backgroundColor:
-                    colorScheme === 'dark'
-                      ? 'rgba(34, 51, 68, 0.5)'
-                      : 'rgba(214, 228, 245, 0.3)',
+                    colorScheme === 'dark' ? 'rgba(34, 51, 68, 0.5)' : 'rgba(214, 228, 245, 0.3)',
                   borderColor: softCapError ? colors.error : 'transparent',
                 },
               ]}
@@ -202,17 +184,13 @@ setGoalDisplay(Formatters.formatCLPInput(cleaned));
 
           {/* META MEDIA */}
           <View style={styles.halfWidth}>
-            <Text style={[styles.label, { color: colors.text }]}>
-              Meta Media
-            </Text>
+            <Text style={[styles.label, { color: colors.text }]}>Meta Media</Text>
             <View
               style={[
                 styles.inputWrapper,
                 {
                   backgroundColor:
-                    colorScheme === 'dark'
-                      ? 'rgba(34, 51, 68, 0.5)'
-                      : 'rgba(214, 228, 245, 0.3)',
+                    colorScheme === 'dark' ? 'rgba(34, 51, 68, 0.5)' : 'rgba(214, 228, 245, 0.3)',
                   borderColor: hardCapError ? colors.error : 'transparent',
                 },
               ]}
@@ -242,9 +220,7 @@ setGoalDisplay(Formatters.formatCLPInput(cleaned));
               styles.currencyButton,
               {
                 backgroundColor:
-                  colorScheme === 'dark'
-                    ? 'rgba(34, 51, 68, 0.5)'
-                    : 'rgba(214, 228, 245, 0.3)',
+                  colorScheme === 'dark' ? 'rgba(34, 51, 68, 0.5)' : 'rgba(214, 228, 245, 0.3)',
               },
             ]}
           >

@@ -1,5 +1,4 @@
 {
-
   "deno.enablePaths": [
     "supabase/functions"
   ],
@@ -34,7 +33,7 @@
   ],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "vscode.typescript-language-features"
   },
   "[typescriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -56,4 +55,3 @@
   "eslint.alwaysShowStatus": true,
   "eslint.format.enable": true
 }
-

@@ -1,11 +1,18 @@
-import { create } from "zustand";
-import { CampaignCreateService } from "../services/createCampaign.service";
-import { CreateCampaignFormData, UploadProgress, ValidationError, LocalImage, CampaignBeneficiary, CountryCode } from "../types/campaign-create.types";
-import { CampaignValidations } from "../utils/campaignValidations";
-import { MAX_AMOUNTS_BY_COUNTRY, MIN_AMOUNTS_BY_COUNTRY } from "../utils/campaingConstants";
-import { useExchangeRatesStore } from "./exchangeRates.store";
-import { fromCurrencyToUSDNumber } from "../utils/ratesUtils";
-import { Formatters } from "../utils/formatters";
+import { create } from 'zustand';
+import { CampaignCreateService } from '../services/createCampaign.service';
+import {
+  CreateCampaignFormData,
+  UploadProgress,
+  ValidationError,
+  LocalImage,
+  CampaignBeneficiary,
+  CountryCode,
+} from '../types/campaign-create.types';
+import { CampaignValidations } from '../utils/campaignValidations';
+import { MAX_AMOUNTS_BY_COUNTRY, MIN_AMOUNTS_BY_COUNTRY } from '../utils/campaingConstants';
+import { useExchangeRatesStore } from './exchangeRates.store';
+import { fromCurrencyToUSDNumber } from '../utils/ratesUtils';
+import { Formatters } from '../utils/formatters';
 
 interface CreateCampaignStore {
   // State
@@ -53,7 +60,7 @@ interface CreateCampaignStore {
   // Actions - Submit
   submitCampaign: () => Promise<void>;
   reset: () => void;
-  resetAmounts: () => void
+  resetAmounts: () => void;
 }
 
 const initialFormData: CreateCampaignFormData = {
@@ -136,7 +143,7 @@ export const useCreateCampaignStore = create<CreateCampaignStore>((set, get) => 
       errors: state.errors.filter((e) => e.field !== 'startDate'),
     }));
   },
-    setCountry: (country) => {
+  setCountry: (country) => {
     set((state) => ({
       formData: { ...state.formData, country },
       errors: state.errors.filter((e) => e.field !== 'country'),
@@ -291,7 +298,7 @@ export const useCreateCampaignStore = create<CreateCampaignStore>((set, get) => 
 
   // Validation
   validateForm: () => {
-    const { formData, } = get();
+    const { formData } = get();
     const country = formData.country;
     const result = CampaignValidations.validateForm(formData, country);
     set({ errors: result.errors });
@@ -304,15 +311,20 @@ export const useCreateCampaignStore = create<CreateCampaignStore>((set, get) => 
 
   // Submit
   submitCampaign: async () => {
-    let { formData, validateForm,  } = get();
-    const actualAmount  = Number(Formatters.unformatCLP(formData.goalAmount))
-    const actualSoftCap  = Number(Formatters.unformatCLP(formData.softCap))
-    const actualHardCap  = Number(Formatters.unformatCLP(formData.hardCap))
-    const amountInUsd = Math.trunc(fromCurrencyToUSDNumber(actualAmount, formData.country))
-    const softCapInUsd = Math.trunc(fromCurrencyToUSDNumber(actualSoftCap, formData.country))
-    const hardCapInUsd = Math.trunc(fromCurrencyToUSDNumber(actualHardCap, formData.country))
-    let newformData = {...formData, softCap: softCapInUsd.toString(), hardCap: hardCapInUsd.toString(), goalAmount: amountInUsd.toString() }
-    
+    const { formData, validateForm } = get();
+    const actualAmount = Number(Formatters.unformatCLP(formData.goalAmount));
+    const actualSoftCap = Number(Formatters.unformatCLP(formData.softCap));
+    const actualHardCap = Number(Formatters.unformatCLP(formData.hardCap));
+    const amountInUsd = Math.trunc(fromCurrencyToUSDNumber(actualAmount, formData.country));
+    const softCapInUsd = Math.trunc(fromCurrencyToUSDNumber(actualSoftCap, formData.country));
+    const hardCapInUsd = Math.trunc(fromCurrencyToUSDNumber(actualHardCap, formData.country));
+    const newformData = {
+      ...formData,
+      softCap: softCapInUsd.toString(),
+      hardCap: hardCapInUsd.toString(),
+      goalAmount: amountInUsd.toString(),
+    };
+
     // Validar formulario
     if (!validateForm()) {
       throw new Error('Formulario inválido');
@@ -320,15 +332,12 @@ export const useCreateCampaignStore = create<CreateCampaignStore>((set, get) => 
 
     set({ isSubmitting: true, currentStep: 'Iniciando', progress: 0 });
     try {
-       await CampaignCreateService.createCampaign(
-         newformData,
-         (step, progress) => {
-           set({ currentStep: step, progress });
-         }
-       );
+      await CampaignCreateService.createCampaign(newformData, (step, progress) => {
+        set({ currentStep: step, progress });
+      });
 
-       // Reset form on success
-       get().reset();
+      // Reset form on success
+      get().reset();
     } catch (error) {
       console.error('Error submitting campaign:', error);
       throw error;
@@ -342,10 +351,14 @@ export const useCreateCampaignStore = create<CreateCampaignStore>((set, get) => 
     const clpRate = useExchangeRatesStore.getState().clpRate;
     const copRate = useExchangeRatesStore.getState().copRate;
     switch (country) {
-      case 'US': return `${MAX_AMOUNTS_BY_COUNTRY.US}`;
-      case 'MX': return `${MAX_AMOUNTS_BY_COUNTRY.MX * mxnRate}`;
-      case 'CL': return `${MAX_AMOUNTS_BY_COUNTRY.CL * clpRate}`;
-      case 'CO': return `${MAX_AMOUNTS_BY_COUNTRY.CO * copRate}`;
+      case 'US':
+        return `${MAX_AMOUNTS_BY_COUNTRY.US}`;
+      case 'MX':
+        return `${MAX_AMOUNTS_BY_COUNTRY.MX * mxnRate}`;
+      case 'CL':
+        return `${MAX_AMOUNTS_BY_COUNTRY.CL * clpRate}`;
+      case 'CO':
+        return `${MAX_AMOUNTS_BY_COUNTRY.CO * copRate}`;
     }
   },
   minGoalAmount: () => {
@@ -354,10 +367,14 @@ export const useCreateCampaignStore = create<CreateCampaignStore>((set, get) => 
     const clpRate = useExchangeRatesStore.getState().clpRate;
     const copRate = useExchangeRatesStore.getState().copRate;
     switch (country) {
-      case 'US': return `${MIN_AMOUNTS_BY_COUNTRY.US}`;
-      case 'MX': return `${MIN_AMOUNTS_BY_COUNTRY.MX * mxnRate}`;
-      case 'CL': return `${MIN_AMOUNTS_BY_COUNTRY.CL * clpRate}`;
-      case 'CO': return `${MIN_AMOUNTS_BY_COUNTRY.CO * copRate}`;
+      case 'US':
+        return `${MIN_AMOUNTS_BY_COUNTRY.US}`;
+      case 'MX':
+        return `${MIN_AMOUNTS_BY_COUNTRY.MX * mxnRate}`;
+      case 'CL':
+        return `${MIN_AMOUNTS_BY_COUNTRY.CL * clpRate}`;
+      case 'CO':
+        return `${MIN_AMOUNTS_BY_COUNTRY.CO * copRate}`;
     }
   },
 
@@ -372,14 +389,14 @@ export const useCreateCampaignStore = create<CreateCampaignStore>((set, get) => 
       progress: 0,
     });
   },
-  resetAmounts: () =>{
+  resetAmounts: () => {
     set({
       formData: {
         ...get().formData,
         goalAmount: '',
         softCap: '',
         hardCap: '',
-      }
-    })
-  }
+      },
+    });
+  },
 }));

@@ -1,4 +1,3 @@
-
 // src/hooks/useThemeColors.ts
 import { Colors } from '@/constants/theme';
 import { DarkTheme, DefaultTheme, Theme } from '@react-navigation/native';

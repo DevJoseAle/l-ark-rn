@@ -26,7 +26,7 @@ import { BeneficiariesSection } from '@/src/components/home/BeneficiariesSection
 import { ProgressModal } from '@/src/components/common/ProgressModal';
 
 export default function CreateCampaignScreen() {
- const router = useRouter();
+  const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
@@ -46,12 +46,9 @@ export default function CreateCampaignScreen() {
 
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-const handleCancel = () => {
-  if (formData.title || formData.description || formData.campaignImages.length > 0) {
-    Alert.alert(
-      '¿Cancelar creación?',
-      'Perderás todos los cambios realizados.',
-      [
+  const handleCancel = () => {
+    if (formData.title || formData.description || formData.campaignImages.length > 0) {
+      Alert.alert('¿Cancelar creación?', 'Perderás todos los cambios realizados.', [
         { text: 'Continuar editando', style: 'cancel' },
         {
           text: 'Cancelar',
@@ -61,16 +58,14 @@ const handleCancel = () => {
             router.back();
           },
         },
-      ]
-    );
-  } else {
-    reset(); // 👈 Y aquí también
-    router.back();
-  }
-};
+      ]);
+    } else {
+      reset(); // 👈 Y aquí también
+      router.back();
+    }
+  };
 
   const handleSubmit = async () => {
-     
     // Validar formulario
     const isValid = validateForm();
     if (!isValid) {
@@ -95,19 +90,15 @@ const handleCancel = () => {
               await submitCampaign();
 
               // Success - navegar a home o a la campaña
-              Alert.alert(
-                '¡Campaña creada!',
-                'Tu campaña ha sido creada exitosamente.',
-                [
-                  {
-                    text: 'Ver campaña',
-                    onPress: () => {
-                      reset();
-                      router.replace('/(auth)/(tabs)/arkHome');
-                    },
+              Alert.alert('¡Campaña creada!', 'Tu campaña ha sido creada exitosamente.', [
+                {
+                  text: 'Ver campaña',
+                  onPress: () => {
+                    reset();
+                    router.replace('/(auth)/(tabs)/arkHome');
                   },
-                ]
-              );
+                },
+              ]);
             } catch (error: any) {
               console.error('Error creating campaign:', error);
               setSubmitError(
@@ -140,14 +131,10 @@ const handleCancel = () => {
         {/* HEADER FIJO */}
         <View style={[styles.header, { borderBottomColor: colors.separator }]}>
           <TouchableOpacity onPress={handleCancel} style={styles.cancelButton}>
-            <Text style={[styles.cancelText, { color: colors.primary }]}>
-              Cancelar
-            </Text>
+            <Text style={[styles.cancelText, { color: colors.primary }]}>Cancelar</Text>
           </TouchableOpacity>
 
-          <Text style={[styles.headerTitle, { color: colors.text }]}>
-            Crear Campaña
-          </Text>
+          <Text style={[styles.headerTitle, { color: colors.text }]}>Crear Campaña</Text>
 
           <View style={styles.headerSpacer} />
         </View>
@@ -201,7 +188,7 @@ const handleCancel = () => {
             <BeneficiariesSection />
           </View>
 
-                 {/* ETAPA 3: Montos */}
+          {/* ETAPA 3: Montos */}
           <View style={styles.section}>
             <AmountsSection />
           </View>
@@ -214,9 +201,7 @@ const handleCancel = () => {
             styles.submitContainer,
             {
               backgroundColor:
-                colorScheme === 'dark'
-                  ? colors.cardBackground + 'F0'
-                  : colors.background + 'F0',
+                colorScheme === 'dark' ? colors.cardBackground + 'F0' : colors.background + 'F0',
               borderTopColor: colors.separator,
             },
           ]}
@@ -238,7 +223,7 @@ const handleCancel = () => {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-        {/* PROGRESS MODAL */}
+      {/* PROGRESS MODAL */}
       <ProgressModal
         visible={isSubmitting || submitError !== null}
         progress={progress}

@@ -22,9 +22,7 @@ export function StorageBar() {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>Almacenamiento</Text>
-        <Text style={styles.percentage}>
-          {quota.percentage.toFixed(0)}%
-        </Text>
+        <Text style={styles.percentage}>{quota.percentage.toFixed(0)}%</Text>
       </View>
 
       {/* Barra de progreso */}
@@ -58,9 +56,7 @@ export function StorageBar() {
 
       {showError && (
         <View style={[styles.messageContainer, styles.errorContainer]}>
-          <Text style={styles.errorText}>
-            🚫 Has alcanzado el límite de almacenamiento
-          </Text>
+          <Text style={styles.errorText}>🚫 Has alcanzado el límite de almacenamiento</Text>
         </View>
       )}
     </View>

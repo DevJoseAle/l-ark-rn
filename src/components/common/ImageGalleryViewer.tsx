@@ -37,7 +37,7 @@ export const ImageGalleryViewer: React.FC<ImageGalleryViewerProps> = ({
         <TouchableOpacity onPress={() => handlePress(0)} style={style}>
           {children}
         </TouchableOpacity>
-        
+
         <ImageView
           images={images}
           imageIndex={currentIndex}
@@ -56,7 +56,7 @@ export const ImageGalleryViewer: React.FC<ImageGalleryViewerProps> = ({
       <TouchableOpacity onPress={() => handlePress(0)} style={style}>
         <Image source={{ uri: images[0]?.uri }} style={imageStyle} />
       </TouchableOpacity>
-      
+
       <ImageView
         images={images}
         imageIndex={currentIndex}
@@ -75,10 +75,7 @@ interface ImageGridViewerProps {
   renderItem: (image: ImageSource, index: number) => React.ReactNode;
 }
 
-export const ImageGridViewer: React.FC<ImageGridViewerProps> = ({
-  images,
-  renderItem,
-}) => {
+export const ImageGridViewer: React.FC<ImageGridViewerProps> = ({ images, renderItem }) => {
   const [visible, setVisible] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -94,7 +91,7 @@ export const ImageGridViewer: React.FC<ImageGridViewerProps> = ({
           {renderItem(image, index)}
         </TouchableOpacity>
       ))}
-      
+
       <ImageView
         images={images}
         imageIndex={currentIndex}

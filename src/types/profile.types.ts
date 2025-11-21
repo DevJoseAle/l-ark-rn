@@ -5,13 +5,9 @@ import { CountryCode } from './campaign-create.types';
 
 // ==================== ENUMS ====================
 
-export type KycStatus = 
-  | 'kyc_pending' 
-  | 'kyc_review' 
-  | 'kyc_verified' 
-  | 'kyc_rejected';
+export type KycStatus = 'kyc_pending' | 'kyc_review' | 'kyc_verified' | 'kyc_rejected';
 
-export type ConnectStatus = 
+export type ConnectStatus =
   | 'invited'
   | 'pending'
   | 'onboarding'
@@ -22,11 +18,7 @@ export type ConnectStatus =
 
 export type PayoutMode = 'connect' | 'external';
 
-export type KycDocumentType = 
-  | 'id_front' 
-  | 'id_back' 
-  | 'selfie' 
-  | 'proof_of_address';
+export type KycDocumentType = 'id_front' | 'id_back' | 'selfie' | 'proof_of_address';
 
 // ==================== USER PROFILE ====================
 
@@ -35,7 +27,7 @@ export interface UserProfile {
   email: string;
   display_name: string;
   phone?: string | null;
-  country: string | null;  // ✅ CAMBIADO: era CountryCode | null
+  country: string | null; // ✅ CAMBIADO: era CountryCode | null
   kyc_status: KycStatus;
   default_currency: string;
   pin_set: boolean;
@@ -61,7 +53,7 @@ export interface KYCDocument {
 
 export interface BeneficiaryAccount {
   user_id: string;
-  country: string;  // ✅ CAMBIADO: era CountryCode
+  country: string; // ✅ CAMBIADO: era CountryCode
   payout_mode: PayoutMode;
   stripe_connect_account_id?: string | null;
   connect_status: ConnectStatus;
@@ -79,11 +71,11 @@ export interface ProfileCampaign {
   title: string;
   description?: string | null;
   goal_amount: number;
-  total_raised: number;  // ✅ CAMBIADO: era current_amount
+  total_raised: number; // ✅ CAMBIADO: era current_amount
   currency: string;
   status: 'draft' | 'active' | 'paused' | 'completed' | 'cancelled';
   visibility: 'public' | 'private' | 'hidden';
-  country: string;  // ✅ CAMBIADO: era CountryCode
+  country: string; // ✅ CAMBIADO: era CountryCode
   created_at: string;
   updated_at: string;
 }
@@ -99,10 +91,10 @@ export interface ProfileBeneficiaryCampaign {
     id: string;
     title: string;
     status: string;
-    total_raised: number;  // ✅ CAMBIADO: era current_amount
+    total_raised: number; // ✅ CAMBIADO: era current_amount
     goal_amount: number;
     currency: string;
-    country: string;  // ✅ CAMBIADO: era CountryCode
+    country: string; // ✅ CAMBIADO: era CountryCode
     owner: {
       display_name: string;
       email: string;
@@ -114,7 +106,7 @@ export interface ProfileBeneficiaryCampaign {
 
 export interface UpdateProfileDTO {
   display_name?: string;
-  country?: string;  // ✅ CAMBIADO: era CountryCode
+  country?: string; // ✅ CAMBIADO: era CountryCode
   phone?: string;
 }
 

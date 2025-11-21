@@ -10,33 +10,22 @@ interface LoadingScreenProps {
 }
 
 export function LoadingScreen({ message = 'Cargando...' }: LoadingScreenProps) {
-  const styles = loadingStyles
+  const styles = loadingStyles;
   const colors = useThemeColors();
 
   return (
     <GradientBackground>
       <View style={styles.container}>
         <LarkLogo size={120} />
-        
-        <Text style={[styles.title, { color: colors.text }]}>
-          L-Ark
-        </Text>
-        
-        <Text style={[styles.subtitle, { color: colors.secondaryText }]}>
-          Digital Heritage
-        </Text>
-        
-        <ActivityIndicator 
-          size="large" 
-          color={colors.primary} 
-          style={styles.spinner}
-        />
-        
-        <Text style={[styles.message, { color: colors.secondaryText }]}>
-          {message}
-        </Text>
+
+        <Text style={[styles.title, { color: colors.text }]}>L-Ark</Text>
+
+        <Text style={[styles.subtitle, { color: colors.secondaryText }]}>Digital Heritage</Text>
+
+        <ActivityIndicator size="large" color={colors.primary} style={styles.spinner} />
+
+        <Text style={[styles.message, { color: colors.secondaryText }]}>{message}</Text>
       </View>
     </GradientBackground>
   );
 }
-

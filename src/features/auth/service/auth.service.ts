@@ -25,7 +25,7 @@ interface UserExist {
 
 export const authService = {
   loginSendOTP: async (email: string): Promise<AuthServiceResponse<SendOTPData>> => {
-try {
+    try {
       const { data, error } = await supabase.auth.signInWithOtp({
         email,
         options: {
@@ -37,11 +37,11 @@ try {
 
       return {
         success: true,
-        message: "OTP enviado exitosamente",
+        message: 'OTP enviado exitosamente',
         data: data as SendOTPData,
       };
     } catch (error) {
-      console.error("Error enviando OTP:", error);
+      console.error('Error enviando OTP:', error);
       return {
         success: false,
         message: `${error}`,
@@ -51,7 +51,7 @@ try {
   },
 
   verifyOTP: async (email: string, token: string): Promise<AuthServiceResponse<VerifyOTPData>> => {
-try {
+    try {
       // 1. Verificar OTP
       const { data, error } = await supabase.auth.verifyOtp({
         email,
@@ -64,7 +64,7 @@ try {
       if (!data.user) {
         throw new Error('No se obtuvo información del usuario');
       }
-await authService.ensureUserExists(data.user.id, data.user.email!);
+      await authService.ensureUserExists(data.user.id, data.user.email!);
       try {
         // Obtener versión actual de términos
         const { data: currentTerms } = await supabase
@@ -85,26 +85,23 @@ await authService.ensureUserExists(data.user.id, data.user.email!);
 
         if (!existingAcceptance) {
           // Guardar aceptación de términos
-          const { error: acceptanceError } = await supabase
-            .from('user_terms_acceptances')
-            .insert({
-              user_id: data.user.id,
-              terms_version: currentVersion,
-              accepted_at: new Date().toISOString(),
-            });
+          const { error: acceptanceError } = await supabase.from('user_terms_acceptances').insert({
+            user_id: data.user.id,
+            terms_version: currentVersion,
+            accepted_at: new Date().toISOString(),
+          });
 
           if (acceptanceError) {
             // Si aún falla, loguear pero no fallar el login
             console.error('⚠️ Error guardando aceptación de términos:', acceptanceError);
           } else {
-// Actualizar columna helper en users
+            // Actualizar columna helper en users
             await supabase
               .from('users')
               .update({ current_terms_version: currentVersion })
               .eq('id', data.user.id);
           }
-        } else {
-}
+        }
       } catch (termsError) {
         // No fallar el login si hay error con términos
         console.error('⚠️ Error procesando términos:', termsError);
@@ -112,15 +109,14 @@ await authService.ensureUserExists(data.user.id, data.user.email!);
 
       return {
         success: true,
-        message: "OTP Verificado Exitosamente",
-        data: data as VerifyOTPData
+        message: 'OTP Verificado Exitosamente',
+        data: data as VerifyOTPData,
       };
-
     } catch (error) {
-      console.error("❌ Error verificando OTP:", error);
+      console.error('❌ Error verificando OTP:', error);
       return {
         success: false,
-        message: "Error al verificar OTP (Falla servicio)",
+        message: 'Error al verificar OTP (Falla servicio)',
         error: error as AuthError,
       };
     }
@@ -136,39 +132,37 @@ await authService.ensureUserExists(data.user.id, data.user.email!);
     const delayMs = 500;
 
     for (let i = 0; i < maxAttempts; i++) {
-const { data: user, error } = await supabase
+      const { data: user, error } = await supabase
         .from('users')
         .select('id')
         .eq('id', userId)
         .maybeSingle();
 
       if (user) {
-return;
+        return;
       }
 
       if (i === maxAttempts - 1) {
         // Último intento: crear manualmente
-const { error: insertError } = await supabase
-          .from('users')
-          .insert({
-            id: userId,
-            email: email,
-            display_name: email.split('@')[0],
-            kyc_status: 'kyc_pending',
-            default_currency: 'USD',
-            pin_set: false,
-          });
+        const { error: insertError } = await supabase.from('users').insert({
+          id: userId,
+          email: email,
+          display_name: email.split('@')[0],
+          kyc_status: 'kyc_pending',
+          default_currency: 'USD',
+          pin_set: false,
+        });
 
         if (insertError) {
           console.error('❌ Error creando usuario manualmente:', insertError);
           throw new Error('No se pudo crear el usuario en la base de datos');
         }
 
-return;
+        return;
       }
 
       // Esperar antes del siguiente intento
-      await new Promise(resolve => setTimeout(resolve, delayMs));
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
     }
 
     throw new Error('Timeout esperando creación de usuario');
@@ -180,15 +174,15 @@ return;
       if (error) throw error;
       return {
         success: true,
-        message: "Session obtenida",
-        data: data.session as Session
+        message: 'Session obtenida',
+        data: data.session as Session,
       };
     } catch (error) {
       return {
         success: false,
-        message: "Error al obtener Sesion",
-        error: error as AuthError
-      }
+        message: 'Error al obtener Sesion',
+        error: error as AuthError,
+      };
     }
   },
 
@@ -197,36 +191,35 @@ return;
     if (error) throw error;
     return {
       success: true,
-      message: "Sesión cerrada",
+      message: 'Sesión cerrada',
     };
   },
 
   checkIfUserExists: async (email: string): Promise<AuthServiceResponse<UserExist>> => {
     try {
       const { data, error } = await supabase.functions.invoke('check-user-exists', {
-        body: { email }
-      })
-      if (error) throw error
-      const exists = data as UserExist
+        body: { email },
+      });
+      if (error) throw error;
+      const exists = data as UserExist;
       if (exists.exists == false) {
         return {
           success: true,
-          message: "Usuario no existe en la base de datos",
-          data
-        }
+          message: 'Usuario no existe en la base de datos',
+          data,
+        };
       }
       return {
         success: true,
-        message: "Usuario encontrado Exitosamente",
-        data
-      }
-
+        message: 'Usuario encontrado Exitosamente',
+        data,
+      };
     } catch (error) {
       return {
         success: false,
-        message: "Error al verificar el usuario",
-        error: error as AuthError
-      }
+        message: 'Error al verificar el usuario',
+        error: error as AuthError,
+      };
     }
   },
 

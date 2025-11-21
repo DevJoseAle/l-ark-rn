@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   useColorScheme,
-
   Pressable,
   Modal,
 } from 'react-native';
@@ -69,8 +68,7 @@ export const ConfigurationSection = () => {
   const visibilityLabel =
     VISIBILITY_OPTIONS.find((o) => o.value === formData.visibility)?.label || 'Pública';
   const distributionLabel =
-    DISTRIBUTION_OPTIONS.find((o) => o.value === formData.distributionRule)?.label ||
-    'Porcentaje';
+    DISTRIBUTION_OPTIONS.find((o) => o.value === formData.distributionRule)?.label || 'Porcentaje';
 
   // Handlers
   const handleVisibilitySelect = (value: VisibilityOption) => {
@@ -90,20 +88,14 @@ export const ConfigurationSection = () => {
           styles.card,
           {
             backgroundColor:
-              colorScheme === 'dark'
-                ? 'rgba(30, 42, 54, 0.7)'
-                : 'rgba(251, 252, 251, 0.7)',
+              colorScheme === 'dark' ? 'rgba(30, 42, 54, 0.7)' : 'rgba(251, 252, 251, 0.7)',
             borderColor:
-              colorScheme === 'dark'
-                ? 'rgba(42, 63, 84, 0.5)'
-                : 'rgba(172, 202, 231, 0.3)',
+              colorScheme === 'dark' ? 'rgba(42, 63, 84, 0.5)' : 'rgba(172, 202, 231, 0.3)',
           },
         ]}
       >
         {/* HEADER */}
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>
-          Configuración
-        </Text>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>Configuración</Text>
 
         {/* VISIBILIDAD */}
         <View style={styles.optionGroup}>
@@ -113,40 +105,30 @@ export const ConfigurationSection = () => {
               styles.optionButton,
               {
                 backgroundColor:
-                  colorScheme === 'dark'
-                    ? 'rgba(34, 51, 68, 0.5)'
-                    : 'rgba(214, 228, 245, 0.3)',
+                  colorScheme === 'dark' ? 'rgba(34, 51, 68, 0.5)' : 'rgba(214, 228, 245, 0.3)',
               },
             ]}
             onPress={() => setActivePicker('visibility')}
           >
-            <Text style={[styles.optionText, { color: colors.text }]}>
-              {visibilityLabel}
-            </Text>
+            <Text style={[styles.optionText, { color: colors.text }]}>{visibilityLabel}</Text>
             <Ionicons name="chevron-down" size={18} color={colors.icon} />
           </TouchableOpacity>
         </View>
 
         {/* REGLA DE DISTRIBUCIÓN */}
         <View style={styles.optionGroup}>
-          <Text style={[styles.label, { color: colors.text }]}>
-            Regla de distribución
-          </Text>
+          <Text style={[styles.label, { color: colors.text }]}>Regla de distribución</Text>
           <TouchableOpacity
             style={[
               styles.optionButton,
               {
                 backgroundColor:
-                  colorScheme === 'dark'
-                    ? 'rgba(34, 51, 68, 0.5)'
-                    : 'rgba(214, 228, 245, 0.3)',
+                  colorScheme === 'dark' ? 'rgba(34, 51, 68, 0.5)' : 'rgba(214, 228, 245, 0.3)',
               },
             ]}
             onPress={() => setActivePicker('distribution')}
           >
-            <Text style={[styles.optionText, { color: colors.text }]}>
-              {distributionLabel}
-            </Text>
+            <Text style={[styles.optionText, { color: colors.text }]}>{distributionLabel}</Text>
             <Ionicons name="chevron-down" size={18} color={colors.icon} />
           </TouchableOpacity>
         </View>
@@ -166,18 +148,14 @@ export const ConfigurationSection = () => {
                 styles.modalContent,
                 {
                   backgroundColor:
-                    colorScheme === 'dark'
-                      ? colors.cardBackground
-                      : colors.background,
+                    colorScheme === 'dark' ? colors.cardBackground : colors.background,
                 },
               ]}
               onPress={(e) => e.stopPropagation()}
             >
               {/* HEADER */}
               <View style={styles.modalHeader}>
-                <Text style={[styles.modalTitle, { color: colors.text }]}>
-                  Visibilidad
-                </Text>
+                <Text style={[styles.modalTitle, { color: colors.text }]}>Visibilidad</Text>
                 <TouchableOpacity onPress={() => setActivePicker(null)}>
                   <Ionicons name="close" size={24} color={colors.icon} />
                 </TouchableOpacity>
@@ -214,9 +192,7 @@ export const ConfigurationSection = () => {
                         name={option.icon}
                         size={20}
                         color={
-                          formData.visibility === option.value
-                            ? colors.customWhite
-                            : colors.icon
+                          formData.visibility === option.value ? colors.customWhite : colors.icon
                         }
                       />
                     </View>
@@ -224,9 +200,7 @@ export const ConfigurationSection = () => {
                       <Text style={[styles.optionLabel, { color: colors.text }]}>
                         {option.label}
                       </Text>
-                      <Text
-                        style={[styles.optionDescription, { color: colors.secondaryText }]}
-                      >
+                      <Text style={[styles.optionDescription, { color: colors.secondaryText }]}>
                         {option.description}
                       </Text>
                     </View>
@@ -255,9 +229,7 @@ export const ConfigurationSection = () => {
                 styles.modalContent,
                 {
                   backgroundColor:
-                    colorScheme === 'dark'
-                      ? colors.cardBackground
-                      : colors.background,
+                    colorScheme === 'dark' ? colors.cardBackground : colors.background,
                 },
               ]}
               onPress={(e) => e.stopPropagation()}
@@ -313,9 +285,7 @@ export const ConfigurationSection = () => {
                       <Text style={[styles.optionLabel, { color: colors.text }]}>
                         {option.label}
                       </Text>
-                      <Text
-                        style={[styles.optionDescription, { color: colors.secondaryText }]}
-                      >
+                      <Text style={[styles.optionDescription, { color: colors.secondaryText }]}>
                         {option.description}
                       </Text>
                     </View>

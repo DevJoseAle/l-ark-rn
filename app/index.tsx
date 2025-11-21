@@ -6,9 +6,9 @@ import { SplashScreen } from '@/src/components/common/SplashScreen';
 
 export default function Index() {
   const [animationComplete, setAnimationComplete] = useState(false);
-  
+
   const { user, isAuthenticated, isLoading, initialize } = useAuthStore(
-    useShallow(state => ({
+    useShallow((state) => ({
       user: state.user,
       isAuthenticated: state.isAuthenticated,
       isLoading: state.isLoading,
@@ -23,11 +23,7 @@ export default function Index() {
 
   // Mostrar splash mientras carga O mientras la animación no termina
   if (isLoading || !animationComplete) {
-    return (
-      <SplashScreen 
-        onAnimationComplete={() => setAnimationComplete(true)}
-      />
-    );
+    return <SplashScreen onAnimationComplete={() => setAnimationComplete(true)} />;
   }
 
   // Redirige según estado de autenticación

@@ -18,7 +18,7 @@ export default function KycLayout() {
       <Stack>
         <Stack.Screen name="welcome" options={{ headerShown: false }} />
         <Stack.Screen name="documents" options={{ headerShown: false }} />
-        <Stack.Screen name="login" options={{ headerShown: false  }} />
+        <Stack.Screen name="login" options={{ headerShown: false }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

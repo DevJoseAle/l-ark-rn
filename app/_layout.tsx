@@ -22,7 +22,9 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <BottomSheetModalProvider>
         <QueryClientProvider client={queryClient}>
-          <ThemeProvider value={colorScheme === 'dark' ? DarkNavigationTheme : LightNavigationTheme}>
+          <ThemeProvider
+            value={colorScheme === 'dark' ? DarkNavigationTheme : LightNavigationTheme}
+          >
             <Stack>
               <Stack.Screen name="(auth)" options={{ headerShown: false }} />
               <Stack.Screen name="(public)" options={{ headerShown: false }} />

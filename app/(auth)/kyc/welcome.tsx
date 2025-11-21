@@ -1,12 +1,6 @@
 // app/(auth)/kyc/intro.tsx
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  useColorScheme,
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/theme';
@@ -39,7 +33,7 @@ export default function KYCIntroScreen() {
   return (
     <GradientBackground>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      
+
       <View style={styles.container}>
         {/* Icon */}
         <View style={[styles.iconContainer, { backgroundColor: colors.primary + '20' }]}>
@@ -47,9 +41,7 @@ export default function KYCIntroScreen() {
         </View>
 
         {/* Title */}
-        <Text style={[styles.title, { color: colors.text }]}>
-          Verificación de identidad
-        </Text>
+        <Text style={[styles.title, { color: colors.text }]}>Verificación de identidad</Text>
 
         {/* Subtitle */}
         <Text style={[styles.subtitle, { color: colors.secondaryText }]}>
@@ -65,28 +57,17 @@ export default function KYCIntroScreen() {
                 styles.stepCard,
                 {
                   backgroundColor:
-                    colorScheme === 'dark'
-                      ? 'rgba(30, 42, 54, 0.7)'
-                      : 'rgba(251, 252, 251, 0.7)',
+                    colorScheme === 'dark' ? 'rgba(30, 42, 54, 0.7)' : 'rgba(251, 252, 251, 0.7)',
                   borderColor:
-                    colorScheme === 'dark'
-                      ? 'rgba(42, 63, 84, 0.5)'
-                      : 'rgba(172, 202, 231, 0.3)',
+                    colorScheme === 'dark' ? 'rgba(42, 63, 84, 0.5)' : 'rgba(172, 202, 231, 0.3)',
                 },
               ]}
             >
-              <View
-                style={[
-                  styles.stepIcon,
-                  { backgroundColor: colors.primary + '20' },
-                ]}
-              >
+              <View style={[styles.stepIcon, { backgroundColor: colors.primary + '20' }]}>
                 <Ionicons name={step.icon} size={24} color={colors.primary} />
               </View>
               <View style={styles.stepContent}>
-                <Text style={[styles.stepTitle, { color: colors.text }]}>
-                  {step.title}
-                </Text>
+                <Text style={[styles.stepTitle, { color: colors.text }]}>{step.title}</Text>
                 <Text style={[styles.stepDescription, { color: colors.secondaryText }]}>
                   {step.description}
                 </Text>
@@ -104,18 +85,14 @@ export default function KYCIntroScreen() {
             style={[styles.button, { backgroundColor: colors.primary }]}
             onPress={() => router.push('/(auth)/kyc/documents')}
           >
-            <Text style={[styles.buttonText, { color: colors.customWhite }]}>
-              Continuar
-            </Text>
+            <Text style={[styles.buttonText, { color: colors.customWhite }]}>Continuar</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={[styles.buttonOutline, { borderColor: colors.primary }]}
             onPress={() => router.back()}
           >
-            <Text style={[styles.buttonOutlineText, { color: colors.primary }]}>
-              Regresar
-            </Text>
+            <Text style={[styles.buttonOutlineText, { color: colors.primary }]}>Regresar</Text>
           </TouchableOpacity>
         </View>
       </View>

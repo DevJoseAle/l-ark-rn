@@ -1,6 +1,6 @@
 // src/services/terms.service.ts
 
-import { supabase } from "../lib/supabaseClient";
+import { supabase } from '../lib/supabaseClient';
 
 export const TermsService = {
   /**
@@ -8,29 +8,24 @@ export const TermsService = {
    */
   async acceptTerms(userId: string, version: string): Promise<boolean> {
     try {
-      const { error } = await supabase
-        .from('user_terms_acceptances')
-        .insert({
-          user_id: userId,
-          terms_version: version,
-          accepted_at: new Date().toISOString(),
-        });
+      const { error } = await supabase.from('user_terms_acceptances').insert({
+        user_id: userId,
+        terms_version: version,
+        accepted_at: new Date().toISOString(),
+      });
 
       if (error) {
         // Si ya existe (UNIQUE constraint), está ok
         if (error.code === '23505') {
-return true;
+          return true;
         }
         throw error;
       }
 
       // Actualizar columna helper en users
-      await supabase
-        .from('users')
-        .update({ current_terms_version: version })
-        .eq('id', userId);
+      await supabase.from('users').update({ current_terms_version: version }).eq('id', userId);
 
-return true;
+      return true;
     } catch (error) {
       console.error('Error guardando aceptación:', error);
       return false;
@@ -62,5 +57,5 @@ return true;
       .single();
 
     return data?.version || '1.0';
-  }
+  },
 };

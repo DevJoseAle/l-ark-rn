@@ -33,9 +33,7 @@ export default function EditProfileScreen() {
   const { user, isUpdating, updateProfile } = useProfileStore();
 
   const [displayName, setDisplayName] = useState(user?.display_name || '');
-  const [selectedCountry, setSelectedCountry] = useState<string | null>(
-    user?.country || null
-  );
+  const [selectedCountry, setSelectedCountry] = useState<string | null>(user?.country || null);
   const [showCountryPicker, setShowCountryPicker] = useState(false);
 
   useEffect(() => {
@@ -63,10 +61,7 @@ export default function EditProfileScreen() {
     }
 
     // Check if anything changed
-    if (
-      displayName.trim() === user?.display_name &&
-      selectedCountry === user?.country
-    ) {
+    if (displayName.trim() === user?.display_name && selectedCountry === user?.country) {
       Alert.alert('Sin cambios', 'No has realizado ningún cambio');
       return;
     }
@@ -90,25 +85,18 @@ export default function EditProfileScreen() {
   };
 
   const handleCancel = () => {
-    if (
-      displayName.trim() !== user?.display_name ||
-      selectedCountry !== user?.country
-    ) {
-      Alert.alert(
-        'Descartar cambios',
-        '¿Estás seguro de que quieres descartar los cambios?',
-        [
-          {
-            text: 'Continuar editando',
-            style: 'cancel',
-          },
-          {
-            text: 'Descartar',
-            style: 'destructive',
-            onPress: () => router.back(),
-          },
-        ]
-      );
+    if (displayName.trim() !== user?.display_name || selectedCountry !== user?.country) {
+      Alert.alert('Descartar cambios', '¿Estás seguro de que quieres descartar los cambios?', [
+        {
+          text: 'Continuar editando',
+          style: 'cancel',
+        },
+        {
+          text: 'Descartar',
+          style: 'destructive',
+          onPress: () => router.back(),
+        },
+      ]);
     } else {
       router.back();
     }
@@ -116,7 +104,6 @@ export default function EditProfileScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -154,12 +141,7 @@ export default function EditProfileScreen() {
           <View style={styles.section}>
             <Text style={styles.label}>Nombre</Text>
             <View style={styles.inputContainer}>
-              <Ionicons
-                name="person-outline"
-                size={20}
-                color="#9CA3AF"
-                style={styles.inputIcon}
-              />
+              <Ionicons name="person-outline" size={20} color="#9CA3AF" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 value={displayName}
@@ -175,21 +157,14 @@ export default function EditProfileScreen() {
                 </TouchableOpacity>
               )}
             </View>
-            <Text style={styles.hint}>
-              {displayName.length}/50 caracteres
-            </Text>
+            <Text style={styles.hint}>{displayName.length}/50 caracteres</Text>
           </View>
 
           {/* Email (readonly) */}
           <View style={styles.section}>
             <Text style={styles.label}>Email</Text>
             <View style={[styles.inputContainer, styles.inputDisabled]}>
-              <Ionicons
-                name="mail-outline"
-                size={20}
-                color="#9CA3AF"
-                style={styles.inputIcon}
-              />
+              <Ionicons name="mail-outline" size={20} color="#9CA3AF" style={styles.inputIcon} />
               <TextInput
                 style={[styles.input, styles.inputTextDisabled]}
                 value={user?.email}
@@ -197,9 +172,7 @@ export default function EditProfileScreen() {
               />
               <Ionicons name="lock-closed-outline" size={20} color="#9CA3AF" />
             </View>
-            <Text style={styles.hint}>
-              El email no se puede cambiar
-            </Text>
+            <Text style={styles.hint}>El email no se puede cambiar</Text>
           </View>
 
           {/* Country */}
@@ -211,12 +184,7 @@ export default function EditProfileScreen() {
               activeOpacity={0.7}
             >
               <View style={styles.countrySelectorLeft}>
-                <Ionicons
-                  name="earth-outline"
-                  size={20}
-                  color="#9CA3AF"
-                  style={styles.inputIcon}
-                />
+                <Ionicons name="earth-outline" size={20} color="#9CA3AF" style={styles.inputIcon} />
                 {selectedCountry ? (
                   <View style={styles.selectedCountryContainer}>
                     <Text style={styles.countryFlag}>
@@ -263,9 +231,7 @@ export default function EditProfileScreen() {
               </View>
             )}
 
-            <Text style={styles.hint}>
-              El país determina opciones de pago disponibles
-            </Text>
+            <Text style={styles.hint}>El país determina opciones de pago disponibles</Text>
           </View>
 
           {/* Info Box */}

@@ -1,14 +1,7 @@
 // src/components/home/DeleteConfirmDialog.tsx
 
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Modal,
-  TouchableOpacity,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, Modal, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { formatBytes } from '@/src/utils/vaultUtils';
 
@@ -30,12 +23,7 @@ export function DeleteConfirmDialog({
   if (!file) return null;
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={onCancel}
-    >
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
       {/* Overlay SIN BlurView */}
       <View style={styles.overlay}>
         <View style={styles.container}>
@@ -54,23 +42,24 @@ export function DeleteConfirmDialog({
 
           {/* File info */}
           <View style={styles.fileInfo}>
-            <Ionicons 
+            <Ionicons
               name={
-                file.file_type === 'image' ? 'image' :
-                file.file_type === 'pdf' ? 'document-text' :
-                file.file_type === 'video' ? 'videocam' :
-                'document'
-              } 
-              size={20} 
-              color="rgba(255,255,255,0.6)" 
+                file.file_type === 'image'
+                  ? 'image'
+                  : file.file_type === 'pdf'
+                    ? 'document-text'
+                    : file.file_type === 'video'
+                      ? 'videocam'
+                      : 'document'
+              }
+              size={20}
+              color="rgba(255,255,255,0.6)"
             />
             <View style={styles.fileDetails}>
               <Text style={styles.fileName} numberOfLines={1}>
                 {file.file_name}
               </Text>
-              <Text style={styles.fileSize}>
-                {formatBytes(file.file_size_bytes)}
-              </Text>
+              <Text style={styles.fileSize}>{formatBytes(file.file_size_bytes)}</Text>
             </View>
           </View>
 

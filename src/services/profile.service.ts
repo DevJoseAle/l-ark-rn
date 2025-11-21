@@ -21,19 +21,15 @@ export class ProfileService {
    */
   static async getProfileSummary(): Promise<ProfileServiceResponse<ProfileSummary>> {
     try {
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      
+      const {
+        data: { user: authUser },
+      } = await supabase.auth.getUser();
+
       if (!authUser) {
         throw new Error('Usuario no autenticado');
       }
 
-      const [
-        userData,
-        kycData,
-        accountData,
-        campaignsData,
-        beneficiaryData,
-      ] = await Promise.all([
+      const [userData, kycData, accountData, campaignsData, beneficiaryData] = await Promise.all([
         this.getUserData(authUser.id),
         this.getKYCDocuments(authUser.id),
         this.getBeneficiaryAccount(authUser.id),
@@ -62,7 +58,9 @@ export class ProfileService {
   private static async getUserData(userId: string): Promise<UserProfile> {
     const { data, error } = await supabase
       .from('users')
-      .select('id, email, display_name, phone, country, kyc_status, default_currency, pin_set, created_at, updated_at')
+      .select(
+        'id, email, display_name, phone, country, kyc_status, default_currency, pin_set, created_at, updated_at'
+      )
       .eq('id', userId)
       .single();
 
@@ -91,9 +89,7 @@ export class ProfileService {
   /**
    * Obtener cuenta de beneficiario (Stripe Connect)
    */
-  private static async getBeneficiaryAccount(
-    userId: string
-  ): Promise<BeneficiaryAccount | null> {
+  private static async getBeneficiaryAccount(userId: string): Promise<BeneficiaryAccount | null> {
     const { data, error } = await supabase
       .from('beneficiary_accounts')
       .select('*')
@@ -114,9 +110,7 @@ export class ProfileService {
   /**
    * Obtener campañas creadas por el usuario
    */
-  private static async getOwnedCampaigns(
-    userId: string
-  ): Promise<ProfileCampaign[]> {
+  private static async getOwnedCampaigns(userId: string): Promise<ProfileCampaign[]> {
     const { data, error } = await supabase
       .from('campaigns')
       .select(
@@ -141,7 +135,8 @@ export class ProfileService {
   ): Promise<ProfileBeneficiaryCampaign[]> {
     const { data, error } = await supabase
       .from('campaign_beneficiaries')
-      .select(`
+      .select(
+        `
         id,
         campaign_id,
         beneficiary_user_id,
@@ -161,7 +156,8 @@ export class ProfileService {
             email
           )
         )
-      `)
+      `
+      )
       .eq('beneficiary_user_id', userId)
       .eq('is_active', true)
       .order('created_at', { ascending: false });
@@ -202,8 +198,10 @@ export class ProfileService {
     updates: UpdateProfileDTO
   ): Promise<ProfileServiceResponse<UserProfile>> {
     try {
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      
+      const {
+        data: { user: authUser },
+      } = await supabase.auth.getUser();
+
       if (!authUser) {
         throw new Error('Usuario no autenticado');
       }
@@ -243,8 +241,7 @@ export class ProfileService {
       beneficiaryAccount?.connect_status === 'verified' ||
       beneficiaryAccount?.connect_status === 'active';
 
-    const needsConnect =
-      isBeneficiary && countrySupportsConnect && !hasActiveConnect;
+    const needsConnect = isBeneficiary && countrySupportsConnect && !hasActiveConnect;
 
     const kycRejected = user.kyc_status === 'kyc_rejected';
     const connectRejected = beneficiaryAccount?.connect_status === 'rejected';
@@ -264,13 +261,8 @@ export class ProfileService {
     const { ownedCampaigns, beneficiaryCampaigns } = summary;
 
     const totalCampaigns = ownedCampaigns.length;
-    const activeCampaigns = ownedCampaigns.filter(
-      (c) => c.status === 'active'
-    ).length;
-    const totalRaised = ownedCampaigns.reduce(
-      (sum, c) => sum + (c.total_raised || 0),
-      0
-    );
+    const activeCampaigns = ownedCampaigns.filter((c) => c.status === 'active').length;
+    const totalRaised = ownedCampaigns.reduce((sum, c) => sum + (c.total_raised || 0), 0);
 
     const beneficiaryCount = beneficiaryCampaigns.length;
     const estimatedEarnings = beneficiaryCampaigns.reduce((sum, bc) => {
@@ -298,8 +290,10 @@ export class ProfileService {
     beneficiary: ProfileBeneficiaryCampaign[];
   }> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
       if (!user) {
         throw new Error('Usuario no autenticado');
       }
@@ -321,8 +315,10 @@ export class ProfileService {
    */
   static async getConnectStatus(): Promise<BeneficiaryAccount | null> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
       if (!user) {
         throw new Error('Usuario no autenticado');
       }

@@ -13,14 +13,11 @@ export function EmptyFilesList() {
       </View>
 
       {/* Título */}
-      <Text style={styles.title}>
-        Aún no has subido archivos
-      </Text>
+      <Text style={styles.title}>Aún no has subido archivos</Text>
 
       {/* Descripción */}
       <Text style={styles.description}>
-        Guarda documentos importantes, fotos y videos de forma segura en tu
-        bóveda digital
+        Guarda documentos importantes, fotos y videos de forma segura en tu bóveda digital
       </Text>
 
       {/* Lista de tipos aceptados */}
@@ -34,9 +31,7 @@ export function EmptyFilesList() {
       </View>
 
       {/* Nota */}
-      <Text style={styles.note}>
-        Toca el botón + abajo para comenzar
-      </Text>
+      <Text style={styles.note}>Toca el botón + abajo para comenzar</Text>
     </View>
   );
 }

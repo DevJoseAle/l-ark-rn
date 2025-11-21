@@ -1,16 +1,14 @@
-
-
 /**
  * ⚠️ MOCK PAYMENT SERVICE - SOLO PARA DESARROLLO
- * 
+ *
  * Este servicio simula compras de suscripciones sin necesitar
  * cuenta de Apple Developer o Google Play.
- * 
+ *
  *  este archivo será reemplazado
  * por RevenueCatService.ts
  */
 
-import { BillingInterval, VaultPlanType } from "../types/vault.types";
+import { BillingInterval, VaultPlanType } from '../types/vault.types';
 
 export interface MockPurchaseResult {
   success: boolean;
@@ -30,7 +28,7 @@ export interface MockSubscriptionInfo {
  * Simula delay de red (para que se sienta real)
  */
 const simulateNetworkDelay = (ms: number = 2000) => {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
 /**
@@ -60,16 +58,16 @@ export const MockPaymentService = {
 
     if (shouldSucceed) {
       const transactionId = generateMockTransactionId();
-      
+
       console.log('✅ [MOCK] Compra exitosa:', transactionId);
-      
+
       return {
         success: true,
         transactionId,
       };
     } else {
       console.log('❌ [MOCK] Compra fallida (simulación de error)');
-      
+
       return {
         success: false,
         error: 'Pago cancelado por el usuario (simulado)',
@@ -138,7 +136,7 @@ export const MockPaymentService = {
 
     // Aquí llamarías a tu SubscriptionService para actualizar la DB
     // Por ahora solo retornamos el mock result
-    
+
     return {
       success: true,
       transactionId,
@@ -148,14 +146,11 @@ export const MockPaymentService = {
   /**
    * Helper: Desactiva manualmente el plan PRO (vuelve a FREE)
    */
-  async _devDeactivatePro(
-    userId: string,
-    campaignId: string
-  ): Promise<{ success: boolean }> {
+  async _devDeactivatePro(userId: string, campaignId: string): Promise<{ success: boolean }> {
     console.log('🔧 [DEV] Desactivando PRO (volver a FREE)');
 
     // Aquí llamarías a tu SubscriptionService para actualizar la DB
-    
+
     return { success: true };
   },
 };
@@ -170,7 +165,9 @@ export const IS_MOCK_PAYMENTS_ENABLED = __DEV__;
  * Mensajes de ayuda para desarrollo
  */
 export const MOCK_PAYMENT_MESSAGES = {
-  purchaseSuccess: '✅ Compra simulada exitosa!\nEn producción, esto procesaría el pago real con Apple/Google.',
-  purchaseError: '❌ Compra simulada fallida!\nEsto simula cuando el usuario cancela o hay un error.',
+  purchaseSuccess:
+    '✅ Compra simulada exitosa!\nEn producción, esto procesaría el pago real con Apple/Google.',
+  purchaseError:
+    '❌ Compra simulada fallida!\nEsto simula cuando el usuario cancela o hay un error.',
   devMode: '🎭 Modo desarrollo: Los pagos son simulados.\nNinguna tarjeta será cobrada.',
 };

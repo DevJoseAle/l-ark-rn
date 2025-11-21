@@ -15,7 +15,7 @@ export function useDeepLinking() {
         const initialUrl = await Linking.getInitialURL();
 
         if (initialUrl) {
-handleDeepLink(initialUrl);
+          handleDeepLink(initialUrl);
         }
       } catch (error) {
         console.error('❌ Error obteniendo URL inicial:', error);
@@ -24,7 +24,7 @@ handleDeepLink(initialUrl);
 
     // 2. Manejar links cuando la app ya está abierta
     const handleUrlEvent = (event: { url: string }) => {
-handleDeepLink(event.url);
+      handleDeepLink(event.url);
     };
 
     // Listener para links
@@ -44,10 +44,10 @@ handleDeepLink(event.url);
    */
   const handleDeepLink = (url: string) => {
     try {
-// Parsear URL
+      // Parsear URL
       const { hostname, path, queryParams } = Linking.parse(url);
 
-// Verificar si es un link de campaña
+      // Verificar si es un link de campaña
       if (hostname === 'campaign' || path?.includes('campaign')) {
         // Extraer campaign ID
         let campaignId: string | null = null;
@@ -68,12 +68,11 @@ handleDeepLink(event.url);
         }
 
         if (campaignId) {
-navigateToCampaign(campaignId);
+          navigateToCampaign(campaignId);
         } else {
           console.warn('⚠️ No se pudo extraer campaign ID del link');
         }
-      } else {
-}
+      }
     } catch (error) {
       console.error('❌ Error procesando deep link:', error);
     }
@@ -83,9 +82,9 @@ navigateToCampaign(campaignId);
    * Navega a la pantalla de campaña
    */
   const navigateToCampaign = (campaignId: string) => {
-// Verificar autenticación
+    // Verificar autenticación
     if (!isAuthenticated) {
-// Guardar el campaignId para después del login
+      // Guardar el campaignId para después del login
       // Podrías usar AsyncStorage para persistir esto
       router.push({
         pathname: '/(public)/welcome',

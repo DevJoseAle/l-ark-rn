@@ -9,11 +9,7 @@ export type CampaignVisibility = 'public' | 'private' | 'hidden';
 // 👇 Actualizado con los valores reales de la BD
 export type BeneficiaryRule = 'single_beneficiary' | 'fixed_shares' | 'priority';
 
-export type KycStatus = 
-  | 'kyc_pending' 
-  | 'kyc_review' 
-  | 'kyc_verified' 
-  | 'kyc_rejected';
+export type KycStatus = 'kyc_pending' | 'kyc_review' | 'kyc_verified' | 'kyc_rejected';
 
 export type CampaignImageType = 'main' | 'campaign' | 'diagnosis' | 'beneficiary';
 
@@ -143,10 +139,10 @@ export interface CampaignSearchResult {
   status: string;
   owner_user_id: string;
   created_at: string;
-  images?: Array<{
+  images?: {
     image_url: string;
     image_type: string;
-  }>;
+  }[];
   owner?: {
     display_name: string;
     email: string;

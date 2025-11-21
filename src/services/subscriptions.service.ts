@@ -1,8 +1,7 @@
-import { supabase } from "../lib/supabaseClient";
-import { BillingInterval, VaultSubscription } from "../types/vault.types";
-import { VAULT_LIMITS } from "../utils/vaultConstants";
-import { IS_MOCK_PAYMENTS_ENABLED, MockPaymentService } from "./mockPayment.service";
-
+import { supabase } from '../lib/supabaseClient';
+import { BillingInterval, VaultSubscription } from '../types/vault.types';
+import { VAULT_LIMITS } from '../utils/vaultConstants';
+import { IS_MOCK_PAYMENTS_ENABLED, MockPaymentService } from './mockPayment.service';
 
 /**
  * Servicio para gestionar suscripciones de bóveda
@@ -73,7 +72,6 @@ export const SubscriptionService = {
     interval: BillingInterval
   ): Promise<{ success: boolean; error?: string }> {
     try {
-
       // 1. Procesar pago (mock o real)
       let transactionId: string | undefined;
 
@@ -128,7 +126,6 @@ export const SubscriptionService = {
         throw error;
       }
 
-
       return { success: true };
     } catch (error: any) {
       console.error('❌ Error en upgradeToPro:', error);
@@ -144,7 +141,6 @@ export const SubscriptionService = {
    */
   async cancelSubscription(subscriptionId: string): Promise<{ success: boolean; error?: string }> {
     try {
-
       // 1. Si es mock, usar el método de cancelación mock
       if (IS_MOCK_PAYMENTS_ENABLED) {
         await MockPaymentService.cancelSubscription();

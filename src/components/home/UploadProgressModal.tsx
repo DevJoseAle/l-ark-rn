@@ -1,13 +1,7 @@
 // src/features/vault/components/UploadProgressModal.tsx
 
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Modal,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, Modal, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { formatBytes } from '@/src/utils/vaultUtils';
 
@@ -34,24 +28,18 @@ export function UploadProgressModal({
   errorMessage,
 }: UploadProgressModalProps) {
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-    >
+    <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.container}>
           {/* Icono de estado */}
-          {isUploading && (
-            <ActivityIndicator size="large" color="#4BA3D9" />
-          )}
-          
+          {isUploading && <ActivityIndicator size="large" color="#4BA3D9" />}
+
           {isSuccess && (
             <View style={styles.iconContainer}>
               <Ionicons name="checkmark-circle" size={64} color="#10B981" />
             </View>
           )}
-          
+
           {isError && (
             <View style={styles.iconContainer}>
               <Ionicons name="close-circle" size={64} color="#EF4444" />
@@ -70,22 +58,14 @@ export function UploadProgressModal({
             {fileName}
           </Text>
 
-          <Text style={styles.fileSize}>
-            {formatBytes(fileSize)}
-          </Text>
+          <Text style={styles.fileSize}>{formatBytes(fileSize)}</Text>
 
           {/* Mensaje de error */}
-          {isError && errorMessage && (
-            <Text style={styles.errorMessage}>
-              {errorMessage}
-            </Text>
-          )}
+          {isError && errorMessage && <Text style={styles.errorMessage}>{errorMessage}</Text>}
 
           {/* Mensaje de éxito */}
           {isSuccess && (
-            <Text style={styles.successMessage}>
-              Tu archivo se ha guardado en la bóveda
-            </Text>
+            <Text style={styles.successMessage}>Tu archivo se ha guardado en la bóveda</Text>
           )}
         </View>
       </View>

@@ -1,6 +1,6 @@
-import { create } from "zustand";
-import { CampaignService } from "../services/campaign.service";
-import { Campaign, CreateCampaignDTO, UpdateCampaignDTO } from "../types/campaign.types";
+import { create } from 'zustand';
+import { CampaignService } from '../services/campaign.service';
+import { Campaign, CreateCampaignDTO, UpdateCampaignDTO } from '../types/campaign.types';
 
 interface CampaignState {
   // State
@@ -30,11 +30,11 @@ export const useCampaignStore = create<CampaignState>((set, get) => ({
 
   // Fetch user campaign
   fetchCampaign: async () => {
-set({ isLoading: true, error: null });
+    set({ isLoading: true, error: null });
 
     try {
       const campaign = await CampaignService.getUserCampaign();
-set({
+      set({
         campaign,
         isLoading: false,
         lastFetchedAt: Date.now(),
@@ -103,33 +103,9 @@ set({
 
   // Toggle visibility
   toggleVisibility: () => {
-    let visibility = get().amountVisibility
-    set({amountVisibility: !visibility})
+    const visibility = get().amountVisibility;
+    set({ amountVisibility: !visibility });
   },
-  // toggleVisibility: async (campaignId: string) => {
-  //   const campaign = get().campaign;
-  //   if (!campaign) return;
-
-  //   const newVisibility = campaign.visibility === 'public' ? 'private' : 'public';
-
-  //   // Optimistic update
-  //   set({
-  //     campaign: { ...campaign, visibility: newVisibility },
-  //   });
-
-  //   try {
-  //     await CampaignService.updateVisibility(campaignId, newVisibility);
-  //   } catch (error) {
-  //     // Revert on error
-  //     set({ campaign });
-
-  //     const errorMessage = error instanceof Error ? error.message : 'Error al cambiar visibilidad';
-  //     set({ error: errorMessage });
-  //     throw error;
-  //   }
-  // },
-
-  // Delete campaign
   deleteCampaign: async (campaignId: string) => {
     set({ isLoading: true, error: null });
 

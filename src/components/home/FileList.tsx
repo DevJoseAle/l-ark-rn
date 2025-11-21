@@ -2,13 +2,7 @@
 // 🔄 REEMPLAZA COMPLETAMENTE
 
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-} from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { formatBytes, formatRelativeDate } from '@/src/utils/vaultUtils';
 
@@ -25,9 +19,7 @@ interface FileListProps {
 export function FileList({ files, onFilePress, onDownload, onDelete }: FileListProps) {
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>
-        Mis archivos ({files.length})
-      </Text>
+      <Text style={styles.header}>Mis archivos ({files.length})</Text>
 
       <FlatList
         data={files}
@@ -61,23 +53,35 @@ interface FileCardProps {
 function FileCard({ file, onPress, onDownload, onDelete }: FileCardProps) {
   const getIconName = (fileType: string) => {
     switch (fileType) {
-      case 'image': return 'image';
-      case 'pdf': return 'document-text';
-      case 'video': return 'videocam';
-      case 'audio': return 'musical-notes';
-      case 'document': return 'document';
-      default: return 'document-outline';
+      case 'image':
+        return 'image';
+      case 'pdf':
+        return 'document-text';
+      case 'video':
+        return 'videocam';
+      case 'audio':
+        return 'musical-notes';
+      case 'document':
+        return 'document';
+      default:
+        return 'document-outline';
     }
   };
 
   const getIconColor = (fileType: string) => {
     switch (fileType) {
-      case 'image': return '#4BA3D9';
-      case 'pdf': return '#EF4444';
-      case 'video': return '#8B5CF6';
-      case 'audio': return '#F59E0B';
-      case 'document': return '#10B981';
-      default: return '#6B7280';
+      case 'image':
+        return '#4BA3D9';
+      case 'pdf':
+        return '#EF4444';
+      case 'video':
+        return '#8B5CF6';
+      case 'audio':
+        return '#F59E0B';
+      case 'document':
+        return '#10B981';
+      default:
+        return '#6B7280';
     }
   };
 
@@ -85,11 +89,7 @@ function FileCard({ file, onPress, onDownload, onDelete }: FileCardProps) {
   const iconColor = getIconColor(file.file_type);
 
   return (
-    <TouchableOpacity 
-      style={styles.card}
-      onPress={onPress}
-      activeOpacity={0.7}
-    >
+    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
       {/* Icono del archivo */}
       <View style={[styles.iconContainer, { backgroundColor: `${iconColor}15` }]}>
         <Ionicons name={iconName} size={24} color={iconColor} />
@@ -101,13 +101,9 @@ function FileCard({ file, onPress, onDownload, onDelete }: FileCardProps) {
           {file.file_name}
         </Text>
         <View style={styles.metaContainer}>
-          <Text style={styles.metaText}>
-            {formatBytes(file.file_size_bytes)}
-          </Text>
+          <Text style={styles.metaText}>{formatBytes(file.file_size_bytes)}</Text>
           <Text style={styles.metaDot}>•</Text>
-          <Text style={styles.metaText}>
-            {formatRelativeDate(file.created_at)}
-          </Text>
+          <Text style={styles.metaText}>{formatRelativeDate(file.created_at)}</Text>
         </View>
       </View>
 

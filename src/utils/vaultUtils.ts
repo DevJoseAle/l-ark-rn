@@ -1,5 +1,10 @@
-import { StorageQuota, VaultFileType } from "../types/vault.types";
-import { STORAGE_WARNING_THRESHOLD, ACCEPTED_MIME_TYPES, VAULT_LIMITS, STORAGE_CRITICAL_THRESHOLD } from "./vaultConstants";
+import { StorageQuota, VaultFileType } from '../types/vault.types';
+import {
+  STORAGE_WARNING_THRESHOLD,
+  ACCEPTED_MIME_TYPES,
+  VAULT_LIMITS,
+  STORAGE_CRITICAL_THRESHOLD,
+} from './vaultConstants';
 
 /**
  * Formatea bytes a formato legible (KB, MB, GB)
@@ -19,10 +24,7 @@ export const formatBytes = (bytes: number, decimals: number = 2): string => {
 /**
  * Calcula la información de cuota de almacenamiento
  */
-export const calculateStorageQuota = (
-  usedBytes: number,
-  totalBytes: number
-): StorageQuota => {
+export const calculateStorageQuota = (usedBytes: number, totalBytes: number): StorageQuota => {
   const percentage = totalBytes > 0 ? (usedBytes / totalBytes) * 100 : 0;
   const remaining = Math.max(0, totalBytes - usedBytes);
 
@@ -42,19 +44,19 @@ export const calculateStorageQuota = (
 export const getFileTypeFromMimeType = (mimeType: string): VaultFileType => {
   const lowerMime = mimeType.toLowerCase();
 
-  if (ACCEPTED_MIME_TYPES.images.some(type => lowerMime.includes(type))) {
+  if (ACCEPTED_MIME_TYPES.images.some((type) => lowerMime.includes(type))) {
     return 'image';
   }
   if (lowerMime.includes('pdf')) {
     return 'pdf';
   }
-  if (ACCEPTED_MIME_TYPES.videos.some(type => lowerMime.includes(type))) {
+  if (ACCEPTED_MIME_TYPES.videos.some((type) => lowerMime.includes(type))) {
     return 'video';
   }
-  if (ACCEPTED_MIME_TYPES.audio.some(type => lowerMime.includes(type))) {
+  if (ACCEPTED_MIME_TYPES.audio.some((type) => lowerMime.includes(type))) {
     return 'audio';
   }
-  if (ACCEPTED_MIME_TYPES.documents.some(type => lowerMime.includes(type))) {
+  if (ACCEPTED_MIME_TYPES.documents.some((type) => lowerMime.includes(type))) {
     return 'document';
   }
 
@@ -101,9 +103,7 @@ export const isAcceptedMimeType = (mimeType: string): boolean => {
     ...ACCEPTED_MIME_TYPES.audio,
   ];
 
-  return allAcceptedTypes.some(type => 
-    mimeType.toLowerCase().includes(type.toLowerCase())
-  );
+  return allAcceptedTypes.some((type) => mimeType.toLowerCase().includes(type.toLowerCase()));
 };
 
 /**
@@ -121,12 +121,12 @@ export const formatRelativeDate = (dateString: string): string => {
   if (diffMins < 60) return `Hace ${diffMins} min`;
   if (diffHours < 24) return `Hace ${diffHours}h`;
   if (diffDays < 7) return `Hace ${diffDays}d`;
-  
+
   // Si es más de una semana, mostrar fecha exacta
-  return date.toLocaleDateString('es-CL', { 
-    day: 'numeric', 
+  return date.toLocaleDateString('es-CL', {
+    day: 'numeric',
     month: 'short',
-    year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
+    year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined,
   });
 };
 
@@ -153,7 +153,7 @@ export const generateStoragePath = (
   const timestamp = Date.now();
   const random = Math.random().toString(36).substring(2, 9);
   const cleanFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_');
-  
+
   return `${userId}/${campaignId}/${timestamp}_${random}_${cleanFileName}`;
 };
 

@@ -1,7 +1,7 @@
-import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
-import { GradientBackground } from "../common/GradiendBackground";
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { GradientBackground } from '../common/GradiendBackground';
 
 export function NoCampaignState() {
   const router = useRouter();
@@ -21,30 +21,19 @@ export function NoCampaignState() {
         </View>
 
         {/* Título */}
-        <Text style={styles.title}>
-          Tu bóveda está esperando
-        </Text>
+        <Text style={styles.title}>Tu bóveda está esperando</Text>
 
         {/* Descripción */}
         <Text style={styles.description}>
-          Para acceder a tu bóveda digital y almacenar archivos importantes,
-          primero necesitas crear una campaña.
+          Para acceder a tu bóveda digital y almacenar archivos importantes, primero necesitas crear
+          una campaña.
         </Text>
 
         {/* Features */}
         <View style={styles.featuresContainer}>
-          <FeatureItem
-            icon="shield-checkmark"
-            text="Almacenamiento seguro en la nube"
-          />
-          <FeatureItem
-            icon="lock-closed"
-            text="Acceso privado y encriptado"
-          />
-          <FeatureItem
-            icon="people"
-            text="Documentos para tus beneficiarios"
-          />
+          <FeatureItem icon="shield-checkmark" text="Almacenamiento seguro en la nube" />
+          <FeatureItem icon="lock-closed" text="Acceso privado y encriptado" />
+          <FeatureItem icon="people" text="Documentos para tus beneficiarios" />
         </View>
 
         {/* Botón CTA */}
@@ -59,8 +48,7 @@ export function NoCampaignState() {
 
         {/* Texto de ayuda */}
         <Text style={styles.helpText}>
-          Las campañas te permiten recaudar fondos y crear un legado digital
-          para tus seres queridos
+          Las campañas te permiten recaudar fondos y crear un legado digital para tus seres queridos
         </Text>
       </View>
     </GradientBackground>

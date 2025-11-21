@@ -37,20 +37,21 @@ export const useAuthStore = create<AuthStore>()(
       kycStatus: KYCUserStatus.PENDING,
 
       setKYCStatus: (status: KYCUserStatus) => set({ kycStatus: status }),
-      setUser: (user) => set({
-        user,
-        isAuthenticated: !!user
-      }),
-      setEmail: (email: string) => set({email}),
+      setUser: (user) =>
+        set({
+          user,
+          isAuthenticated: !!user,
+        }),
+      setEmail: (email: string) => set({ email }),
       initialize: async () => {
-set({ isLoading: true });
+        set({ isLoading: true });
 
         try {
           // Supabase recupera la sesión de AsyncStorage automáticamente
           const response = await authService.getSession();
-if (response.success && response.data) {
+          if (response.success && response.data) {
             const session = response.data;
-const {kyc_status}  = await UserService.getUserInfo(session.user.id);
+            const { kyc_status } = await UserService.getUserInfo(session.user.id);
             get().setKYCStatus(kyc_status as KYCUserStatus);
             set({
               user: {
@@ -65,16 +66,16 @@ const {kyc_status}  = await UserService.getUserInfo(session.user.id);
             // ✅ Listener para cambios en auth
             authService.onAuthStateChange((session) => {
               if (session?.user) {
-get().setUser({
+                get().setUser({
                   id: session.user.id,
                   email: session.user.email!,
                 });
               } else {
-get().setUser(null);
+                get().setUser(null);
               }
             });
           } else {
-set({ isLoading: false });
+            set({ isLoading: false });
           }
         } catch (error) {
           console.error('❌ Error inicializando auth:', error);
@@ -86,7 +87,7 @@ set({ isLoading: false });
         await authService.signOut();
         set({
           user: null,
-          isAuthenticated: false
+          isAuthenticated: false,
         });
       },
     }),
@@ -96,7 +97,7 @@ set({ isLoading: false });
       partialize: (state) => ({
         user: state.user,
         isAuthenticated: state.isAuthenticated,
-        kycStatus: state.kycStatus
+        kycStatus: state.kycStatus,
       }),
     }
   )

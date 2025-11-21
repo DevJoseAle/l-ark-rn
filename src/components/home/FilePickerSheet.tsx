@@ -52,12 +52,7 @@ export function FilePickerSheet({
   });
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.overlay}>
           <TouchableWithoutFeedback>
@@ -74,9 +69,7 @@ export function FilePickerSheet({
 
               {/* Título */}
               <Text style={styles.title}>Subir archivo</Text>
-              <Text style={styles.subtitle}>
-                Elige de dónde quieres subir tu archivo
-              </Text>
+              <Text style={styles.subtitle}>Elige de dónde quieres subir tu archivo</Text>
 
               {/* Opciones */}
               <View style={styles.options}>
@@ -104,11 +97,7 @@ export function FilePickerSheet({
               </View>
 
               {/* Botón cancelar */}
-              <TouchableOpacity
-                style={styles.cancelButton}
-                onPress={onClose}
-                activeOpacity={0.7}
-              >
+              <TouchableOpacity style={styles.cancelButton} onPress={onClose} activeOpacity={0.7}>
                 <Text style={styles.cancelText}>Cancelar</Text>
               </TouchableOpacity>
             </Animated.View>
@@ -136,11 +125,7 @@ function OptionButton({
   onPress: () => void;
 }) {
   return (
-    <TouchableOpacity
-      style={styles.optionButton}
-      onPress={onPress}
-      activeOpacity={0.7}
-    >
+    <TouchableOpacity style={styles.optionButton} onPress={onPress} activeOpacity={0.7}>
       <View style={[styles.iconContainer, { backgroundColor: `${iconColor}15` }]}>
         <Ionicons name={icon} size={28} color={iconColor} />
       </View>

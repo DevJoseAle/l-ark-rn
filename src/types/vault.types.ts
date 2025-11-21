@@ -22,13 +22,7 @@ export interface VaultFile {
  * Tipos de archivo soportados
  * Debe coincidir con el constraint de la DB
  */
-export type VaultFileType = 
-  | 'image'
-  | 'pdf'
-  | 'video'
-  | 'audio'
-  | 'document'
-  | 'other';
+export type VaultFileType = 'image' | 'pdf' | 'video' | 'audio' | 'document' | 'other';
 
 /**
  * Archivo preparado para subir (antes de enviar a Supabase)

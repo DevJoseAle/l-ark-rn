@@ -1,4 +1,4 @@
- // src/components/profile/StatusCard.tsx
+// src/components/profile/StatusCard.tsx
 
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
@@ -116,20 +116,14 @@ export const StatusCard: React.FC<StatusCardProps> = ({
   const CardWrapper = onPress ? TouchableOpacity : View;
 
   return (
-    <CardWrapper
-      style={styles.container}
-      onPress={onPress}
-      activeOpacity={onPress ? 0.7 : 1}
-    >
+    <CardWrapper style={styles.container} onPress={onPress} activeOpacity={onPress ? 0.7 : 1}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>{title}</Text>
-        
+
         <View style={[styles.badge, { backgroundColor: config.backgroundColor }]}>
           <Ionicons name={config.icon} size={16} color={config.color} />
-          <Text style={[styles.badgeText, { color: config.color }]}>
-            {config.label}
-          </Text>
+          <Text style={[styles.badgeText, { color: config.color }]}>{config.label}</Text>
         </View>
       </View>
 
@@ -155,11 +149,7 @@ export const StatusCard: React.FC<StatusCardProps> = ({
 
       {/* Action Button */}
       {actionLabel && onActionPress && (
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={onActionPress}
-          activeOpacity={0.7}
-        >
+        <TouchableOpacity style={styles.actionButton} onPress={onActionPress} activeOpacity={0.7}>
           <Text style={styles.actionText}>{actionLabel}</Text>
           <Ionicons name="arrow-forward" size={16} color="#007AFF" />
         </TouchableOpacity>

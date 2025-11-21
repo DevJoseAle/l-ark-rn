@@ -12,7 +12,16 @@ import { SharingService } from '@/src/services/share.service';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { Alert, Platform, RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  Alert,
+  Platform,
+  RefreshControl,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 export default function ArkHomePage() {
   const router = useRouter();
@@ -43,11 +52,11 @@ export default function ArkHomePage() {
 
   const handleBottomSheetOpen = useCallback(() => {
     bottomSheetRef.current?.present();
-     // 👈 en modals se usa present()
+    // 👈 en modals se usa present()
   }, []);
   const handleShare = async () => {
     // TODO: Implementar share con Expo Sharing
-};
+  };
 
   const handleSendLink = async () => {
     try {
@@ -90,7 +99,7 @@ export default function ArkHomePage() {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={[
               styles.scrollContent,
-              { paddingBottom: Platform.OS === 'ios' ? 100 : 110 }
+              { paddingBottom: Platform.OS === 'ios' ? 100 : 110 },
             ]}
             refreshControl={
               <RefreshControl
@@ -169,57 +178,58 @@ function formatAmount(amount: number): string {
   }).format(amount);
 }
 
-const arkHomeStyles = (color: ThemeColors) => StyleSheet.create({
-  safeArea: {
-    flex: 1
-  },
-  container: {
-    flex: 1
-  },
-  header: {
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 10
-  },
-  headerTitle: {
-    color: color.text,
-    fontSize: 34,
-    fontWeight: '700',
-    letterSpacing: -0.5,
-  },
-  scrollView: {
-    flex: 1
-  },
-  scrollContent: {
-    // paddingBottom agregado dinámicamente
-  },
-  donationsSection: {
-    paddingHorizontal: 20,
-    marginTop: 32
-  },
-  donationsTitle: {
-    color: color.text,
-    fontSize: 22,
-    fontWeight: '700',
-    marginBottom: 16
-  },
-  centerContent: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  loadingText: {
-    color: color.text,
-    fontSize: 16
-  },
-  emptyDonations: {
-    paddingHorizontal: 20,
-    marginTop: 32,
-    alignItems: 'center',
-  },
-  emptyDonationsText: {
-    color: 'rgba(255, 255, 255, 0.6)',
-    fontSize: 16,
-    textAlign: 'center',
-  },
-});
+const arkHomeStyles = (color: ThemeColors) =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+    },
+    container: {
+      flex: 1,
+    },
+    header: {
+      paddingHorizontal: 20,
+      paddingTop: 20,
+      paddingBottom: 10,
+    },
+    headerTitle: {
+      color: color.text,
+      fontSize: 34,
+      fontWeight: '700',
+      letterSpacing: -0.5,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    scrollContent: {
+      // paddingBottom agregado dinámicamente
+    },
+    donationsSection: {
+      paddingHorizontal: 20,
+      marginTop: 32,
+    },
+    donationsTitle: {
+      color: color.text,
+      fontSize: 22,
+      fontWeight: '700',
+      marginBottom: 16,
+    },
+    centerContent: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    loadingText: {
+      color: color.text,
+      fontSize: 16,
+    },
+    emptyDonations: {
+      paddingHorizontal: 20,
+      marginTop: 32,
+      alignItems: 'center',
+    },
+    emptyDonationsText: {
+      color: 'rgba(255, 255, 255, 0.6)',
+      fontSize: 16,
+      textAlign: 'center',
+    },
+  });

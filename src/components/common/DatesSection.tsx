@@ -7,7 +7,6 @@ import {
   StyleSheet,
   useColorScheme,
   Platform,
-
   Pressable,
   Modal,
 } from 'react-native';
@@ -34,10 +33,7 @@ export const DatesSection = () => {
   const endDateError = errors.find((e) => e.field === 'endDate');
 
   // Calcular duración
-  const duration = Formatters.getDurationInMonths(
-    formData.startDate,
-    formData.endDate
-  );
+  const duration = Formatters.getDurationInMonths(formData.startDate, formData.endDate);
 
   // Abrir picker de inicio
   const openStartPicker = () => {
@@ -97,34 +93,24 @@ export const DatesSection = () => {
           styles.card,
           {
             backgroundColor:
-              colorScheme === 'dark'
-                ? 'rgba(30, 42, 54, 0.7)'
-                : 'rgba(251, 252, 251, 0.7)',
+              colorScheme === 'dark' ? 'rgba(30, 42, 54, 0.7)' : 'rgba(251, 252, 251, 0.7)',
             borderColor:
-              colorScheme === 'dark'
-                ? 'rgba(42, 63, 84, 0.5)'
-                : 'rgba(172, 202, 231, 0.3)',
+              colorScheme === 'dark' ? 'rgba(42, 63, 84, 0.5)' : 'rgba(172, 202, 231, 0.3)',
           },
         ]}
       >
         {/* HEADER */}
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>
-          Fechas:
-        </Text>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>Fechas:</Text>
 
         {/* FECHA DE INICIO */}
         <View style={styles.dateRow}>
-          <Text style={[styles.label, { color: colors.text }]}>
-            Fecha de inicio
-          </Text>
+          <Text style={[styles.label, { color: colors.text }]}>Fecha de inicio</Text>
           <TouchableOpacity
             style={[
               styles.dateButton,
               {
                 backgroundColor:
-                  colorScheme === 'dark'
-                    ? 'rgba(34, 51, 68, 0.5)'
-                    : 'rgba(214, 228, 245, 0.3)',
+                  colorScheme === 'dark' ? 'rgba(34, 51, 68, 0.5)' : 'rgba(214, 228, 245, 0.3)',
                 borderColor: startDateError ? colors.error : 'transparent',
               },
             ]}
@@ -138,24 +124,18 @@ export const DatesSection = () => {
         </View>
 
         {startDateError && (
-          <Text style={[styles.errorText, { color: colors.error }]}>
-            {startDateError.message}
-          </Text>
+          <Text style={[styles.errorText, { color: colors.error }]}>{startDateError.message}</Text>
         )}
 
         {/* FECHA DE FIN */}
         <View style={styles.dateRow}>
-          <Text style={[styles.label, { color: colors.text }]}>
-            Fecha de fin
-          </Text>
+          <Text style={[styles.label, { color: colors.text }]}>Fecha de fin</Text>
           <TouchableOpacity
             style={[
               styles.dateButton,
               {
                 backgroundColor:
-                  colorScheme === 'dark'
-                    ? 'rgba(34, 51, 68, 0.5)'
-                    : 'rgba(214, 228, 245, 0.3)',
+                  colorScheme === 'dark' ? 'rgba(34, 51, 68, 0.5)' : 'rgba(214, 228, 245, 0.3)',
                 borderColor: endDateError ? colors.error : 'transparent',
               },
             ]}
@@ -169,9 +149,7 @@ export const DatesSection = () => {
         </View>
 
         {endDateError && (
-          <Text style={[styles.errorText, { color: colors.error }]}>
-            {endDateError.message}
-          </Text>
+          <Text style={[styles.errorText, { color: colors.error }]}>{endDateError.message}</Text>
         )}
 
         {/* DURACIÓN INFO */}
@@ -181,9 +159,7 @@ export const DatesSection = () => {
               styles.durationBadge,
               {
                 backgroundColor:
-                  duration >= 3 && duration <= 12
-                    ? colors.success + '20'
-                    : colors.warning + '20',
+                  duration >= 3 && duration <= 12 ? colors.success + '20' : colors.warning + '20',
               },
             ]}
           >
@@ -196,8 +172,7 @@ export const DatesSection = () => {
               style={[
                 styles.durationText,
                 {
-                  color:
-                    duration >= 3 && duration <= 12 ? colors.success : colors.warning,
+                  color: duration >= 3 && duration <= 12 ? colors.success : colors.warning,
                 },
               ]}
             >
@@ -209,21 +184,14 @@ export const DatesSection = () => {
 
       {/* MODAL PARA iOS */}
       {Platform.OS === 'ios' && activePicker !== null && (
-        <Modal
-          visible={true}
-          transparent
-          animationType="slide"
-          onRequestClose={handleCancel}
-        >
+        <Modal visible={true} transparent animationType="slide" onRequestClose={handleCancel}>
           <Pressable style={styles.modalOverlay} onPress={handleCancel}>
             <Pressable
               style={[
                 styles.modalContent,
                 {
                   backgroundColor:
-                    colorScheme === 'dark'
-                      ? colors.cardBackground
-                      : colors.background,
+                    colorScheme === 'dark' ? colors.cardBackground : colors.background,
                 },
               ]}
               onPress={(e) => e.stopPropagation()}
@@ -231,9 +199,7 @@ export const DatesSection = () => {
               {/* HEADER DEL MODAL */}
               <View style={styles.modalHeader}>
                 <TouchableOpacity onPress={handleCancel} style={styles.modalButton}>
-                  <Text style={[styles.modalButtonText, { color: colors.error }]}>
-                    Cancelar
-                  </Text>
+                  <Text style={[styles.modalButtonText, { color: colors.error }]}>Cancelar</Text>
                 </TouchableOpacity>
 
                 <Text style={[styles.modalTitle, { color: colors.text }]}>
@@ -241,9 +207,7 @@ export const DatesSection = () => {
                 </Text>
 
                 <TouchableOpacity onPress={handleConfirm} style={styles.modalButton}>
-                  <Text style={[styles.modalButtonText, { color: colors.primary }]}>
-                    Confirmar
-                  </Text>
+                  <Text style={[styles.modalButtonText, { color: colors.primary }]}>Confirmar</Text>
                 </TouchableOpacity>
               </View>
 

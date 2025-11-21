@@ -1,19 +1,14 @@
 // src/types/donation.types.ts
 
-export type DonationStatus = 
-  | 'initiated' 
-  | 'pending' 
-  | 'completed' 
-  | 'failed' 
+export type DonationStatus =
+  | 'initiated'
+  | 'pending'
+  | 'completed'
+  | 'failed'
   | 'refunded'
   | 'cancelled';
 
-export type PaymentProvider = 
-  | 'stripe' 
-  | 'mercadopago' 
-  | 'webpay' 
-  | 'flow' 
-  | 'paypal';
+export type PaymentProvider = 'stripe' | 'mercadopago' | 'webpay' | 'flow' | 'paypal';
 
 export interface Donation {
   id: string;

@@ -36,15 +36,15 @@ export default function DonateModal({
   const colors = useThemeColors();
   const styles = modalStyles(colors);
   const { user } = useAuthStore();
-  
+
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(false);
-  
+
   // Estado para monto
   const [selectedAmount, setSelectedAmount] = useState(1000); // $10 por defecto (en centavos)
   const [customAmount, setCustomAmount] = useState('');
   const [showCustomInput, setShowCustomInput] = useState(false);
-  const [isAnonymous, setIsAnonymous] = useState(false)
+  const [isAnonymous, setIsAnonymous] = useState(false);
   // Montos predefinidos (en centavos)
   const presetAmounts = [
     { label: '$10', value: 1000 },
@@ -63,7 +63,7 @@ export default function DonateModal({
     // Solo números y punto decimal
     const cleaned = text.replace(/[^0-9.]/g, '');
     setCustomAmount(cleaned);
-    
+
     const amountInDollars = parseFloat(cleaned);
     if (!isNaN(amountInDollars) && amountInDollars >= 5) {
       setSelectedAmount(Math.round(amountInDollars * 100));
@@ -72,7 +72,8 @@ export default function DonateModal({
 
   const handleDonateNow = async () => {
     // Validar monto mínimo
-    if (selectedAmount < 500) { // $5
+    if (selectedAmount < 500) {
+      // $5
       Alert.alert('Monto mínimo', 'El monto mínimo de donación es $5 USD');
       return;
     }
@@ -105,21 +106,17 @@ export default function DonateModal({
       });
 
       if (result.success) {
-        Alert.alert(
-          '✅ Email enviado',
-          `Te enviamos el link de donación a ${user.email}`,
-          [
-            {
-              text: 'Abrir ahora',
-              onPress: handleDonateNow,
-            },
-            {
-              text: 'Cerrar',
-              onPress: onClose,
-              style: 'cancel',
-            },
-          ]
-        );
+        Alert.alert('✅ Email enviado', `Te enviamos el link de donación a ${user.email}`, [
+          {
+            text: 'Abrir ahora',
+            onPress: handleDonateNow,
+          },
+          {
+            text: 'Cerrar',
+            onPress: onClose,
+            style: 'cancel',
+          },
+        ]);
       } else {
         throw new Error(result.error || 'Error desconocido');
       }
@@ -134,12 +131,7 @@ export default function DonateModal({
   const displayAmount = selectedAmount / 100;
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.overlay}>
         <View style={styles.modal}>
           {/* Close button */}
@@ -154,7 +146,7 @@ export default function DonateModal({
 
           {/* Title */}
           <Text style={styles.title}>Donar a esta campaña</Text>
-          
+
           <Text style={styles.campaignTitle} numberOfLines={2}>
             {campaignTitle}
           </Text>
@@ -162,7 +154,7 @@ export default function DonateModal({
           {/* Amount Selector */}
           <View style={styles.amountSection}>
             <Text style={styles.amountLabel}>Selecciona un monto</Text>
-            
+
             {/* Preset amounts */}
             <View style={styles.presetGrid}>
               {presetAmounts.map((preset) => (
@@ -177,7 +169,9 @@ export default function DonateModal({
                   <Text
                     style={[
                       styles.presetText,
-                      selectedAmount === preset.value && !showCustomInput && styles.presetTextActive,
+                      selectedAmount === preset.value &&
+                        !showCustomInput &&
+                        styles.presetTextActive,
                     ]}
                   >
                     {preset.label}
@@ -188,10 +182,7 @@ export default function DonateModal({
 
             {/* Custom amount */}
             <TouchableOpacity
-              style={[
-                styles.customBtn,
-                showCustomInput && styles.customBtnActive,
-              ]}
+              style={[styles.customBtn, showCustomInput && styles.customBtnActive]}
               onPress={() => setShowCustomInput(true)}
             >
               <Text style={styles.customLabel}>Monto personalizado</Text>
@@ -217,12 +208,12 @@ export default function DonateModal({
           </View>
 
           {/* CHECKBOX */}
-          <View >
-              <CheckBox
-              setFn={()=> setIsAnonymous(!isAnonymous)}
+          <View>
+            <CheckBox
+              setFn={() => setIsAnonymous(!isAnonymous)}
               isValid={isAnonymous}
-              text='Donacion Anónima'
-              />
+              text="Donacion Anónima"
+            />
           </View>
           {/* Action Buttons */}
           <View style={styles.actions}>
@@ -237,9 +228,7 @@ export default function DonateModal({
                 <ActivityIndicator size="small" color={colors.customWhite} />
               ) : (
                 <>
-                  <Text style={styles.actionBtnText}>
-                    Donar ${displayAmount.toFixed(2)}
-                  </Text>
+                  <Text style={styles.actionBtnText}>Donar ${displayAmount.toFixed(2)}</Text>
                   <Ionicons name="arrow-forward" size={20} color={colors.customWhite} />
                 </>
               )}
@@ -270,162 +259,163 @@ export default function DonateModal({
   );
 }
 
-const modalStyles = (colors: ThemeColors) => StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: colors.overlay,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  modal: {
-    backgroundColor: colors.cardBackground,
-    borderRadius: 24,
-    padding: 24,
-    width: '100%',
-    maxWidth: 400,
-    maxHeight: '90%',
-    shadowColor: colors.customBlack,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
-    elevation: 10,
-  },
-  closeBtn: {
-    position: 'absolute',
-    top: 16,
-    right: 16,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: colors.separator,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 1,
-  },
-  iconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: `${colors.success}20`,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-    marginBottom: 16,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: colors.text,
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  campaignTitle: {
-    fontSize: 15,
-    color: colors.secondaryText,
-    textAlign: 'center',
-    marginBottom: 24,
-  },
-  amountSection: {
-    marginBottom: 24,
-  },
-  amountLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.text,
-    marginBottom: 12,
-  },
-  presetGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-    marginBottom: 12,
-  },
-  presetBtn: {
-    flex: 1,
-    minWidth: '45%',
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    borderRadius: 12,
-    backgroundColor: colors.cardBackground,
-    borderWidth: 2,
-    borderColor: colors.border,
-    alignItems: 'center',
-  },
-  presetBtnActive: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-  },
-  presetText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.text,
-  },
-  presetTextActive: {
-    color: colors.customWhite,
-  },
-  customBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    borderRadius: 12,
-    backgroundColor: colors.cardBackground,
-    borderWidth: 2,
-    borderColor: colors.border,
-  },
-  customBtnActive: {
-    borderColor: colors.primary,
-  },
-  customLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.text,
-  },
-  customInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  currencySymbol: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.text,
-  },
-  customInput: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.text,
-    minWidth: 60,
-    textAlign: 'right',
-  },
-  minAmount: {
-    fontSize: 12,
-    color: colors.secondaryText,
-    marginTop: 8,
-  },
-  actions: {
-    gap: 12,
-  },
-  actionBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    paddingVertical: 16,
-    borderRadius: 12,
-  },
-  primaryBtn: {
-    backgroundColor: colors.success,
-  },
-  secondaryBtn: {
-    backgroundColor: colors.cardBackground,
-    borderWidth: 2,
-    borderColor: colors.border,
-  },
-  actionBtnText: {
-    fontSize: 17,
-    fontWeight: '600',
-    color: colors.customWhite,
-  },
-});
+const modalStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    overlay: {
+      flex: 1,
+      backgroundColor: colors.overlay,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 20,
+    },
+    modal: {
+      backgroundColor: colors.cardBackground,
+      borderRadius: 24,
+      padding: 24,
+      width: '100%',
+      maxWidth: 400,
+      maxHeight: '90%',
+      shadowColor: colors.customBlack,
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.3,
+      shadowRadius: 16,
+      elevation: 10,
+    },
+    closeBtn: {
+      position: 'absolute',
+      top: 16,
+      right: 16,
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: colors.separator,
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 1,
+    },
+    iconContainer: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      backgroundColor: `${colors.success}20`,
+      alignItems: 'center',
+      justifyContent: 'center',
+      alignSelf: 'center',
+      marginBottom: 16,
+    },
+    title: {
+      fontSize: 24,
+      fontWeight: '700',
+      color: colors.text,
+      textAlign: 'center',
+      marginBottom: 8,
+    },
+    campaignTitle: {
+      fontSize: 15,
+      color: colors.secondaryText,
+      textAlign: 'center',
+      marginBottom: 24,
+    },
+    amountSection: {
+      marginBottom: 24,
+    },
+    amountLabel: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: colors.text,
+      marginBottom: 12,
+    },
+    presetGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 12,
+      marginBottom: 12,
+    },
+    presetBtn: {
+      flex: 1,
+      minWidth: '45%',
+      paddingVertical: 16,
+      paddingHorizontal: 20,
+      borderRadius: 12,
+      backgroundColor: colors.cardBackground,
+      borderWidth: 2,
+      borderColor: colors.border,
+      alignItems: 'center',
+    },
+    presetBtnActive: {
+      backgroundColor: colors.primary,
+      borderColor: colors.primary,
+    },
+    presetText: {
+      fontSize: 18,
+      fontWeight: '600',
+      color: colors.text,
+    },
+    presetTextActive: {
+      color: colors.customWhite,
+    },
+    customBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: 16,
+      borderRadius: 12,
+      backgroundColor: colors.cardBackground,
+      borderWidth: 2,
+      borderColor: colors.border,
+    },
+    customBtnActive: {
+      borderColor: colors.primary,
+    },
+    customLabel: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: colors.text,
+    },
+    customInputContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
+    },
+    currencySymbol: {
+      fontSize: 18,
+      fontWeight: '600',
+      color: colors.text,
+    },
+    customInput: {
+      fontSize: 18,
+      fontWeight: '600',
+      color: colors.text,
+      minWidth: 60,
+      textAlign: 'right',
+    },
+    minAmount: {
+      fontSize: 12,
+      color: colors.secondaryText,
+      marginTop: 8,
+    },
+    actions: {
+      gap: 12,
+    },
+    actionBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8,
+      paddingVertical: 16,
+      borderRadius: 12,
+    },
+    primaryBtn: {
+      backgroundColor: colors.success,
+    },
+    secondaryBtn: {
+      backgroundColor: colors.cardBackground,
+      borderWidth: 2,
+      borderColor: colors.border,
+    },
+    actionBtnText: {
+      fontSize: 17,
+      fontWeight: '600',
+      color: colors.customWhite,
+    },
+  });

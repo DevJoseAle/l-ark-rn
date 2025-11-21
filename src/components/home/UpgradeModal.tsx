@@ -12,7 +12,10 @@ import {
   Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { IS_MOCK_PAYMENTS_ENABLED, MOCK_PAYMENT_MESSAGES } from '@/src/services/mockPayment.service';
+import {
+  IS_MOCK_PAYMENTS_ENABLED,
+  MOCK_PAYMENT_MESSAGES,
+} from '@/src/services/mockPayment.service';
 import { useVaultStore } from '@/src/stores/vault.store';
 import { BillingInterval } from '@/src/types/vault.types';
 import { PLAN_PRICES } from '@/src/utils/vaultConstants';
@@ -28,8 +31,8 @@ interface UpgradeModalProps {
 export function UpgradeModal({ visible, onClose }: UpgradeModalProps) {
   const [selectedInterval, setSelectedInterval] = useState<BillingInterval>('monthly');
   const [isProcessing, setIsProcessing] = useState(false);
-  
-  const upgradeToPro = useVaultStore(state => state.upgradeToPro);
+
+  const upgradeToPro = useVaultStore((state) => state.upgradeToPro);
 
   /**
    * Handler para procesar la compra
@@ -40,11 +43,9 @@ export function UpgradeModal({ visible, onClose }: UpgradeModalProps) {
     try {
       // Mostrar mensaje de modo desarrollo si aplica
       if (IS_MOCK_PAYMENTS_ENABLED) {
-        Alert.alert(
-          '🎭 Modo Desarrollo',
-          MOCK_PAYMENT_MESSAGES.devMode,
-          [{ text: 'Continuar', onPress: () => processPurchase() }]
-        );
+        Alert.alert('🎭 Modo Desarrollo', MOCK_PAYMENT_MESSAGES.devMode, [
+          { text: 'Continuar', onPress: () => processPurchase() },
+        ]);
       } else {
         await processPurchase();
       }
@@ -76,11 +77,9 @@ export function UpgradeModal({ visible, onClose }: UpgradeModalProps) {
         ]
       );
     } else {
-      Alert.alert(
-        'Error',
-        'No se pudo procesar la suscripción. Por favor intenta nuevamente.',
-        [{ text: 'OK' }]
-      );
+      Alert.alert('Error', 'No se pudo procesar la suscripción. Por favor intenta nuevamente.', [
+        { text: 'OK' },
+      ]);
     }
   };
 
@@ -105,7 +104,7 @@ export function UpgradeModal({ visible, onClose }: UpgradeModalProps) {
           <View style={styles.closeButtonPlaceholder} />
         </View>
 
-        <ScrollView 
+        <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
@@ -116,9 +115,7 @@ export function UpgradeModal({ visible, onClose }: UpgradeModalProps) {
           </View>
 
           {/* Título */}
-          <Text style={styles.title}>
-            Desbloquea todo el potencial de tu bóveda
-          </Text>
+          <Text style={styles.title}>Desbloquea todo el potencial de tu bóveda</Text>
 
           {/* Descripción */}
           <Text style={styles.description}>
@@ -210,25 +207,25 @@ export function UpgradeModal({ visible, onClose }: UpgradeModalProps) {
           {/* Features */}
           <View style={styles.featuresContainer}>
             <Text style={styles.featuresTitle}>Con PRO obtienes:</Text>
-            
+
             <FeatureItem
               icon="expand"
               title="5 GB de almacenamiento"
               description="10 veces más espacio que el plan FREE"
             />
-            
+
             <FeatureItem
               icon="headset"
               title="Soporte prioritario"
               description="Respuesta rápida a tus consultas"
             />
-            
+
             <FeatureItem
               icon="hardware-chip"
               title="SSD físico para beneficiarios"
               description="Tus archivos se entregarán en un disco físico"
             />
-            
+
             <FeatureItem
               icon="shield-checkmark"
               title="Respaldo seguro"
@@ -240,9 +237,7 @@ export function UpgradeModal({ visible, onClose }: UpgradeModalProps) {
           {IS_MOCK_PAYMENTS_ENABLED && (
             <View style={styles.devNote}>
               <Ionicons name="information-circle" size={20} color="#3B82F6" />
-              <Text style={styles.devNoteText}>
-                Modo desarrollo: Esta es una compra simulada
-              </Text>
+              <Text style={styles.devNoteText}>Modo desarrollo: Esta es una compra simulada</Text>
             </View>
           )}
         </ScrollView>
@@ -259,17 +254,13 @@ export function UpgradeModal({ visible, onClose }: UpgradeModalProps) {
               <ActivityIndicator size="small" color="#FFFFFF" />
             ) : (
               <>
-                <Text style={styles.purchaseButtonText}>
-                  Suscribirse a PRO
-                </Text>
+                <Text style={styles.purchaseButtonText}>Suscribirse a PRO</Text>
                 <Ionicons name="arrow-forward" size={20} color="#FFFFFF" />
               </>
             )}
           </TouchableOpacity>
-          
-          <Text style={styles.footerNote}>
-            Cancela cuando quieras. Sin compromisos.
-          </Text>
+
+          <Text style={styles.footerNote}>Cancela cuando quieras. Sin compromisos.</Text>
         </View>
       </View>
     </Modal>
@@ -279,13 +270,13 @@ export function UpgradeModal({ visible, onClose }: UpgradeModalProps) {
 /**
  * Item de feature con icono y descripción
  */
-function FeatureItem({ 
-  icon, 
-  title, 
-  description 
-}: { 
-  icon: any; 
-  title: string; 
+function FeatureItem({
+  icon,
+  title,
+  description,
+}: {
+  icon: any;
+  title: string;
   description: string;
 }) {
   return (

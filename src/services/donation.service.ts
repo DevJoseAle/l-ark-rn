@@ -1,5 +1,11 @@
-import { supabase } from "../lib/supabaseClient";
-import { DonationWithDonor, CreateDonationDTO, Donation, DonationListItem, SendDonationLinkParams } from "../types/donation.types";
+import { supabase } from '../lib/supabaseClient';
+import {
+  DonationWithDonor,
+  CreateDonationDTO,
+  Donation,
+  DonationListItem,
+  SendDonationLinkParams,
+} from '../types/donation.types';
 import * as WebBrowser from 'expo-web-browser';
 
 export interface CreateCheckoutSessionParams {
@@ -18,10 +24,12 @@ export class DonationService {
     try {
       const { data, error } = await supabase
         .from('donations')
-        .select(`
+        .select(
+          `
           *,
           donor:donor_user_id(id, display_name, email)
-        `)
+        `
+        )
         .eq('campaign_id', campaignId)
         .eq('status', 'paid')
         .order('created_at', { ascending: false })
@@ -43,7 +51,9 @@ export class DonationService {
    */
   static async createDonation(data: CreateDonationDTO): Promise<Donation> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
       const { data: donation, error } = await supabase
         .from('donations')
@@ -74,9 +84,7 @@ export class DonationService {
   /**
    * Formatea las donaciones para mostrar en la UI
    */
-  static formatDonationsForUI(
-    donations: DonationWithDonor[]
-  ): DonationListItem[] {
+  static formatDonationsForUI(donations: DonationWithDonor[]): DonationListItem[] {
     return donations.map((donation) => {
       // Determinar si es anónimo (sin donor_user_id)
       const isAnonymous = !donation.donor_user_id || !donation.donor;
@@ -138,7 +146,9 @@ export class DonationService {
    */
   static async getUserDonations(limit: number = 50): Promise<DonationWithDonor[]> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
       if (!user) {
         throw new Error('Usuario no autenticado');
@@ -146,10 +156,12 @@ export class DonationService {
 
       const { data, error } = await supabase
         .from('donations')
-        .select(`
+        .select(
+          `
           *,
           campaign:campaign_id(id, title)
-        `)
+        `
+        )
         .eq('donor_user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(limit);
@@ -164,8 +176,8 @@ export class DonationService {
       throw error;
     }
   }
-   static async sendDonationLink(params: SendDonationLinkParams): Promise<{ 
-    success: boolean; 
+  static async sendDonationLink(params: SendDonationLinkParams): Promise<{
+    success: boolean;
     donationUrl: string;
     error?: string;
   }> {
@@ -193,7 +205,7 @@ export class DonationService {
   /**
    * Abrir página de donación en navegador
    */
- static async openDonationPage(params: CreateCheckoutSessionParams): Promise<void> {
+  static async openDonationPage(params: CreateCheckoutSessionParams): Promise<void> {
     try {
       // 1. Crear checkout session via Edge Function
       const { data, error } = await supabase.functions.invoke('create-donation-checkout', {
@@ -212,7 +224,7 @@ export class DonationService {
       throw error;
     }
   }
- static async openDonationCheckout(campaignId: string, amount: number = 500): Promise<void> {
+  static async openDonationCheckout(campaignId: string, amount: number = 500): Promise<void> {
     try {
       // Llamar a tu Edge Function existente
       const { data, error } = await supabase.functions.invoke('stripe-checkout-session', {

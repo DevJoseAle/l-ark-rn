@@ -1,8 +1,14 @@
-import { create } from "zustand";
-import { SubscriptionService } from "../services/subscriptions.service";
-import { VaultService } from "../services/vault.service";
-import { FileToUpload, StorageQuota, UploadResult, VaultFile, VaultSubscription } from "../types/vault.types";
-import { calculateStorageQuota } from "../utils/vaultUtils";
+import { create } from 'zustand';
+import { SubscriptionService } from '../services/subscriptions.service';
+import { VaultService } from '../services/vault.service';
+import {
+  FileToUpload,
+  StorageQuota,
+  UploadResult,
+  VaultFile,
+  VaultSubscription,
+} from '../types/vault.types';
+import { calculateStorageQuota } from '../utils/vaultUtils';
 
 /**
  * Estado del store
@@ -72,13 +78,13 @@ export const useVaultStore = create<VaultState>((set, get) => ({
    */
   initialize: async (userId: string) => {
     try {
-// 1. Verificar si tiene campaña
+      // 1. Verificar si tiene campaña
       const { hasCampaign, campaignId } = await SubscriptionService.hasCampaign(userId);
 
       set({ hasCampaign, campaignId });
 
       if (!hasCampaign || !campaignId) {
-return;
+        return;
       }
 
       // 2. Cargar suscripción
@@ -86,8 +92,7 @@ return;
 
       // 3. Cargar archivos
       await get().fetchFiles(userId, campaignId);
-
-} catch (error) {
+    } catch (error) {
       console.error('❌ Error inicializando VaultStore:', error);
       set({ error: 'Error al inicializar la bóveda' });
     }
@@ -97,7 +102,7 @@ return;
    * Resetea el store al estado inicial
    */
   reset: () => {
-set(initialState);
+    set(initialState);
   },
 
   /**
@@ -110,11 +115,11 @@ set(initialState);
       const files = await VaultService.getFiles(userId, campaignId);
 
       set({ files, isLoadingFiles: false });
-} catch (error) {
+    } catch (error) {
       console.error('❌ Error cargando archivos:', error);
       set({
         error: 'Error al cargar los archivos',
-        isLoadingFiles: false
+        isLoadingFiles: false,
       });
     }
   },
@@ -149,15 +154,14 @@ set(initialState);
 
       if (result.success && result.file) {
         // Agregar archivo a la lista (optimistic update)
-        set(state => ({
+        set((state) => ({
           files: [result.file!, ...state.files],
           isUploading: false,
         }));
 
         // Refrescar suscripción para actualizar storage_used_bytes
         await get().refreshSubscription();
-
-} else {
+      } else {
         set({ isUploading: false, error: result.error || 'Error al subir' });
       }
 
@@ -180,8 +184,8 @@ set(initialState);
       set({ error: null });
 
       // Optimistic update: eliminar de la lista inmediatamente
-      set(state => ({
-        files: state.files.filter(f => f.id !== fileId),
+      set((state) => ({
+        files: state.files.filter((f) => f.id !== fileId),
       }));
 
       const result = await VaultService.deleteFile(fileId, storagePath);
@@ -190,7 +194,7 @@ set(initialState);
         // Refrescar suscripción para actualizar storage_used_bytes
         await get().refreshSubscription();
 
-return true;
+        return true;
       } else {
         // Rollback: volver a cargar archivos si falló
         const state = get();
@@ -225,10 +229,7 @@ return true;
     try {
       set({ isLoadingSubscription: true, error: null });
 
-      const subscription = await SubscriptionService.getOrCreateSubscription(
-        userId,
-        campaignId
-      );
+      const subscription = await SubscriptionService.getOrCreateSubscription(userId, campaignId);
 
       if (subscription) {
         // Calcular cuota de almacenamiento
@@ -240,17 +241,16 @@ return true;
         set({
           subscription,
           storageQuota,
-          isLoadingSubscription: false
+          isLoadingSubscription: false,
         });
-
-} else {
+      } else {
         throw new Error('No se pudo obtener la suscripción');
       }
     } catch (error) {
       console.error('❌ Error cargando suscripción:', error);
       set({
         error: 'Error al cargar la suscripción',
-        isLoadingSubscription: false
+        isLoadingSubscription: false,
       });
     }
   },
@@ -269,16 +269,13 @@ return true;
     try {
       set({ error: null });
 
-      const result = await SubscriptionService.upgradeToPro(
-        state.subscription.id,
-        interval
-      );
+      const result = await SubscriptionService.upgradeToPro(state.subscription.id, interval);
 
       if (result.success) {
         // Refrescar suscripción para obtener datos actualizados
         await get().refreshSubscription();
 
-return true;
+        return true;
       } else {
         set({ error: result.error || 'Error al actualizar a PRO' });
         return false;
@@ -304,15 +301,13 @@ return true;
     try {
       set({ error: null });
 
-      const result = await SubscriptionService.cancelSubscription(
-        state.subscription.id
-      );
+      const result = await SubscriptionService.cancelSubscription(state.subscription.id);
 
       if (result.success) {
         // Refrescar suscripción para obtener datos actualizados
         await get().refreshSubscription();
 
-return true;
+        return true;
       } else {
         set({ error: result.error || 'Error al cancelar la suscripción' });
         return false;
@@ -331,10 +326,7 @@ return true;
     const state = get();
     if (!state.subscription || !state.campaignId) return;
 
-    await get().fetchSubscription(
-      state.subscription.user_id,
-      state.campaignId
-    );
+    await get().fetchSubscription(state.subscription.user_id, state.campaignId);
   },
 
   /**
@@ -353,7 +345,7 @@ return true;
 }));
 
 export const useVaultPlan = () => {
-  const subscription = useVaultStore(state => state.subscription);
+  const subscription = useVaultStore((state) => state.subscription);
 
   return {
     isFree: subscription?.plan_type === 'free',
@@ -367,7 +359,7 @@ export const useVaultPlan = () => {
  * Hook de conveniencia para verificar el estado de almacenamiento
  */
 export const useStorageStatus = () => {
-  const storageQuota = useVaultStore(state => state.storageQuota);
+  const storageQuota = useVaultStore((state) => state.storageQuota);
 
   return {
     quota: storageQuota,

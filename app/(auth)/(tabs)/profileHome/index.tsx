@@ -59,40 +59,36 @@ export default function ProfileScreen() {
 
   // Handle logout
   const handleLogout = () => {
-    Alert.alert(
-      'Cerrar Sesión',
-      '¿Estás seguro de que quieres cerrar sesión?',
-      [
-        {
-          text: 'Cancelar',
-          style: 'cancel',
+    Alert.alert('Cerrar Sesión', '¿Estás seguro de que quieres cerrar sesión?', [
+      {
+        text: 'Cancelar',
+        style: 'cancel',
+      },
+      {
+        text: 'Cerrar Sesión',
+        style: 'destructive',
+        onPress: async () => {
+          await logout();
+          router.replace('/(public)/welcome');
         },
-        {
-          text: 'Cerrar Sesión',
-          style: 'destructive',
-          onPress: async () => {
-            await logout();
-            router.replace('/(public)/welcome');
-          },
-        },
-      ]
-    );
+      },
+    ]);
   };
 
   // Get Connect status details
   const getConnectDetails = () => {
     if (!beneficiaryAccount) return undefined;
-    
+
     const details: string[] = [];
-    
+
     if (beneficiaryAccount.bank_account_last4) {
       details.push(`Cuenta: ****${beneficiaryAccount.bank_account_last4}`);
     }
-    
+
     if (beneficiaryAccount.bank_name) {
       details.push(`Banco: ${beneficiaryAccount.bank_name}`);
     }
-    
+
     return details.length > 0 ? details : undefined;
   };
 
@@ -101,13 +97,13 @@ export default function ProfileScreen() {
     if (!isBeneficiary) {
       return 'No eres beneficiario de ninguna campaña';
     }
-    
+
     if (!countrySupportsConnect) {
       return 'Tu país requiere transferencia manual';
     }
-    
+
     const status = beneficiaryAccount?.connect_status;
-    
+
     switch (status) {
       case 'verified':
       case 'active':
@@ -138,13 +134,15 @@ export default function ProfileScreen() {
   };
 
   // Determine if should show KYC alert
-  const  shouldShowKYCAlert = () => {
+  const shouldShowKYCAlert = () => {
     if (!user) return false;
-    
+
     const hasActivities = ownedCampaigns.length > 0 || beneficiaryCampaigns.length > 0;
-    
+
     // Solo mostrar alert si tiene actividades Y está pending o rejected
-    return hasActivities && (user.kyc_status === 'kyc_pending' || user.kyc_status === 'kyc_rejected');
+    return (
+      hasActivities && (user.kyc_status === 'kyc_pending' || user.kyc_status === 'kyc_rejected')
+    );
   };
 
   // Loading state
@@ -160,8 +158,7 @@ export default function ProfileScreen() {
 
   return (
     <GradientBackground>
-
-      <View style={{ paddingTop: insets.top, flex: 1 }}>    
+      <View style={{ paddingTop: insets.top, flex: 1 }}>
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
@@ -183,13 +180,7 @@ export default function ProfileScreen() {
           />
 
           {/* Error Alert */}
-          {error && (
-            <AlertBanner
-              type="error"
-              message={error}
-              onDismiss={clearError}
-            />
-          )}
+          {error && <AlertBanner type="error" message={error} onDismiss={clearError} />}
 
           {/* KYC Alerts - Condicionales según estado */}
           {shouldShowKYCAlert() && user.kyc_status === 'kyc_pending' && (
@@ -226,9 +217,7 @@ export default function ProfileScreen() {
             status={user.kyc_status}
             subtitle={getKYCSubtitle()}
             // ✅ Solo mostrar botón si está en pending
-            actionLabel={
-              user.kyc_status === 'kyc_pending' ? 'Iniciar verificación' : undefined
-            }
+            actionLabel={user.kyc_status === 'kyc_pending' ? 'Iniciar verificación' : undefined}
             onActionPress={
               user.kyc_status === 'kyc_pending'
                 ? () => router.push('/(auth)/kyc/welcome')
@@ -324,11 +313,7 @@ export default function ProfileScreen() {
           )}
 
           {/* Logout Button */}
-          <TouchableOpacity
-            style={styles.logoutButton}
-            onPress={handleLogout}
-            activeOpacity={0.7}
-          >
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout} activeOpacity={0.7}>
             <Ionicons name="log-out-outline" size={20} color="#DC2626" />
             <Text style={styles.logoutText}>Cerrar Sesión</Text>
           </TouchableOpacity>

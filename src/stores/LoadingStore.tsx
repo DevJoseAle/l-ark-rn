@@ -11,8 +11,6 @@ interface LoadingStore {
 export const useLoadingStore = create<LoadingStore>((set) => ({
   isLoading: false,
   loadingMessage: 'Cargando...',
-  showLoading: (message = 'Cargando...') => 
-    set({ isLoading: true, loadingMessage: message }),
-  hideLoading: () => 
-    set({ isLoading: false }),
+  showLoading: (message = 'Cargando...') => set({ isLoading: true, loadingMessage: message }),
+  hideLoading: () => set({ isLoading: false }),
 }));

@@ -112,7 +112,7 @@ async function walkDirectory(dir, dryRun = false) {
 
     if (stat.isDirectory()) {
       // Excluir directorios
-      if (!CONFIG.excludeDirs.some(excluded => filePath.includes(excluded))) {
+      if (!CONFIG.excludeDirs.some((excluded) => filePath.includes(excluded))) {
         await walkDirectory(filePath, dryRun);
       }
     } else if (stat.isFile()) {
@@ -131,7 +131,7 @@ async function walkDirectory(dir, dryRun = false) {
 async function main() {
   const args = process.argv.slice(2);
   const dryRun = args.includes('--dry-run');
-  const targetDir = args.find(arg => !arg.startsWith('--')) || './';
+  const targetDir = args.find((arg) => !arg.startsWith('--')) || './';
 
   console.log('\n🧹 L-ark Code Cleaner - Modo Seguro\n');
 

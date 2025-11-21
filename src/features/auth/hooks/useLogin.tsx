@@ -1,14 +1,14 @@
-import { CURRENT_TERMS_VERSION } from "@/constants/Constants";
-import { useThemeColors } from "@/hooks/use-theme-color";
-import { supabase } from "@/src/lib/supabaseClient";
-import { isValidOTPArray } from "@/src/lib/validators";
-import { useAuthStore } from "@/src/stores/authStore";
-import { useLoadingStore } from "@/src/stores/LoadingStore";
-import { Router } from "expo-router";
-import { useMemo, useRef, useState } from "react";
-import { Alert, TextInput } from "react-native";
-import { authService } from "../service/auth.service";
-import { createLoginStyles } from "../styles/loginStyles";
+import { CURRENT_TERMS_VERSION } from '@/constants/Constants';
+import { useThemeColors } from '@/hooks/use-theme-color';
+import { supabase } from '@/src/lib/supabaseClient';
+import { isValidOTPArray } from '@/src/lib/validators';
+import { useAuthStore } from '@/src/stores/authStore';
+import { useLoadingStore } from '@/src/stores/LoadingStore';
+import { Router } from 'expo-router';
+import { useMemo, useRef, useState } from 'react';
+import { Alert, TextInput } from 'react-native';
+import { authService } from '../service/auth.service';
+import { createLoginStyles } from '../styles/loginStyles';
 
 export const useLogin = (router: any) => {
   const colors = useThemeColors();
@@ -49,13 +49,11 @@ export const useLogin = (router: any) => {
           .from('user_terms_acceptances')
           .select('id')
           .eq('user_id', existingUser.id)
-          .eq('terms_version', CURRENT_TERMS_VERSION)
-        if (accError) {
-        }
+          .eq('terms_version', CURRENT_TERMS_VERSION);
 
         if (acceptance) {
           // Ya aceptó términos actuales → Enviar OTP
-await sendOTP(cleanEmail);
+          await sendOTP(cleanEmail);
         } else {
           // Debe aceptar nueva versión
           setPendingEmail(cleanEmail);
@@ -82,7 +80,7 @@ await sendOTP(cleanEmail);
     if (response.success) {
       router.push({
         pathname: '/(public)/otp',
-        params: { email: emailToSend }
+        params: { email: emailToSend },
       });
       hideLoading();
     } else {
@@ -100,10 +98,7 @@ await sendOTP(cleanEmail);
   const handleDeclineTerms = () => {
     setShowTermsModal(false);
     setPendingEmail('');
-    Alert.alert(
-      'Términos requeridos',
-      'Debes aceptar los Términos y Condiciones para usar L-ark.'
-    );
+    Alert.alert('Términos requeridos', 'Debes aceptar los Términos y Condiciones para usar L-ark.');
   };
 
   return {
@@ -126,7 +121,7 @@ export function useOTPForm(length: number = 6, router: Router) {
   const { showLoading, hideLoading } = useLoadingStore();
   const { email } = useAuthStore();
   const [otp, setOtp] = useState<string[]>(Array(length).fill(''));
-  const inputRefs = useRef<Array<TextInput | null>>([]);
+  const inputRefs = useRef<(TextInput | null)[]>([]);
   const isCodeComplete = useMemo(() => {
     return isValidOTPArray(otp);
   }, [otp]);
@@ -142,7 +137,7 @@ export function useOTPForm(length: number = 6, router: Router) {
     try {
       // Lógica de verificación
       const response = await authService.verifyOTP(email, code);
-router.replace('/(auth)/(tabs)/arkHome');
+      router.replace('/(auth)/(tabs)/arkHome');
       hideLoading();
       Alert.alert('Éxito', 'Código verificado exitosamente');
     } catch (error) {
@@ -197,7 +192,6 @@ router.replace('/(auth)/(tabs)/arkHome');
     handleResend,
     inputRefs,
     handleKeyPress,
-    handleOtpChange
+    handleOtpChange,
   };
 }
-

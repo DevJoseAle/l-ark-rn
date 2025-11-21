@@ -43,20 +43,11 @@ export function FilePreviewModal({
   const isPDF = file.file_type === 'pdf';
 
   return (
-    <Modal
-      visible={visible}
-      animationType="fade"
-      transparent={false}
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} animationType="fade" transparent={false} onRequestClose={onClose}>
       <GradientBackground>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={onClose}
-            activeOpacity={0.7}
-          >
+          <TouchableOpacity style={styles.closeButton} onPress={onClose} activeOpacity={0.7}>
             <Ionicons name="close" size={28} color="white" />
           </TouchableOpacity>
 
@@ -70,11 +61,7 @@ export function FilePreviewModal({
           </View>
 
           <View style={styles.headerActions}>
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={onDownload}
-              activeOpacity={0.7}
-            >
+            <TouchableOpacity style={styles.actionButton} onPress={onDownload} activeOpacity={0.7}>
               <Ionicons name="download-outline" size={24} color="white" />
             </TouchableOpacity>
 
@@ -98,7 +85,7 @@ export function FilePreviewModal({
                   <Text style={styles.loadingText}>Cargando imagen...</Text>
                 </View>
               )}
-              
+
               <Image
                 source={{ uri: imageUrl }}
                 style={styles.image}
@@ -119,9 +106,7 @@ export function FilePreviewModal({
           ) : (
             <View style={styles.unsupportedContainer}>
               <Ionicons name="document" size={80} color="rgba(255,255,255,0.3)" />
-              <Text style={styles.unsupportedTitle}>
-                {file.file_type.toUpperCase()}
-              </Text>
+              <Text style={styles.unsupportedTitle}>{file.file_type.toUpperCase()}</Text>
               <Text style={styles.unsupportedSubtitle}>
                 Vista previa no disponible para este tipo de archivo
               </Text>
@@ -144,16 +129,12 @@ export function FilePreviewModal({
 
             <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>Tamaño:</Text>
-              <Text style={styles.detailValue}>
-                {formatBytes(file.file_size_bytes)}
-              </Text>
+              <Text style={styles.detailValue}>{formatBytes(file.file_size_bytes)}</Text>
             </View>
 
             <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>Subido:</Text>
-              <Text style={styles.detailValue}>
-                {formatRelativeDate(file.created_at)}
-              </Text>
+              <Text style={styles.detailValue}>{formatRelativeDate(file.created_at)}</Text>
             </View>
 
             <View style={styles.detailRow}>

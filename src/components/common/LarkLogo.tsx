@@ -1,5 +1,5 @@
-import { Image } from "expo-image";
-import { StyleProp, ImageStyle } from "react-native";
+import { Image } from 'expo-image';
+import { StyleProp, ImageStyle } from 'react-native';
 
 interface LarkLogoProps {
   size?: number;

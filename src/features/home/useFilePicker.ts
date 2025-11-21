@@ -48,11 +48,9 @@ export function useFilePicker() {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
       if (status !== 'granted') {
-        Alert.alert(
-          'Permisos necesarios',
-          'Necesitamos acceso a tu galería para subir archivos.',
-          [{ text: 'OK' }]
-        );
+        Alert.alert('Permisos necesarios', 'Necesitamos acceso a tu galería para subir archivos.', [
+          { text: 'OK' },
+        ]);
         return null;
       }
 
@@ -64,7 +62,7 @@ export function useFilePicker() {
       });
 
       if (result.canceled) {
-return null;
+        return null;
       }
 
       const asset = result.assets[0];
@@ -84,15 +82,10 @@ return null;
         return null;
       }
 
-return file;
-
+      return file;
     } catch (error) {
       console.error('❌ Error abriendo galería:', error);
-      Alert.alert(
-        'Error',
-        'No se pudo abrir la galería. Intenta nuevamente.',
-        [{ text: 'OK' }]
-      );
+      Alert.alert('Error', 'No se pudo abrir la galería. Intenta nuevamente.', [{ text: 'OK' }]);
       return null;
     } finally {
       setIsPickingFile(false);
@@ -113,7 +106,7 @@ return file;
       });
 
       if (result.canceled) {
-return null;
+        return null;
       }
 
       const doc = result.assets[0];
@@ -133,15 +126,12 @@ return null;
         return null;
       }
 
-return file;
-
+      return file;
     } catch (error) {
       console.error('❌ Error abriendo document picker:', error);
-      Alert.alert(
-        'Error',
-        'No se pudo abrir el selector de archivos. Intenta nuevamente.',
-        [{ text: 'OK' }]
-      );
+      Alert.alert('Error', 'No se pudo abrir el selector de archivos. Intenta nuevamente.', [
+        { text: 'OK' },
+      ]);
       return null;
     } finally {
       setIsPickingFile(false);

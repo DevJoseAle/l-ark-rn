@@ -55,19 +55,13 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
   const currentStepIndex = getCurrentStepIndex();
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      statusBarTranslucent
-    >
+    <Modal visible={visible} transparent animationType="fade" statusBarTranslucent>
       <View style={styles.overlay}>
         <View
           style={[
             styles.container,
             {
-              backgroundColor:
-                colorScheme === 'dark' ? colors.cardBackground : colors.background,
+              backgroundColor: colorScheme === 'dark' ? colors.cardBackground : colors.background,
             },
           ]}
         >
@@ -77,9 +71,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
               <View style={[styles.iconContainer, { backgroundColor: colors.primary + '20' }]}>
                 <ActivityIndicator size="large" color={colors.primary} />
               </View>
-              <Text style={[styles.title, { color: colors.text }]}>
-                Creando tu campaña
-              </Text>
+              <Text style={[styles.title, { color: colors.text }]}>Creando tu campaña</Text>
               <Text style={[styles.subtitle, { color: colors.secondaryText }]}>
                 Por favor espera, esto puede tomar unos momentos
               </Text>
@@ -89,24 +81,15 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
               <View style={[styles.iconContainer, { backgroundColor: colors.error + '20' }]}>
                 <Ionicons name="alert-circle" size={48} color={colors.error} />
               </View>
-              <Text style={[styles.title, { color: colors.text }]}>
-                Error al crear campaña
-              </Text>
-              <Text style={[styles.subtitle, { color: colors.secondaryText }]}>
-                {error}
-              </Text>
+              <Text style={[styles.title, { color: colors.text }]}>Error al crear campaña</Text>
+              <Text style={[styles.subtitle, { color: colors.secondaryText }]}>{error}</Text>
             </View>
           )}
 
           {/* PROGRESS BAR */}
           {!error && (
             <View style={styles.progressSection}>
-              <View
-                style={[
-                  styles.progressBarBackground,
-                  { backgroundColor: colors.separator },
-                ]}
-              >
+              <View style={[styles.progressBarBackground, { backgroundColor: colors.separator }]}>
                 <View
                   style={[
                     styles.progressBarFill,
@@ -117,9 +100,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
                   ]}
                 />
               </View>
-              <Text style={[styles.progressText, { color: colors.text }]}>
-                {progress}%
-              </Text>
+              <Text style={[styles.progressText, { color: colors.text }]}>{progress}%</Text>
             </View>
           )}
 
@@ -140,8 +121,8 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
                         backgroundColor: isCompleted
                           ? colors.success + '20'
                           : isCurrent
-                          ? colors.primary + '20'
-                          : colors.separator,
+                            ? colors.primary + '20'
+                            : colors.separator,
                       },
                     ]}
                   >
@@ -155,8 +136,8 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
                           isCurrent
                             ? colors.primary
                             : isPending
-                            ? colors.secondaryText
-                            : colors.icon
+                              ? colors.secondaryText
+                              : colors.icon
                         }
                       />
                     )}
@@ -170,8 +151,8 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
                         color: isCompleted
                           ? colors.success
                           : isCurrent
-                          ? colors.text
-                          : colors.secondaryText,
+                            ? colors.text
+                            : colors.secondaryText,
                         fontWeight: isCurrent ? '600' : '400',
                       },
                     ]}
@@ -180,9 +161,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
                   </Text>
 
                   {/* Loading indicator for current step */}
-                  {isCurrent && !error && (
-                    <ActivityIndicator size="small" color={colors.primary} />
-                  )}
+                  {isCurrent && !error && <ActivityIndicator size="small" color={colors.primary} />}
                 </View>
               );
             })}
@@ -193,16 +172,10 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
             <View style={styles.actions}>
               {onCancel && (
                 <TouchableOpacity
-                  style={[
-                    styles.button,
-                    styles.buttonSecondary,
-                    { borderColor: colors.border },
-                  ]}
+                  style={[styles.button, styles.buttonSecondary, { borderColor: colors.border }]}
                   onPress={onCancel}
                 >
-                  <Text style={[styles.buttonText, { color: colors.text }]}>
-                    Cancelar
-                  </Text>
+                  <Text style={[styles.buttonText, { color: colors.text }]}>Cancelar</Text>
                 </TouchableOpacity>
               )}
               {onRetry && (
@@ -210,9 +183,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
                   style={[styles.button, { backgroundColor: colors.primary }]}
                   onPress={onRetry}
                 >
-                  <Text style={[styles.buttonText, { color: colors.customWhite }]}>
-                    Reintentar
-                  </Text>
+                  <Text style={[styles.buttonText, { color: colors.customWhite }]}>Reintentar</Text>
                 </TouchableOpacity>
               )}
             </View>

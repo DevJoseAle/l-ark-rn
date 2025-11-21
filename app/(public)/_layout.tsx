@@ -15,13 +15,13 @@ export default function PublicLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkNavigationTheme : LightNavigationTheme} >
+    <ThemeProvider value={colorScheme === 'dark' ? DarkNavigationTheme : LightNavigationTheme}>
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="welcome" options={{ headerShown: false  }} />
+        <Stack.Screen name="welcome" options={{ headerShown: false }} />
         <Stack.Screen name="login" options={{ headerShown: false }} />
         <Stack.Screen name="otp" options={{ headerShown: false }} />
       </Stack>
-      
+
       <StatusBar style="auto" />
     </ThemeProvider>
   );

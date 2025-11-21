@@ -17,8 +17,8 @@ export interface KYCSubmission {
 
 export type KYCStep = 'intro' | 'id_front' | 'id_back' | 'selfie' | 'review' | 'submitting';
 export enum KYCUserStatus {
-  PENDING  = 'kyc_pending',
-  REVIEW   = 'kyc_review',
+  PENDING = 'kyc_pending',
+  REVIEW = 'kyc_review',
   VERIFIED = 'kyc_verified',
   REJECTED = 'kyc_rejected',
 }

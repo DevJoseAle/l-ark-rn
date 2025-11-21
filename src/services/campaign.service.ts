@@ -1,5 +1,12 @@
-import { supabase } from "../lib/supabaseClient";
-import { Campaign, CampaignDetail, CampaignSearchResult, CampaignStats, CreateCampaignDTO, UpdateCampaignDTO } from "../types/campaign.types";
+import { supabase } from '../lib/supabaseClient';
+import {
+  Campaign,
+  CampaignDetail,
+  CampaignSearchResult,
+  CampaignStats,
+  CreateCampaignDTO,
+  UpdateCampaignDTO,
+} from '../types/campaign.types';
 
 export class CampaignService {
   /**
@@ -8,10 +15,12 @@ export class CampaignService {
    */
   static async getUserCampaign(): Promise<Campaign | null> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
       if (!user) {
-        return null
+        return null;
       }
 
       const { data, error } = await supabase
@@ -19,7 +28,7 @@ export class CampaignService {
         .select('*')
         .eq('owner_user_id', user.id)
         .maybeSingle();
-if (error) {
+      if (error) {
         // Si no encuentra campaña, devolver null (no es error)
         if (error.code === 'PGRST116') {
           return null;
@@ -39,7 +48,9 @@ if (error) {
    */
   static async createCampaign(data: CreateCampaignDTO): Promise<Campaign> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
       if (!user) {
         throw new Error('Usuario no autenticado');
@@ -68,12 +79,11 @@ if (error) {
   /**
    * Actualiza la campaña del usuario actual
    */
-  static async updateCampaign(
-    campaignId: string,
-    data: UpdateCampaignDTO
-  ): Promise<Campaign> {
+  static async updateCampaign(campaignId: string, data: UpdateCampaignDTO): Promise<Campaign> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
       if (!user) {
         throw new Error('Usuario no autenticado');
@@ -109,7 +119,7 @@ if (error) {
     visibility: Campaign['visibility']
   ): Promise<Campaign> {
     try {
-return await this.updateCampaign(campaignId, { visibility });
+      return await this.updateCampaign(campaignId, { visibility });
     } catch (error) {
       console.error('Error al actualizar visibilidad:', error);
       throw error;
@@ -133,9 +143,8 @@ return await this.updateCampaign(campaignId, { visibility });
 
       // Calcular porcentaje
       const goalAmount = campaign.goal_amount || 0;
-      const percentage = goalAmount > 0
-        ? Math.min(Math.round((campaign.total_raised / goalAmount) * 100), 100)
-        : 0;
+      const percentage =
+        goalAmount > 0 ? Math.min(Math.round((campaign.total_raised / goalAmount) * 100), 100) : 0;
 
       // Calcular días restantes
       let daysLeft: number | null = null;
@@ -180,18 +189,21 @@ return await this.updateCampaign(campaignId, { visibility });
   }
 
   /**
- * Obtener campaña del usuario actual
- */
+   * Obtener campaña del usuario actual
+   */
   static async getCurrentUserCampaign(): Promise<CampaignDetail | null> {
-try {
-      const { data: { user } } = await supabase.auth.getUser();
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         throw new Error('Usuario no autenticado');
       }
 
       const { data, error } = await supabase
         .from('campaigns')
-        .select(`
+        .select(
+          `
         *,
         owner:users!campaigns_owner_user_id_fkey(id, display_name, email),
         images:campaign_images(id, image_url, image_type, display_order, is_primary),
@@ -214,7 +226,8 @@ try {
             display_order
           )
         )
-      `)
+      `
+        )
         .eq('owner_user_id', user.id)
         .single();
 
@@ -236,12 +249,12 @@ try {
    * Obtener campaña por ID
    */
   static async getCampaignById(campaignId: string): Promise<CampaignDetail | null> {
-
     const isLongOrLargeId = campaignId.length > 7 ? 'id' : 'short_code';
     try {
       const { data, error } = await supabase
         .from('campaigns')
-        .select(`
+        .select(
+          `
         *,
         owner:users!campaigns_owner_user_id_fkey(id, display_name, email),
         images:campaign_images(id, image_url, image_type, display_order, is_primary),
@@ -264,7 +277,8 @@ try {
             display_order
           )
         )
-      `)
+      `
+        )
         .eq(isLongOrLargeId, campaignId)
         .single();
 
@@ -310,7 +324,7 @@ try {
     if (!images || images.length === 0) return null;
 
     const mainImage = images
-      .filter(img => img.image_type === 'main' || img.image_type === 'campaign')
+      .filter((img) => img.image_type === 'main' || img.image_type === 'campaign')
       .sort((a, b) => {
         if (a.is_primary && !b.is_primary) return -1;
         if (!a.is_primary && b.is_primary) return 1;
@@ -320,13 +334,14 @@ try {
     return mainImage?.image_url || null;
   }
 
-   static async searchByCode(code: string): Promise<CampaignSearchResult | null> {
+  static async searchByCode(code: string): Promise<CampaignSearchResult | null> {
     try {
       const cleanCode = code.trim().toLowerCase();
 
       const { data, error } = await supabase
         .from('campaigns')
-        .select(`
+        .select(
+          `
           id,
           short_code,
           title,
@@ -339,7 +354,8 @@ try {
           created_at,
           images:campaign_images(image_url, image_type),
           owner:owner_user_id(display_name, email)
-        `)
+        `
+        )
         .eq('short_code', cleanCode)
         .in('visibility', ['public', 'unlisted'])
         .single();
@@ -363,7 +379,8 @@ try {
     try {
       const { data, error } = await supabase
         .from('campaigns')
-        .select(`
+        .select(
+          `
           id,
           short_code,
           title,
@@ -376,7 +393,8 @@ try {
           created_at,
           images:campaign_images(image_url, image_type),
           owner:owner_user_id(display_name, email)
-        `)
+        `
+        )
         .or(`title.ilike.%${query}%,description.ilike.%${query}%`)
         .eq('status', 'active')
         .eq('visibility', 'public')
@@ -388,7 +406,7 @@ try {
         return [];
       }
 
-      return data as any|| [];
+      return (data as any) || [];
     } catch (error) {
       console.error('Text search error:', error);
       return [];
@@ -402,7 +420,8 @@ try {
     try {
       const { data, error } = await supabase
         .from('campaigns')
-        .select(`
+        .select(
+          `
           id,
           short_code,
           title,
@@ -415,7 +434,8 @@ try {
           created_at,
           images:campaign_images(image_url, image_type),
           owner:owner_user_id(display_name, email)
-        `)
+        `
+        )
         .eq('status', 'active')
         .eq('visibility', 'public')
         .order('created_at', { ascending: false })
@@ -423,7 +443,7 @@ try {
 
       if (error) throw error;
 
-      return data as any || [];
+      return (data as any) || [];
     } catch (error) {
       console.error('Featured campaigns error:', error);
       return [];

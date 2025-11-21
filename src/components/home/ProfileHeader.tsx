@@ -70,7 +70,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           <View style={styles.infoContainer}>
             <Text style={styles.name}>{displayName}</Text>
             <Text style={styles.email}>{email}</Text>
-            
+
             <View style={styles.countryBadge}>
               <Text style={styles.countryFlag}>{getCountryFlag(country)}</Text>
               <Text style={styles.countryName}>{getCountryName(country)}</Text>
@@ -78,11 +78,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           </View>
 
           {/* Edit Button */}
-          <TouchableOpacity
-            style={styles.editButton}
-            onPress={onEdit}
-            activeOpacity={0.7}
-          >
+          <TouchableOpacity style={styles.editButton} onPress={onEdit} activeOpacity={0.7}>
             <Ionicons name="create-outline" size={20} color="#FFF" />
           </TouchableOpacity>
         </View>

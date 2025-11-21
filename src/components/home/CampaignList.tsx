@@ -1,10 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, useColorScheme } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import {
-  ProfileCampaign,
-  ProfileBeneficiaryCampaign,
-} from '../../types/profile.types';
+import { ProfileCampaign, ProfileBeneficiaryCampaign } from '../../types/profile.types';
 import { Colors } from '@/constants/theme';
 import { useTheme } from '@react-navigation/native';
 import { useThemeColors } from '@/hooks/use-theme-color';
@@ -22,7 +19,10 @@ const formatCurrency = (amount: number, currency: string): string => {
 };
 
 const getStatusConfig = (status: string) => {
-  const configs: Record<string, { color: string; label: string; icon: keyof typeof Ionicons.glyphMap }> = {
+  const configs: Record<
+    string,
+    { color: string; label: string; icon: keyof typeof Ionicons.glyphMap }
+  > = {
     draft: {
       color: '#6B7280',
       label: 'Borrador',
@@ -59,8 +59,7 @@ const CampaignCard: React.FC<{
 }> = ({ campaign, type, onPress }) => {
   // Type guards
   const isOwnerCampaign = (c: any): c is ProfileCampaign => type === 'owner';
-  const isBeneficiaryCampaign = (c: any): c is ProfileBeneficiaryCampaign =>
-    type === 'beneficiary';
+  const isBeneficiaryCampaign = (c: any): c is ProfileBeneficiaryCampaign => type === 'beneficiary';
 
   // ✅ INICIALIZAR VARIABLES CON VALORES POR DEFECTO
   let title: string = '';
@@ -75,7 +74,7 @@ const CampaignCard: React.FC<{
   if (isOwnerCampaign(campaign)) {
     title = campaign.title;
     status = campaign.status;
-    currentAmount = campaign.total_raised|| 0;
+    currentAmount = campaign.total_raised || 0;
     goalAmount = campaign.goal_amount || 0;
     currency = campaign.currency;
   } else if (isBeneficiaryCampaign(campaign)) {
@@ -98,11 +97,7 @@ const CampaignCard: React.FC<{
   const statusConfig = getStatusConfig(status);
 
   return (
-    <TouchableOpacity
-      style={styles.campaignCard}
-      onPress={onPress}
-      activeOpacity={0.7}
-    >
+    <TouchableOpacity style={styles.campaignCard} onPress={onPress} activeOpacity={0.7}>
       {/* Header */}
       <View style={styles.campaignHeader}>
         <View style={styles.campaignTitleContainer}>
@@ -115,7 +110,7 @@ const CampaignCard: React.FC<{
             </Text>
           )}
         </View>
-        
+
         <View style={[styles.statusBadge, { backgroundColor: `${statusConfig.color}20` }]}>
           <Ionicons name={statusConfig.icon} size={14} color={statusConfig.color} />
           <Text style={[styles.statusText, { color: statusConfig.color }]}>
@@ -137,14 +132,10 @@ const CampaignCard: React.FC<{
         <View style={styles.progressBar}>
           <View style={[styles.progressFill, { width: `${Math.min(progress, 100)}%` }]} />
         </View>
-        
+
         <View style={styles.amountsContainer}>
-          <Text style={styles.currentAmount}>
-            {formatCurrency(currentAmount, currency)}
-          </Text>
-          <Text style={styles.goalAmount}>
-            de {formatCurrency(goalAmount, currency)}
-          </Text>
+          <Text style={styles.currentAmount}>{formatCurrency(currentAmount, currency)}</Text>
+          <Text style={styles.goalAmount}>de {formatCurrency(goalAmount, currency)}</Text>
         </View>
       </View>
 
@@ -161,24 +152,22 @@ export const CampaignsList: React.FC<CampaignsListProps> = ({
   onSeeAll,
   maxItems = 3,
 }) => {
-    const theme = useColorScheme()
+  const theme = useColorScheme();
   const title = type === 'owner' ? 'Mis Campañas' : 'Soy Beneficiario';
   const emptyMessage =
     type === 'owner'
       ? 'Aún no has creado ninguna campaña'
       : 'No eres beneficiario de ninguna campaña';
 
-  const displayCampaigns = maxItems
-    ? campaigns.slice(0, maxItems)
-    : campaigns;
+  const displayCampaigns = maxItems ? campaigns.slice(0, maxItems) : campaigns;
 
   const showSeeAll = campaigns.length > maxItems && onSeeAll;
-  const titleColor = theme == 'dark' ? Colors.dark.text : Colors.light.text
+  const titleColor = theme == 'dark' ? Colors.dark.text : Colors.light.text;
   if (campaigns.length === 0) {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={[styles.title, {color: titleColor}]}>{title}</Text>
+          <Text style={[styles.title, { color: titleColor }]}>{title}</Text>
           <View style={styles.countBadge}>
             <Text style={styles.countText}>0</Text>
           </View>
@@ -201,7 +190,7 @@ export const CampaignsList: React.FC<CampaignsListProps> = ({
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.titleRow}>
-          <Text style={[styles.title, {color: titleColor}]}>{title}</Text>
+          <Text style={[styles.title, { color: titleColor }]}>{title}</Text>
           <View style={styles.countBadge}>
             <Text style={styles.countText}>{campaigns.length}</Text>
           </View>

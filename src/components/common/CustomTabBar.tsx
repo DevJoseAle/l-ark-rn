@@ -55,15 +55,8 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
               onPress={onPress}
               style={styles.tabButton}
             >
-              <View style={[
-                styles.iconContainer,
-                isFocused && styles.iconContainerFocused
-              ]}>
-                <Ionicons
-                  name={iconName}
-                  size={26}
-                  color={isFocused ? '#FFFFFF' : '#6B7280'}
-                />
+              <View style={[styles.iconContainer, isFocused && styles.iconContainerFocused]}>
+                <Ionicons name={iconName} size={26} color={isFocused ? '#FFFFFF' : '#6B7280'} />
               </View>
             </TouchableOpacity>
           );

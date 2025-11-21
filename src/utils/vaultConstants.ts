@@ -1,6 +1,6 @@
 // src/features/vault/constants/vaultConstants.ts
 
-import { VaultPlanType, PlanDetails } from "../types/vault.types";
+import { VaultPlanType, PlanDetails } from '../types/vault.types';
 
 /**
  * Límites y configuración de la bóveda
@@ -31,11 +31,7 @@ export const PLAN_DETAILS: Record<VaultPlanType, PlanDetails> = {
     storage: '500 MB',
     storageBytes: VAULT_LIMITS.FREE_QUOTA_BYTES,
     price: null,
-    features: [
-      '500 MB de almacenamiento',
-      'Subir documentos y fotos',
-      'Acceso básico a tu bóveda',
-    ],
+    features: ['500 MB de almacenamiento', 'Subir documentos y fotos', 'Acceso básico a tu bóveda'],
   },
   standard: {
     // En caso de que después quieras agregar este plan

@@ -1,27 +1,21 @@
-import { supabase } from "../lib/supabaseClient";
-import { BeneficiaryUser } from "../types/campaign-create.types";
+import { supabase } from '../lib/supabaseClient';
+import { BeneficiaryUser } from '../types/campaign-create.types';
 
 export class UserSearchService {
   /**
    * Buscar usuarios para agregar como beneficiarios
    * Solo muestra usuarios con KYC aprobado
    */
-  static async searchUsers(
-    query: string,
-    excludeUserId?: string
-  ): Promise<BeneficiaryUser[]> {
+  static async searchUsers(query: string, excludeUserId?: string): Promise<BeneficiaryUser[]> {
     try {
       if (!query || query.trim().length < 2) {
         return [];
       }
 
-      const { data, error } = await supabase.rpc(
-        'search_users_for_beneficiaries',
-        {
-          search_query: query.trim(),
-          exclude_user_id: excludeUserId || null,
-        }
-      );
+      const { data, error } = await supabase.rpc('search_users_for_beneficiaries', {
+        search_query: query.trim(),
+        exclude_user_id: excludeUserId || null,
+      });
 
       if (error) {
         throw error;

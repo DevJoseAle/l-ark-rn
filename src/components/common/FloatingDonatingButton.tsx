@@ -11,9 +11,9 @@ interface FloatingDonateButtonProps {
   disabled?: boolean;
 }
 
-export default function FloatingDonateButton({ 
-  onPress, 
-  disabled = false 
+export default function FloatingDonateButton({
+  onPress,
+  disabled = false,
 }: FloatingDonateButtonProps) {
   const colors = useThemeColors();
   const styles = floatingButtonStyles(colors);
@@ -31,33 +31,34 @@ export default function FloatingDonateButton({
   );
 }
 
-const floatingButtonStyles = (colors: ThemeColors) => StyleSheet.create({
-  container: {
-    position: 'absolute',
-    bottom: Platform.OS === 'ios' ? 100 : 90,
-    right: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    backgroundColor: colors.success,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    borderRadius: 30,
-    shadowColor: colors.customBlack,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-    zIndex: 999,
-  },
-  disabled: {
-    backgroundColor: colors.icon,
-    opacity: 0.5,
-  },
-  text: {
-    color: colors.customWhite,
-    fontSize: 18,
-    fontWeight: '700',
-    letterSpacing: 0.5,
-  },
-});
+const floatingButtonStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    container: {
+      position: 'absolute',
+      bottom: Platform.OS === 'ios' ? 100 : 90,
+      right: 20,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      backgroundColor: colors.success,
+      paddingVertical: 16,
+      paddingHorizontal: 24,
+      borderRadius: 30,
+      shadowColor: colors.customBlack,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 8,
+      elevation: 8,
+      zIndex: 999,
+    },
+    disabled: {
+      backgroundColor: colors.icon,
+      opacity: 0.5,
+    },
+    text: {
+      color: colors.customWhite,
+      fontSize: 18,
+      fontWeight: '700',
+      letterSpacing: 0.5,
+    },
+  });

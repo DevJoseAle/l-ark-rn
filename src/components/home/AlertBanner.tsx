@@ -53,10 +53,10 @@ export const AlertBanner: React.FC<AlertBannerProps> = ({
           color={typeStyles.iconColor}
           style={styles.icon}
         />
-        
+
         <View style={styles.textContainer}>
           <Text style={styles.message}>{message}</Text>
-          
+
           {actionLabel && onActionPress && (
             <TouchableOpacity
               style={styles.actionButton}

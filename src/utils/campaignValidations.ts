@@ -1,16 +1,19 @@
 // src/utils/campaignValidations.ts
 
-import { useCampaignStore } from "../stores/campaign.store";
-import { useCreateCampaignStore } from "../stores/createCampaign.store";
-import { CountryCode, CreateCampaignFormData, ValidationError, ValidationResult } from "../types/campaign-create.types";
-import { MAX_AMOUNTS_BY_COUNTRY, MIN_AMOUNTS_BY_COUNTRY } from "./campaingConstants";
-import { fromUSDtoCurrencyNumber } from "./ratesUtils";
+import { useCampaignStore } from '../stores/campaign.store';
+import { useCreateCampaignStore } from '../stores/createCampaign.store';
+import {
+  CountryCode,
+  CreateCampaignFormData,
+  ValidationError,
+  ValidationResult,
+} from '../types/campaign-create.types';
+import { MAX_AMOUNTS_BY_COUNTRY, MIN_AMOUNTS_BY_COUNTRY } from './campaingConstants';
+import { fromUSDtoCurrencyNumber } from './ratesUtils';
 
 export class CampaignValidations {
   // Constantes de validación
-  private static readonly min_goal_amounts_by_country: Record<string, number> = {
-
-  }
+  private static readonly min_goal_amounts_by_country: Record<string, number> = {};
   private static readonly MIN_GOAL_AMOUNT = 3_000_000; // 3 millones CLP
   private static readonly MAX_GOAL_AMOUNT = 50_000_000; // 50 millones CLP
   private static readonly MIN_TITLE_LENGTH = 12;
@@ -69,9 +72,15 @@ export class CampaignValidations {
    */
   static validateGoalAmount(amount: string, country?: CountryCode): ValidationError | null {
     const numAmount = parseFloat(amount);
-    const maxAmount = fromUSDtoCurrencyNumber(MAX_AMOUNTS_BY_COUNTRY[country || 'US'], country || 'US')
-    const minAmount = fromUSDtoCurrencyNumber(MIN_AMOUNTS_BY_COUNTRY[country || 'US'], country || 'US')
-if (isNaN(numAmount) || numAmount <= 0) {
+    const maxAmount = fromUSDtoCurrencyNumber(
+      MAX_AMOUNTS_BY_COUNTRY[country || 'US'],
+      country || 'US'
+    );
+    const minAmount = fromUSDtoCurrencyNumber(
+      MIN_AMOUNTS_BY_COUNTRY[country || 'US'],
+      country || 'US'
+    );
+    if (isNaN(numAmount) || numAmount <= 0) {
       return {
         field: 'goalAmount',
         message: 'Ingresa un monto válido',
@@ -102,10 +111,16 @@ if (isNaN(numAmount) || numAmount <= 0) {
     const numSoftCap = parseFloat(softCap);
     const numGoalAmount = parseFloat(goalAmount);
     const country = useCreateCampaignStore.getState().formData.country;
-    const maxAmount = fromUSDtoCurrencyNumber(MAX_AMOUNTS_BY_COUNTRY[country || 'US'], country || 'US')
-    const minAmount = fromUSDtoCurrencyNumber(MIN_AMOUNTS_BY_COUNTRY[country || 'US'], country || 'US')
+    const maxAmount = fromUSDtoCurrencyNumber(
+      MAX_AMOUNTS_BY_COUNTRY[country || 'US'],
+      country || 'US'
+    );
+    const minAmount = fromUSDtoCurrencyNumber(
+      MIN_AMOUNTS_BY_COUNTRY[country || 'US'],
+      country || 'US'
+    );
 
-if (isNaN(numSoftCap) || numSoftCap <= 0) {
+    if (isNaN(numSoftCap) || numSoftCap <= 0) {
       return {
         field: 'softCap',
         message: 'La meta mínima es requerida',
@@ -139,10 +154,16 @@ if (isNaN(numSoftCap) || numSoftCap <= 0) {
     const numHardCap = parseFloat(hardCap);
     const numGoalAmount = parseFloat(goalAmount);
     const country = useCreateCampaignStore.getState().formData.country;
-    const maxAmount = fromUSDtoCurrencyNumber(MAX_AMOUNTS_BY_COUNTRY[country || 'US'], country || 'US')
-    const minAmount = fromUSDtoCurrencyNumber(MIN_AMOUNTS_BY_COUNTRY[country || 'US'], country || 'US')
+    const maxAmount = fromUSDtoCurrencyNumber(
+      MAX_AMOUNTS_BY_COUNTRY[country || 'US'],
+      country || 'US'
+    );
+    const minAmount = fromUSDtoCurrencyNumber(
+      MIN_AMOUNTS_BY_COUNTRY[country || 'US'],
+      country || 'US'
+    );
 
-if (isNaN(numHardCap) || numHardCap <= 0) {
+    if (isNaN(numHardCap) || numHardCap <= 0) {
       return {
         field: 'hardCap',
         message: 'Ingresa un monto válido',
@@ -261,7 +282,7 @@ if (isNaN(numHardCap) || numHardCap <= 0) {
 
   static validateCountry(country: string): ValidationError | null {
     const validCountries = ['US', 'CO', 'MX', 'CL'];
-if (!country || country.trim().length === 0) {
+    if (!country || country.trim().length === 0) {
       return {
         field: 'country',
         message: 'Debes seleccionar el país de la campaña',
@@ -280,7 +301,10 @@ if (!country || country.trim().length === 0) {
   /**
    * Validar beneficiarios
    */
-  static validateBeneficiaries(beneficiaries: any[], distributionRule: string): ValidationError | null {
+  static validateBeneficiaries(
+    beneficiaries: any[],
+    distributionRule: string
+  ): ValidationError | null {
     if (beneficiaries.length === 0) {
       return {
         field: 'beneficiaries',
@@ -297,10 +321,7 @@ if (!country || country.trim().length === 0) {
 
     // Si es porcentaje, validar que sume 100%
     if (distributionRule === 'percentage') {
-      const totalPercentage = beneficiaries.reduce(
-        (sum, b) => sum + (b.shareValue || 0),
-        0
-      );
+      const totalPercentage = beneficiaries.reduce((sum, b) => sum + (b.shareValue || 0), 0);
 
       if (Math.abs(totalPercentage - 100) > 0.01) {
         return {
@@ -368,7 +389,7 @@ if (!country || country.trim().length === 0) {
     const imageError = this.validateCampaignImages(formData.campaignImages);
     if (imageError) errors.push(imageError);
 
-        // 👇 NUEVA: Validar país
+    // 👇 NUEVA: Validar país
     const countryError = this.validateCountry(formData.country);
     if (countryError) errors.push(countryError);
 

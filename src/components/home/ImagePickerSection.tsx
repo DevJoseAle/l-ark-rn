@@ -42,13 +42,11 @@ export const ImagePickerSection: React.FC<ImagePickerSectionProps> = ({
   const requestPermissions = async (): Promise<boolean> => {
     if (Platform.OS !== 'web') {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      
+
       if (status !== 'granted') {
-        Alert.alert(
-          'Permisos necesarios',
-          'Necesitamos acceso a tu galería para subir imágenes.',
-          [{ text: 'OK' }]
-        );
+        Alert.alert('Permisos necesarios', 'Necesitamos acceso a tu galería para subir imágenes.', [
+          { text: 'OK' },
+        ]);
         return false;
       }
     }
@@ -119,18 +117,14 @@ export const ImagePickerSection: React.FC<ImagePickerSectionProps> = ({
 
   // Confirmar eliminación
   const handleRemoveImage = (imageId: string) => {
-    Alert.alert(
-      'Eliminar imagen',
-      '¿Estás seguro de eliminar esta imagen?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Eliminar',
-          style: 'destructive',
-          onPress: () => onRemoveImage(imageId),
-        },
-      ]
-    );
+    Alert.alert('Eliminar imagen', '¿Estás seguro de eliminar esta imagen?', [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Eliminar',
+        style: 'destructive',
+        onPress: () => onRemoveImage(imageId),
+      },
+    ]);
   };
 
   return (
@@ -140,13 +134,9 @@ export const ImagePickerSection: React.FC<ImagePickerSectionProps> = ({
           styles.card,
           {
             backgroundColor:
-              colorScheme === 'dark'
-                ? 'rgba(30, 42, 54, 0.7)'
-                : 'rgba(251, 252, 251, 0.7)',
+              colorScheme === 'dark' ? 'rgba(30, 42, 54, 0.7)' : 'rgba(251, 252, 251, 0.7)',
             borderColor:
-              colorScheme === 'dark'
-                ? 'rgba(42, 63, 84, 0.5)'
-                : 'rgba(172, 202, 231, 0.3)',
+              colorScheme === 'dark' ? 'rgba(42, 63, 84, 0.5)' : 'rgba(172, 202, 231, 0.3)',
           },
         ]}
       >
@@ -154,9 +144,7 @@ export const ImagePickerSection: React.FC<ImagePickerSectionProps> = ({
         <View style={styles.header}>
           <View style={styles.titleContainer}>
             <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
-            {required && (
-              <Text style={[styles.required, { color: colors.error }]}> *</Text>
-            )}
+            {required && <Text style={[styles.required, { color: colors.error }]}> *</Text>}
           </View>
           <Text style={[styles.counter, { color: colors.secondaryText }]}>
             {images.length}/{maxImages}
@@ -170,13 +158,9 @@ export const ImagePickerSection: React.FC<ImagePickerSectionProps> = ({
               styles.addButton,
               {
                 backgroundColor:
-                  colorScheme === 'dark'
-                    ? 'rgba(34, 51, 68, 0.5)'
-                    : 'rgba(214, 228, 245, 0.3)',
+                  colorScheme === 'dark' ? 'rgba(34, 51, 68, 0.5)' : 'rgba(214, 228, 245, 0.3)',
                 borderColor:
-                  colorScheme === 'dark'
-                    ? 'rgba(42, 63, 84, 0.5)'
-                    : 'rgba(172, 202, 231, 0.5)',
+                  colorScheme === 'dark' ? 'rgba(42, 63, 84, 0.5)' : 'rgba(172, 202, 231, 0.5)',
               },
             ]}
             onPress={pickImage}
@@ -187,9 +171,7 @@ export const ImagePickerSection: React.FC<ImagePickerSectionProps> = ({
             ) : (
               <>
                 <Ionicons name="image-outline" size={32} color={colors.icon} />
-                <Text style={[styles.addButtonText, { color: colors.text }]}>
-                  Agregar
-                </Text>
+                <Text style={[styles.addButtonText, { color: colors.text }]}>Agregar</Text>
               </>
             )}
           </TouchableOpacity>
@@ -201,17 +183,10 @@ export const ImagePickerSection: React.FC<ImagePickerSectionProps> = ({
             {images.map((image, index) => (
               <View key={image.id} style={styles.imageCard}>
                 <Image source={{ uri: image.uri }} style={styles.image} />
-                
+
                 {/* Badge de orden */}
-                <View
-                  style={[
-                    styles.orderBadge,
-                    { backgroundColor: colors.primary },
-                  ]}
-                >
-                  <Text style={[styles.orderText, { color: colors.customWhite }]}>
-                    {index + 1}
-                  </Text>
+                <View style={[styles.orderBadge, { backgroundColor: colors.primary }]}>
+                  <Text style={[styles.orderText, { color: colors.customWhite }]}>{index + 1}</Text>
                 </View>
 
                 {/* Botón eliminar */}
@@ -224,15 +199,8 @@ export const ImagePickerSection: React.FC<ImagePickerSectionProps> = ({
 
                 {/* Badge de imagen principal */}
                 {index === 0 && (
-                  <View
-                    style={[
-                      styles.primaryBadge,
-                      { backgroundColor: colors.success },
-                    ]}
-                  >
-                    <Text
-                      style={[styles.primaryText, { color: colors.customWhite }]}
-                    >
+                  <View style={[styles.primaryBadge, { backgroundColor: colors.success }]}>
+                    <Text style={[styles.primaryText, { color: colors.customWhite }]}>
                       Principal
                     </Text>
                   </View>

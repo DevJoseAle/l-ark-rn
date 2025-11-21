@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-
   useColorScheme,
   Alert,
   ActivityIndicator,
@@ -43,9 +42,7 @@ export default function KYCCaptureScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const cameraRef = useRef<CameraView>(null);
-  const {
-    loadData
-  } = useHomeData();
+  const { loadData } = useHomeData();
   const initialize = useAuthStore((state) => state.initialize);
   const [permission, requestPermission] = useCameraPermissions();
   const [currentStep, setCurrentStep] = useState<KYCDocumentType>('id_front');
@@ -75,7 +72,7 @@ export default function KYCCaptureScreen() {
         size: 0,
       };
 
-      setDocuments(prev => ({ ...prev, [currentStep]: document }));
+      setDocuments((prev) => ({ ...prev, [currentStep]: document }));
 
       // Move to next step
       if (currentStep === 'id_front') {
@@ -86,7 +83,6 @@ export default function KYCCaptureScreen() {
         // All photos captured, submit
         handleSubmit({ ...documents, [currentStep]: document });
       }
-
     } catch (error) {
       console.error('Error taking picture:', error);
       Alert.alert('Error', 'No se pudo tomar la foto');
@@ -112,7 +108,7 @@ export default function KYCCaptureScreen() {
         size: 0,
       };
 
-      setDocuments(prev => ({ ...prev, [currentStep]: document }));
+      setDocuments((prev) => ({ ...prev, [currentStep]: document }));
 
       // Move to next step
       if (currentStep === 'id_front') {
@@ -196,9 +192,7 @@ export default function KYCCaptureScreen() {
           style={[styles.button, { backgroundColor: colors.primary }]}
           onPress={requestPermission}
         >
-          <Text style={[styles.buttonText, { color: colors.customWhite }]}>
-            Otorgar permiso
-          </Text>
+          <Text style={[styles.buttonText, { color: colors.customWhite }]}>Otorgar permiso</Text>
         </TouchableOpacity>
       </View>
     );
@@ -208,9 +202,7 @@ export default function KYCCaptureScreen() {
     return (
       <View style={[styles.centerContainer, { backgroundColor: colors.background }]}>
         <ActivityIndicator size="large" color={colors.primary} />
-        <Text style={[styles.submitText, { color: colors.text }]}>
-          {submitProgress.step}
-        </Text>
+        <Text style={[styles.submitText, { color: colors.text }]}>{submitProgress.step}</Text>
         <Text style={[styles.submitProgress, { color: colors.secondaryText }]}>
           {submitProgress.progress}%
         </Text>
@@ -315,7 +307,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   overlay: {
-    ...StyleSheet.absoluteFillObject, 
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
   topBar: {

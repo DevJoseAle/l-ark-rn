@@ -1,7 +1,7 @@
-import { useCreateCampaignStore } from "@/src/stores/createCampaign.store";
-import { getPayoutMode, COUNTRIES } from "@/src/types/campaign-create.types";
-import { View, ScrollView, Text, StyleSheet } from "react-native";
-import { CountryButton } from "./BeneficiariesSection";
+import { useCreateCampaignStore } from '@/src/stores/createCampaign.store';
+import { getPayoutMode, COUNTRIES } from '@/src/types/campaign-create.types';
+import { View, ScrollView, Text, StyleSheet } from 'react-native';
+import { CountryButton } from './BeneficiariesSection';
 
 export const CountrySelector: React.FC = () => {
   const country = useCreateCampaignStore((state) => state.formData.country);
@@ -14,15 +14,9 @@ export const CountrySelector: React.FC = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>País de la campaña *</Text>
-      <Text style={styles.subtitle}>
-        Todos los beneficiarios deben estar en el mismo país
-      </Text>
+      <Text style={styles.subtitle}>Todos los beneficiarios deben estar en el mismo país</Text>
 
-      <ScrollView 
-        horizontal 
-        showsHorizontalScrollIndicator={false}
-        style={styles.countriesScroll}
-      >
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.countriesScroll}>
         {COUNTRIES.map((c) => (
           <View key={c.code} style={styles.countryItem}>
             <CountryButton
@@ -40,9 +34,7 @@ export const CountrySelector: React.FC = () => {
           {payoutMode === 'connect' ? (
             <View style={styles.badge}>
               <Text style={styles.badgeIcon}>✓</Text>
-              <Text style={styles.badgeText}>
-                Pago automático vía Stripe Connect
-              </Text>
+              <Text style={styles.badgeText}>Pago automático vía Stripe Connect</Text>
             </View>
           ) : (
             <View style={[styles.badge, styles.badgeWarning]}>
@@ -56,9 +48,7 @@ export const CountrySelector: React.FC = () => {
       )}
 
       {/* Error */}
-      {countryError && (
-        <Text style={styles.error}>{countryError.message}</Text>
-      )}
+      {countryError && <Text style={styles.error}>{countryError.message}</Text>}
     </View>
   );
 };

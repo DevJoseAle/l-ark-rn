@@ -52,7 +52,7 @@ export default function CampaignDetailScreen() {
 
   const campaignId = params.id as string;
   const handleBackPress = () => {
-      router.replace('/(auth)/(tabs)/arkHome');
+    router.replace('/(auth)/(tabs)/arkHome');
   };
 
   // Determinar si es campaña propia
@@ -92,7 +92,7 @@ export default function CampaignDetailScreen() {
       Alert.alert('Error', 'No se pudo compartir la campaña');
     }
   };
-  
+
   if (isLoading) {
     return (
       <GradientBackground>
@@ -115,9 +115,7 @@ export default function CampaignDetailScreen() {
             style={[styles.button, { backgroundColor: colors.primary }]}
             onPress={() => router.back()}
           >
-            <Text style={[styles.buttonText, { color: colors.customWhite }]}>
-              Volver
-            </Text>
+            <Text style={[styles.buttonText, { color: colors.customWhite }]}>Volver</Text>
           </TouchableOpacity>
         </View>
       </GradientBackground>
@@ -133,11 +131,9 @@ export default function CampaignDetailScreen() {
   const statusConfig = STATUS_CONFIG[campaign.status];
 
   const campaignImages = campaign.images.filter(
-    img => img.image_type === 'campaign' || img.image_type === 'main'
+    (img) => img.image_type === 'campaign' || img.image_type === 'main'
   );
-  const diagnosisImages = campaign.images.filter(
-    img => img.image_type === 'diagnosis'
-  );
+  const diagnosisImages = campaign.images.filter((img) => img.image_type === 'diagnosis');
 
   const handleOpenDonateModal = () => {
     setShowDonateModal(true);
@@ -158,7 +154,7 @@ export default function CampaignDetailScreen() {
         {/* HERO IMAGE */}
         <ImageGalleryViewer
           images={mainImage ? [{ uri: mainImage }] : []}
-          style={[styles.heroContainer,]}
+          style={[styles.heroContainer]}
         >
           <View style={styles.heroContainer}>
             {mainImage ? (
@@ -196,12 +192,7 @@ export default function CampaignDetailScreen() {
 
             {/* Status Badge */}
             <View style={styles.statusBadgeContainer}>
-              <View
-                style={[
-                  styles.statusBadge,
-                  { backgroundColor: statusConfig.color },
-                ]}
-              >
+              <View style={[styles.statusBadge, { backgroundColor: statusConfig.color }]}>
                 <Ionicons name={statusConfig.icon} size={16} color="#FFFFFF" />
                 <Text style={styles.statusText}>{statusConfig.label}</Text>
               </View>
@@ -213,9 +204,7 @@ export default function CampaignDetailScreen() {
         <View style={styles.content}>
           {/* Title & Owner */}
           <View style={styles.titleSection}>
-            <Text style={[styles.title, { color: colors.text }]}>
-              {campaign.title}
-            </Text>
+            <Text style={[styles.title, { color: colors.text }]}>{campaign.title}</Text>
             <Text style={[styles.owner, { color: colors.secondaryText }]}>
               por @{campaign.owner.display_name}
             </Text>
@@ -227,13 +216,9 @@ export default function CampaignDetailScreen() {
               styles.card,
               {
                 backgroundColor:
-                  colorScheme === 'dark'
-                    ? 'rgba(30, 42, 54, 0.7)'
-                    : 'rgba(251, 252, 251, 0.7)',
+                  colorScheme === 'dark' ? 'rgba(30, 42, 54, 0.7)' : 'rgba(251, 252, 251, 0.7)',
                 borderColor:
-                  colorScheme === 'dark'
-                    ? 'rgba(42, 63, 84, 0.5)'
-                    : 'rgba(172, 202, 231, 0.3)',
+                  colorScheme === 'dark' ? 'rgba(42, 63, 84, 0.5)' : 'rgba(172, 202, 231, 0.3)',
               },
             ]}
           >
@@ -265,17 +250,13 @@ export default function CampaignDetailScreen() {
             {/* Amounts */}
             <View style={styles.amountsRow}>
               <View>
-                <Text style={[styles.amountLabel, { color: colors.secondaryText }]}>
-                  Recaudado
-                </Text>
+                <Text style={[styles.amountLabel, { color: colors.secondaryText }]}>Recaudado</Text>
                 <Text style={[styles.amountValue, { color: colors.text }]}>
                   {Formatters.formatCLP(campaign.total_raised)}
                 </Text>
               </View>
               <View style={{ alignItems: 'flex-end' }}>
-                <Text style={[styles.amountLabel, { color: colors.secondaryText }]}>
-                  Meta
-                </Text>
+                <Text style={[styles.amountLabel, { color: colors.secondaryText }]}>Meta</Text>
                 <Text style={[styles.amountValue, { color: colors.text }]}>
                   {Formatters.formatCLP(campaign.goal_amount ?? 0)}
                 </Text>
@@ -289,25 +270,17 @@ export default function CampaignDetailScreen() {
               styles.card,
               {
                 backgroundColor:
-                  colorScheme === 'dark'
-                    ? 'rgba(30, 42, 54, 0.7)'
-                    : 'rgba(251, 252, 251, 0.7)',
+                  colorScheme === 'dark' ? 'rgba(30, 42, 54, 0.7)' : 'rgba(251, 252, 251, 0.7)',
                 borderColor:
-                  colorScheme === 'dark'
-                    ? 'rgba(42, 63, 84, 0.5)'
-                    : 'rgba(172, 202, 231, 0.3)',
+                  colorScheme === 'dark' ? 'rgba(42, 63, 84, 0.5)' : 'rgba(172, 202, 231, 0.3)',
               },
             ]}
           >
             <View style={styles.cardHeader}>
               <Ionicons name="document-text-outline" size={24} color={colors.primary} />
-              <Text style={[styles.cardTitle, { color: colors.text }]}>
-                Descripción
-              </Text>
+              <Text style={[styles.cardTitle, { color: colors.text }]}>Descripción</Text>
             </View>
-            <Text style={[styles.description, { color: colors.text }]}>
-              {campaign.description}
-            </Text>
+            <Text style={[styles.description, { color: colors.text }]}>{campaign.description}</Text>
           </View>
 
           {/* Goals Card */}
@@ -316,13 +289,9 @@ export default function CampaignDetailScreen() {
               styles.card,
               {
                 backgroundColor:
-                  colorScheme === 'dark'
-                    ? 'rgba(30, 42, 54, 0.7)'
-                    : 'rgba(251, 252, 251, 0.7)',
+                  colorScheme === 'dark' ? 'rgba(30, 42, 54, 0.7)' : 'rgba(251, 252, 251, 0.7)',
                 borderColor:
-                  colorScheme === 'dark'
-                    ? 'rgba(42, 63, 84, 0.5)'
-                    : 'rgba(172, 202, 231, 0.3)',
+                  colorScheme === 'dark' ? 'rgba(42, 63, 84, 0.5)' : 'rgba(172, 202, 231, 0.3)',
               },
             ]}
           >
@@ -336,9 +305,7 @@ export default function CampaignDetailScreen() {
                 <Ionicons name="trophy" size={20} color={colors.primary} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={[styles.goalLabel, { color: colors.secondaryText }]}>
-                  Meta total
-                </Text>
+                <Text style={[styles.goalLabel, { color: colors.secondaryText }]}>Meta total</Text>
                 <Text style={[styles.goalValue, { color: colors.text }]}>
                   {Formatters.formatCLP(campaign.goal_amount ?? 0)}
                 </Text>
@@ -350,9 +317,7 @@ export default function CampaignDetailScreen() {
                 <Ionicons name="shield" size={20} color={colors.warning} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={[styles.goalLabel, { color: colors.secondaryText }]}>
-                  Meta mínima
-                </Text>
+                <Text style={[styles.goalLabel, { color: colors.secondaryText }]}>Meta mínima</Text>
                 <Text style={[styles.goalValue, { color: colors.text }]}>
                   {Formatters.formatCLP(campaign.soft_cap ?? 0)}
                 </Text>
@@ -383,28 +348,20 @@ export default function CampaignDetailScreen() {
                 styles.card,
                 {
                   backgroundColor:
-                    colorScheme === 'dark'
-                      ? 'rgba(30, 42, 54, 0.7)'
-                      : 'rgba(251, 252, 251, 0.7)',
+                    colorScheme === 'dark' ? 'rgba(30, 42, 54, 0.7)' : 'rgba(251, 252, 251, 0.7)',
                   borderColor:
-                    colorScheme === 'dark'
-                      ? 'rgba(42, 63, 84, 0.5)'
-                      : 'rgba(172, 202, 231, 0.3)',
+                    colorScheme === 'dark' ? 'rgba(42, 63, 84, 0.5)' : 'rgba(172, 202, 231, 0.3)',
                 },
               ]}
             >
               <View style={styles.cardHeader}>
                 <Ionicons name="people-outline" size={24} color={colors.primary} />
-                <Text style={[styles.cardTitle, { color: colors.text }]}>
-                  Beneficiarios
-                </Text>
+                <Text style={[styles.cardTitle, { color: colors.text }]}>Beneficiarios</Text>
               </View>
 
               {campaign.beneficiaries.map((beneficiary) => (
                 <View key={beneficiary.id} style={styles.beneficiaryItem}>
-                  <View
-                    style={[styles.beneficiaryAvatar, { backgroundColor: colors.primary }]}
-                  >
+                  <View style={[styles.beneficiaryAvatar, { backgroundColor: colors.primary }]}>
                     <Text style={[styles.beneficiaryAvatarText, { color: colors.customWhite }]}>
                       {beneficiary.user.display_name.substring(0, 2).toUpperCase()}
                     </Text>
@@ -441,13 +398,9 @@ export default function CampaignDetailScreen() {
                 styles.card,
                 {
                   backgroundColor:
-                    colorScheme === 'dark'
-                      ? 'rgba(30, 42, 54, 0.7)'
-                      : 'rgba(251, 252, 251, 0.7)',
+                    colorScheme === 'dark' ? 'rgba(30, 42, 54, 0.7)' : 'rgba(251, 252, 251, 0.7)',
                   borderColor:
-                    colorScheme === 'dark'
-                      ? 'rgba(42, 63, 84, 0.5)'
-                      : 'rgba(172, 202, 231, 0.3)',
+                    colorScheme === 'dark' ? 'rgba(42, 63, 84, 0.5)' : 'rgba(172, 202, 231, 0.3)',
                 },
               ]}
             >
@@ -458,13 +411,9 @@ export default function CampaignDetailScreen() {
 
               <View style={styles.galleryGrid}>
                 <ImageGridViewer
-                  images={campaignImages.map(img => ({ uri: img.image_url }))}
+                  images={campaignImages.map((img) => ({ uri: img.image_url }))}
                   renderItem={(image, index) => (
-                    <Image
-                      key={index}
-                      source={{ uri: image.uri }}
-                      style={styles.galleryImage}
-                    />
+                    <Image key={index} source={{ uri: image.uri }} style={styles.galleryImage} />
                   )}
                 />
               </View>
@@ -479,32 +428,22 @@ export default function CampaignDetailScreen() {
                 styles.card,
                 {
                   backgroundColor:
-                    colorScheme === 'dark'
-                      ? 'rgba(30, 42, 54, 0.7)'
-                      : 'rgba(251, 252, 251, 0.7)',
+                    colorScheme === 'dark' ? 'rgba(30, 42, 54, 0.7)' : 'rgba(251, 252, 251, 0.7)',
                   borderColor:
-                    colorScheme === 'dark'
-                      ? 'rgba(42, 63, 84, 0.5)'
-                      : 'rgba(172, 202, 231, 0.3)',
+                    colorScheme === 'dark' ? 'rgba(42, 63, 84, 0.5)' : 'rgba(172, 202, 231, 0.3)',
                 },
               ]}
             >
               <View style={styles.cardHeader}>
                 <Ionicons name="medical-outline" size={24} color={colors.error} />
-                <Text style={[styles.cardTitle, { color: colors.text }]}>
-                  Diagnóstico Médico
-                </Text>
+                <Text style={[styles.cardTitle, { color: colors.text }]}>Diagnóstico Médico</Text>
               </View>
 
               <View style={styles.galleryGrid}>
                 <ImageGridViewer
-                  images={diagnosisImages.map(img => ({ uri: img.image_url }))}
+                  images={diagnosisImages.map((img) => ({ uri: img.image_url }))}
                   renderItem={(image, index) => (
-                    <Image
-                      key={index}
-                      source={{ uri: image.uri }}
-                      style={styles.galleryImage}
-                    />
+                    <Image key={index} source={{ uri: image.uri }} style={styles.galleryImage} />
                   )}
                 />
               </View>
@@ -521,13 +460,13 @@ export default function CampaignDetailScreen() {
           disabled={campaign?.status !== 'active'}
         />
       )}
-       <DonateModal
-            visible={showDonateModal}
-            onClose={handleCloseDonateModal}
-            campaignId={campaign.id}
-            campaignTitle={campaign.title}
-            shortCode={campaign.short_code}
-          />
+      <DonateModal
+        visible={showDonateModal}
+        onClose={handleCloseDonateModal}
+        campaignId={campaign.id}
+        campaignTitle={campaign.title}
+        shortCode={campaign.short_code}
+      />
     </GradientBackground>
   );
 }

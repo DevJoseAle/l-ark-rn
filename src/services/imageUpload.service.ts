@@ -143,11 +143,7 @@ export class ImageUploadService {
       onProgress?.(60);
 
       // 5. Generar path
-      const storagePath = this.generateStoragePath(
-        campaignId,
-        imageType,
-        beneficiaryId
-      );
+      const storagePath = this.generateStoragePath(campaignId, imageType, beneficiaryId);
       const bucketName = this.getBucketName(imageType);
 
       // 6. Upload a Supabase
@@ -165,9 +161,7 @@ export class ImageUploadService {
       onProgress?.(90);
 
       // 7. Obtener URL pública
-      const { data: urlData } = supabase.storage
-        .from(bucketName)
-        .getPublicUrl(storagePath);
+      const { data: urlData } = supabase.storage.from(bucketName).getPublicUrl(storagePath);
 
       onProgress?.(100);
 
@@ -189,12 +183,8 @@ export class ImageUploadService {
     onProgress?: (imageId: string, progress: number) => void
   ): Promise<UploadedImage[]> {
     const uploadPromises = images.map(async (image, index) => {
-      const url = await this.uploadImage(
-        campaignId,
-        image,
-        imageType,
-        beneficiaryId,
-        (progress) => onProgress?.(image.id, progress)
+      const url = await this.uploadImage(campaignId, image, imageType, beneficiaryId, (progress) =>
+        onProgress?.(image.id, progress)
       );
 
       return {
@@ -212,22 +202,17 @@ export class ImageUploadService {
   /**
    * Eliminar imagen de Storage
    */
-  static async deleteImage(
-    imageUrl: string,
-    imageType: CampaignImageType
-  ): Promise<void> {
+  static async deleteImage(imageUrl: string, imageType: CampaignImageType): Promise<void> {
     try {
       const bucketName = this.getBucketName(imageType);
-      
+
       // Extraer path de la URL
       const url = new URL(imageUrl);
       const pathSegments = url.pathname.split('/');
-      const bucketIndex = pathSegments.findIndex(s => s === bucketName);
+      const bucketIndex = pathSegments.findIndex((s) => s === bucketName);
       const storagePath = pathSegments.slice(bucketIndex + 1).join('/');
 
-      const { error } = await supabase.storage
-        .from(bucketName)
-        .remove([storagePath]);
+      const { error } = await supabase.storage.from(bucketName).remove([storagePath]);
 
       if (error) {
         throw error;
@@ -254,9 +239,7 @@ export class ImageUploadService {
   /**
    * Obtener dimensiones de imagen
    */
-  static async getImageDimensions(
-    uri: string
-  ): Promise<{ width: number; height: number }> {
+  static async getImageDimensions(uri: string): Promise<{ width: number; height: number }> {
     // Esta función requiere react-native-image-size
     // Por ahora retornamos valores por defecto
     return { width: 0, height: 0 };

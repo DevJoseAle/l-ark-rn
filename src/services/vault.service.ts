@@ -1,8 +1,8 @@
 import * as FileSystem from 'expo-file-system/legacy';
-import { supabase } from "../lib/supabaseClient";
-import { FileToUpload, UploadResult } from "../types/vault.types";
-import { STORAGE_BUCKET } from "../utils/vaultConstants";
-import { generateStoragePath, validateFileUpload } from "../utils/vaultUtils";
+import { supabase } from '../lib/supabaseClient';
+import { FileToUpload, UploadResult } from '../types/vault.types';
+import { STORAGE_BUCKET } from '../utils/vaultConstants';
+import { generateStoragePath, validateFileUpload } from '../utils/vaultUtils';
 
 export class VaultService {
   /**
@@ -17,12 +17,8 @@ export class VaultService {
     quotaBytes: number
   ): Promise<UploadResult> {
     try {
-// 1. Validar el archivo
-      const validation = validateFileUpload(
-        file.size,
-        currentUsedBytes,
-        quotaBytes
-      );
+      // 1. Validar el archivo
+      const validation = validateFileUpload(file.size, currentUsedBytes, quotaBytes);
 
       if (!validation.isValid) {
         console.error('❌ Validación fallida:', validation.error);
@@ -34,21 +30,21 @@ export class VaultService {
 
       // 2. Generar path único en Storage
       const storagePath = generateStoragePath(userId, campaignId, file.name);
-// 3. ✅ LEER ARCHIVO CON EXPO-FILE-SYSTEM (React Native compatible)
-// Leer archivo como base64
+      // 3. ✅ LEER ARCHIVO CON EXPO-FILE-SYSTEM (React Native compatible)
+      // Leer archivo como base64
       const base64Data = await FileSystem.readAsStringAsync(file.uri, {
         encoding: FileSystem.EncodingType.Base64,
       });
 
-// Convertir base64 a Uint8Array
+      // Convertir base64 a Uint8Array
       const binaryString = atob(base64Data);
       const bytes = new Uint8Array(binaryString.length);
       for (let i = 0; i < binaryString.length; i++) {
         bytes[i] = binaryString.charCodeAt(i);
       }
 
-// 4. Subir a Supabase Storage
-const { data: uploadData, error: uploadError } = await supabase.storage
+      // 4. Subir a Supabase Storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
         .from(STORAGE_BUCKET)
         .upload(storagePath, bytes, {
           contentType: file.type,
@@ -60,8 +56,8 @@ const { data: uploadData, error: uploadError } = await supabase.storage
         throw uploadError;
       }
 
-// 5. Crear registro en la tabla vault_files
-const { data: fileRecord, error: dbError } = await supabase
+      // 5. Crear registro en la tabla vault_files
+      const { data: fileRecord, error: dbError } = await supabase
         .from('vault_files')
         .insert({
           user_id: userId,
@@ -79,14 +75,12 @@ const { data: fileRecord, error: dbError } = await supabase
       if (dbError) {
         console.error('❌ Error al crear registro:', dbError);
         // Intentar eliminar archivo de storage si falla la DB
-        await supabase.storage
-          .from(STORAGE_BUCKET)
-          .remove([storagePath]);
+        await supabase.storage.from(STORAGE_BUCKET).remove([storagePath]);
         throw dbError;
       }
 
-// 6. Actualizar bytes usados en la suscripción
-const newUsedBytes = currentUsedBytes + file.size;
+      // 6. Actualizar bytes usados en la suscripción
+      const newUsedBytes = currentUsedBytes + file.size;
 
       const { error: updateError } = await supabase
         .from('vault_subscriptions')
@@ -98,11 +92,10 @@ const newUsedBytes = currentUsedBytes + file.size;
         // No es crítico, continuar
       }
 
-return {
+      return {
         success: true,
         file: fileRecord,
       };
-
     } catch (error: any) {
       console.error('❌ Error en uploadFile:', error.message || error);
       return {
@@ -118,10 +111,7 @@ return {
   /**
    * Obtiene todos los archivos de una campaña
    */
-  static async getFiles(
-    userId: string,
-    campaignId: string
-  ): Promise<any[]> {
+  static async getFiles(userId: string, campaignId: string): Promise<any[]> {
     try {
       const { data, error } = await supabase
         .from('vault_files')
@@ -141,10 +131,13 @@ return {
   /**
    * Elimina un archivo
    */
-  static async deleteFile(fileId: string, storagePath: string): Promise<{ success: boolean; error?: string }> {
+  static async deleteFile(
+    fileId: string,
+    storagePath: string
+  ): Promise<{ success: boolean; error?: string }> {
     try {
-// 1. Eliminar de Storage
-const { error: storageError } = await supabase.storage
+      // 1. Eliminar de Storage
+      const { error: storageError } = await supabase.storage
         .from(STORAGE_BUCKET)
         .remove([storagePath]);
 
@@ -154,18 +147,14 @@ const { error: storageError } = await supabase.storage
       }
 
       // 2. Eliminar registro de DB
-const { error: dbError } = await supabase
-        .from('vault_files')
-        .delete()
-        .eq('id', fileId);
+      const { error: dbError } = await supabase.from('vault_files').delete().eq('id', fileId);
 
       if (dbError) {
         console.error('❌ Error eliminando de DB:', dbError);
         throw new Error(dbError.message || 'Error al eliminar de DB');
       }
 
-return { success: true };
-
+      return { success: true };
     } catch (error: any) {
       console.error('❌ Error en deleteFile:', error.message || error);
       return {
@@ -175,7 +164,7 @@ return { success: true };
     }
   }
   // 📍 AGREGAR ESTAS 2 FUNCIONES al final de tu VaultService
-// Justo ANTES del cierre de la clase (antes de la última "}")
+  // Justo ANTES del cierre de la clase (antes de la última "}")
 
   /**
    * Descarga un archivo al dispositivo
@@ -184,7 +173,7 @@ return { success: true };
     file: any
   ): Promise<{ success: boolean; localUri?: string; error?: string }> {
     try {
-// 1. Obtener URL pública temporal del archivo
+      // 1. Obtener URL pública temporal del archivo
       const { data: urlData } = await supabase.storage
         .from(STORAGE_BUCKET)
         .createSignedUrl(file.storage_path, 60); // 60 segundos
@@ -193,23 +182,19 @@ return { success: true };
         throw new Error('No se pudo obtener URL del archivo');
       }
 
-// 2. Descargar archivo con expo-file-system
+      // 2. Descargar archivo con expo-file-system
       const fileUri = `${FileSystem.documentDirectory}${file.file_name}`;
 
-      const downloadResult = await FileSystem.downloadAsync(
-        urlData.signedUrl,
-        fileUri
-      );
+      const downloadResult = await FileSystem.downloadAsync(urlData.signedUrl, fileUri);
 
       if (downloadResult.status !== 200) {
         throw new Error('Error al descargar el archivo');
       }
 
-return {
+      return {
         success: true,
         localUri: downloadResult.uri,
       };
-
     } catch (error: any) {
       console.error('❌ Error en downloadFile:', error.message || error);
       return {
@@ -234,7 +219,6 @@ return {
       return null;
     }
   }
-
 }
 
 // Export por defecto para compatibilidad

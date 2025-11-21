@@ -6,7 +6,6 @@ interface AuthServiceResponse<T = void> {
   success: boolean;
   message: string;
   data?: T;
-  error?: AuthError;
 }
 
 interface SendOTPData {
@@ -23,17 +22,34 @@ interface UserExist {
   exists: boolean;
 }
 
+// 🍎 Constantes para Apple Review
+const DEMO_EMAIL = 'demo@l-ark-review.com';
+const DEMO_OTP = '123456';
+const DEMO_PASSWORD = 'AppleReview2024!';
+
 export const authService = {
+
   loginSendOTP: async (email: string): Promise<AuthServiceResponse<SendOTPData>> => {
     console.log("SendOTPData email:", email);
+
     try {
+      // 🍎 DEMO MODE: Si es el email de Apple Review, NO enviar OTP
+      if (email.toLowerCase() === DEMO_EMAIL.toLowerCase()) {
+        console.log('🍎 Demo mode: Usando password en lugar de OTP');
+        return {
+          success: true,
+          message: 'Usuario demo detectado. Ingresa el código: 123456',
+        };
+      }
+
+      // Flujo normal para usuarios reales
       const { data, error } = await supabase.auth.signInWithOtp({
         email,
         options: {
           shouldCreateUser: true,
         },
       });
-      
+
       if (error) throw error;
 
       return {
@@ -46,7 +62,6 @@ export const authService = {
       return {
         success: false,
         message: `${error}`,
-        error: error as AuthError,
       };
     }
   },
@@ -55,7 +70,35 @@ export const authService = {
     console.log("Verificando OTP para:", email);
 
     try {
-      // 1. Verificar OTP
+      // 🍎 DEMO MODE: Si es el email de Apple Review, usar password
+      if (email.toLowerCase() === DEMO_EMAIL.toLowerCase()) {
+        console.log('🍎 Demo mode: Login con password');
+
+        // Usar el "token" como password (será "123456")
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: DEMO_EMAIL,
+          password: token, // El usuario ingresa "123456" como si fuera OTP
+        });
+
+        if (error) {
+          console.error('❌ Error en login demo:', error);
+          throw new Error()
+          
+        }
+
+        console.log('✅ Login demo exitoso');
+
+        // Asegurar que existe en public.users
+        await authService.ensureUserExists(data.user.id, data.user.email!);
+
+        return {
+          success: true,
+          message: 'Verificación exitosa (Demo)',
+          data: data as VerifyOTPData,
+        };
+      }
+
+      // Flujo normal para usuarios reales
       const { data, error } = await supabase.auth.verifyOtp({
         email,
         token,
@@ -67,10 +110,13 @@ export const authService = {
       if (!data.user) {
         throw new Error('No se obtuvo información del usuario');
       }
+
       console.log("✅ OTP verificado, usuario autenticado");
+
       await authService.ensureUserExists(data.user.id, data.user.email!);
+
+      // Manejar aceptación de términos
       try {
-        // Obtener versión actual de términos
         const { data: currentTerms } = await supabase
           .from('terms_versions')
           .select('version')
@@ -79,7 +125,6 @@ export const authService = {
 
         const currentVersion = currentTerms?.version || '1.0';
 
-        // Verificar si ya aceptó esta versión
         const { data: existingAcceptance } = await supabase
           .from('user_terms_acceptances')
           .select('id')
@@ -88,7 +133,6 @@ export const authService = {
           .maybeSingle();
 
         if (!existingAcceptance) {
-          // Guardar aceptación de términos
           const { error: acceptanceError } = await supabase
             .from('user_terms_acceptances')
             .insert({
@@ -98,12 +142,10 @@ export const authService = {
             });
 
           if (acceptanceError) {
-            // Si aún falla, loguear pero no fallar el login
             console.error('⚠️ Error guardando aceptación de términos:', acceptanceError);
           } else {
             console.log('✅ Términos aceptados:', currentVersion);
 
-            // Actualizar columna helper en users
             await supabase
               .from('users')
               .update({ current_terms_version: currentVersion })
@@ -113,7 +155,6 @@ export const authService = {
           console.log('✅ Usuario ya aceptó términos:', currentVersion);
         }
       } catch (termsError) {
-        // No fallar el login si hay error con términos
         console.error('⚠️ Error procesando términos:', termsError);
       }
 
@@ -125,18 +166,16 @@ export const authService = {
 
     } catch (error) {
       console.error("❌ Error verificando OTP:", error);
+      
       return {
         success: false,
         message: "Error al verificar OTP (Falla servicio)",
-        error: error as AuthError,
       };
     }
   },
 
   /**
    * Asegura que el usuario existe en public.users
-   * Espera hasta 5 segundos a que el trigger lo cree
-   * Si no existe, lo crea manualmente
    */
   ensureUserExists: async (userId: string, email: string): Promise<void> => {
     const maxAttempts = 10;
@@ -157,9 +196,8 @@ export const authService = {
       }
 
       if (i === maxAttempts - 1) {
-        // Último intento: crear manualmente
         console.log('⚠️ Trigger no creó el usuario, creando manualmente...');
-        
+
         const { error: insertError } = await supabase
           .from('users')
           .insert({
@@ -180,7 +218,6 @@ export const authService = {
         return;
       }
 
-      // Esperar antes del siguiente intento
       await new Promise(resolve => setTimeout(resolve, delayMs));
     }
 
@@ -200,7 +237,6 @@ export const authService = {
       return {
         success: false,
         message: "Error al obtener Sesion",
-        error: error as AuthError
       }
     }
   },
@@ -238,7 +274,6 @@ export const authService = {
       return {
         success: false,
         message: "Error al verificar el usuario",
-        error: error as AuthError
       }
     }
   },

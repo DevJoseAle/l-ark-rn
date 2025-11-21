@@ -42,9 +42,11 @@ export const useLogin = (router: any) => {
         throw error;
       }
       console.log(error);
+      console.log('Existing',existingUser);
       hideLoading();
 
       if (existingUser) {
+        console.log('Entre a existing')
         // Usuario existe → Verificar si aceptó la versión actual
         const { data: acceptance, error: accError } = await supabase
           .from('user_terms_acceptances')
@@ -140,7 +142,7 @@ export function useOTPForm(length: number = 6, router: Router) {
   }, [otp]);
 const handleConfirm = async () => {
     const code = otp.join('');
-    
+    console.log('******-------******');
     if (code.length !== 6) {
       Alert.alert('Error', 'Por favor ingresa el código completo');
       return;
@@ -153,12 +155,18 @@ const handleConfirm = async () => {
      console.log(email, code);
       console.log('✅ Código verificado:');
       console.log("response",response);
+      if(!response.success){
+        console.log('no response');
+         router.replace('/(public)/welcome');
+         Alert.alert('Error', 'Inténtalo nuevamente más tarde')
+         throw new Error();
+      }
+
       router.replace('/(auth)/(tabs)/arkHome');
       hideLoading();
       Alert.alert('Éxito', 'Código verificado exitosamente');      
     } catch (error) {
       console.error('❌ Error:', error);
-      Alert.alert('Error', 'Código inválido');
       hideLoading();
     }
   };

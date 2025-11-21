@@ -100,7 +100,7 @@ export function useDeepLinking() {
       // Guardar el campaignId para después del login
       // Podrías usar AsyncStorage para persistir esto
       router.push({
-        pathname: '/(auth)/explore',
+        pathname: '/(public)/welcome',
         params: { redirect: `/campaign/${campaignId}` },
       });
       return;

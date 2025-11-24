@@ -126,73 +126,122 @@ export default function ProfileScreen() {
         return 'Verifica tu cuenta para recibir pagos automáticamente';
     }
   };
-    // ✅ Handle delete account - NUEVO
-  const handleDeleteAccount = async () => {
-    if (!user?.id) {
-      Alert.alert('Error', 'No se pudo identificar tu cuenta');
+  //NUEVITO:::::::
+
+
+  // app/(auth)/(tabs)/profile/index.tsx
+
+// ✅ Agregar esta función helper al inicio del componente
+const handleContactSupport = async (userId: string, activeCampaignsCount: number) => {
+  const email = 'support@lark.app';
+  const subject = 'Solicitud de Eliminación de Cuenta';
+  const body = `User ID: ${userId}\n\nCampañas activas: ${activeCampaignsCount}\n\nHola, necesito asistencia para eliminar mi cuenta.`;
+  
+  const mailtoUrl = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+  try {
+    // Verificar si puede abrir el URL
+    const canOpen = await Linking.canOpenURL(mailtoUrl);
+    
+    if (canOpen) {
+      await Linking.openURL(mailtoUrl);
+    } else {
+      // Si no puede abrir mailto, mostrar alternativas
+      Alert.alert(
+        'Contactar Soporte',
+        `No se pudo abrir el cliente de correo.\n\nPuedes contactarnos en:\n📧 ${email}\n\nUser ID: ${userId}`,
+        [
+          {
+            text: 'Copiar Email',
+            onPress: () => {
+              // Si tienes expo-clipboard instalado:
+              // Clipboard.setStringAsync(email);
+              Alert.alert('Email copiado', email);
+            }
+          },
+          { text: 'Cerrar', style: 'cancel' }
+        ]
+      );
+    }
+  } catch (error) {
+    console.error('Error abriendo soporte:', error);
+    // Fallback: mostrar el email directamente
+    Alert.alert(
+      'Contactar Soporte',
+      `Envía un correo a:\n📧 ${email}\n\nIncluye tu User ID:\n${userId}`,
+      [
+        { text: 'Entendido' }
+      ]
+    );
+  }
+};
+
+// ✅ Modificar el handleDeleteAccount donde llamas a Linking.openURL:
+const handleDeleteAccount = async () => {
+  if (!user?.id) {
+    Alert.alert('Error', 'No se pudo identificar tu cuenta');
+    return;
+  }
+
+  setIsDeleting(true);
+
+  try {
+    console.log('🔍 Verificando si la cuenta puede ser eliminada...');
+
+    // 1. Verificar si tiene campañas activas con fondos
+    const { data: activeCampaigns, error: campaignsError } = await supabase
+      .from('campaigns')
+      .select('id, title, total_raised, status')
+      .eq('owner_user_id', user.id)
+      .in('status', ['active', 'triggered'])
+      .gt('total_raised', 0);
+
+    if (campaignsError) {
+      console.error('Error verificando campañas:', campaignsError);
+      throw new Error('No se pudo verificar el estado de tus campañas');
+    }
+
+    console.log('Campañas activas con fondos:', activeCampaigns?.length || 0);
+
+    if (activeCampaigns && activeCampaigns.length > 0) {
+      // 🚫 No puede eliminar
+      setIsDeleting(false);
+      
+      const campaignsList = activeCampaigns
+        .map(c => `• ${c.title}: $${c.total_raised}`)
+        .join('\n');
+
+      Alert.alert(
+        '⚠️ No se puede eliminar la cuenta',
+        `Tienes ${activeCampaigns.length} campaña(s) activa(s) con fondos:\n\n${campaignsList}\n\n` +
+        '⚖️ Por obligaciones legales y para proteger a los beneficiarios, debes primero:\n\n' +
+        '1️⃣ Completar la distribución de fondos, o\n' +
+        '2️⃣ Cancelar las campañas y procesar reembolsos\n\n' +
+        '📧 Contacta a soporte para asistencia.',
+        [
+          {
+            text: 'Contactar Soporte',
+            onPress: () => {
+              // ✅ Usar la nueva función helper
+              handleContactSupport(user.id, activeCampaigns.length);
+            }
+          },
+          { text: 'Entendido', style: 'cancel' }
+        ]
+      );
       return;
     }
 
-    setIsDeleting(true);
+    // 2. Si puede eliminar, mostrar modal de razones
+    setIsDeleting(false);
+    setShowDeleteModal(true);
 
-    try {
-      console.log('🔍 Verificando si la cuenta puede ser eliminada...');
-
-      // 1. Verificar si tiene campañas activas con fondos
-      const { data: activeCampaigns, error: campaignsError } = await supabase
-        .from('campaigns')
-        .select('id, title, total_raised, status')
-        .eq('owner_user_id', user.id)
-        .in('status', ['active', 'triggered'])
-        .gt('total_raised', 0);
-
-      if (campaignsError) {
-        console.error('Error verificando campañas:', campaignsError);
-        throw new Error('No se pudo verificar el estado de tus campañas');
-      }
-
-      console.log('Campañas activas con fondos:', activeCampaigns?.length || 0);
-
-      if (activeCampaigns && activeCampaigns.length > 0) {
-        // 🚫 No puede eliminar
-        setIsDeleting(false);
-        
-        const campaignsList = activeCampaigns
-          .map(c => `• ${c.title}: $${c.total_raised}`)
-          .join('\n');
-
-        Alert.alert(
-          '⚠️ No se puede eliminar la cuenta',
-          `Tienes ${activeCampaigns.length} campaña(s) activa(s) con fondos:\n\n${campaignsList}\n\n` +
-          '⚖️ Por obligaciones legales y para proteger a los beneficiarios, debes primero:\n\n' +
-          '1️⃣ Completar la distribución de fondos, o\n' +
-          '2️⃣ Cancelar las campañas y procesar reembolsos\n\n' +
-          '📧 Contacta a soporte para asistencia.',
-          [
-            {
-              text: 'Contactar Soporte',
-              onPress: () => {
-                Linking.openURL(
-                  `mailto:support@lark.app?subject=Solicitud de Eliminación de Cuenta&body=User ID: ${user.id}%0A%0ACampañas activas: ${activeCampaigns.length}`
-                );
-              }
-            },
-            { text: 'Entendido', style: 'cancel' }
-          ]
-        );
-        return;
-      }
-
-      // 2. Si puede eliminar, mostrar modal de razones
-      setIsDeleting(false);
-      setShowDeleteModal(true);
-
-    } catch (error: any) {
-      setIsDeleting(false);
-      console.error('Error en handleDeleteAccount:', error);
-      Alert.alert('Error', error.message || 'No se pudo verificar el estado de tu cuenta.');
-    }
-  };
+  } catch (error: any) {
+    setIsDeleting(false);
+    console.error('Error en handleDeleteAccount:', error);
+    Alert.alert('Error', error.message || 'No se pudo verificar el estado de tu cuenta.');
+  }
+};
 
   // ✅ Confirmar eliminación con razón - NUEVO
   const confirmDeletion = async (reason: string) => {

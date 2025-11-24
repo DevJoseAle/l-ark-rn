@@ -40,10 +40,34 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string | null
+          details: Json | null
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       beneficiary_accounts: {
         Row: {
           connect_status: string | null
-          country: Database["public"]["Enums"]["country_code"]
+          country: string
           created_at: string
           external_account_ref: string | null
           external_method: string | null
@@ -55,7 +79,7 @@ export type Database = {
         }
         Insert: {
           connect_status?: string | null
-          country: Database["public"]["Enums"]["country_code"]
+          country: string
           created_at?: string
           external_account_ref?: string | null
           external_method?: string | null
@@ -67,7 +91,7 @@ export type Database = {
         }
         Update: {
           connect_status?: string | null
-          country?: Database["public"]["Enums"]["country_code"]
+          country?: string
           created_at?: string
           external_account_ref?: string | null
           external_method?: string | null
@@ -218,21 +242,21 @@ export type Database = {
           {
             foreignKeyName: "campaign_balance_campaign_id_fkey"
             columns: ["campaign_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "campaign_distribution_summary"
             referencedColumns: ["campaign_id"]
           },
           {
             foreignKeyName: "campaign_balance_campaign_id_fkey"
             columns: ["campaign_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "campaigns"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "campaign_balance_campaign_id_fkey"
             columns: ["campaign_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "vw_campaign_held"
             referencedColumns: ["campaign_id"]
           },
@@ -247,7 +271,7 @@ export type Database = {
           id: string
           is_active: boolean
           priority: number | null
-          share_type: Database["public"]["Enums"]["beneficiary_share_type"]
+          share_type: string
           share_value: number
           updated_at: string
         }
@@ -259,7 +283,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           priority?: number | null
-          share_type: Database["public"]["Enums"]["beneficiary_share_type"]
+          share_type: string
           share_value: number
           updated_at?: string
         }
@@ -271,7 +295,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           priority?: number | null
-          share_type?: Database["public"]["Enums"]["beneficiary_share_type"]
+          share_type?: string
           share_value?: number
           updated_at?: string
         }
@@ -383,9 +407,7 @@ export type Database = {
       }
       campaigns: {
         Row: {
-          beneficiary_rule:
-            | Database["public"]["Enums"]["beneficiary_rule"]
-            | null
+          beneficiary_rule: string | null
           country: string
           created_at: string
           currency: string
@@ -399,16 +421,14 @@ export type Database = {
           short_code: string | null
           soft_cap: number | null
           start_at: string | null
-          status: Database["public"]["Enums"]["campaign_status"]
+          status: string
           title: string
           total_raised: number
           updated_at: string
-          visibility: Database["public"]["Enums"]["campaign_visibility"]
+          visibility: string
         }
         Insert: {
-          beneficiary_rule?:
-            | Database["public"]["Enums"]["beneficiary_rule"]
-            | null
+          beneficiary_rule?: string | null
           country?: string
           created_at?: string
           currency?: string
@@ -422,16 +442,14 @@ export type Database = {
           short_code?: string | null
           soft_cap?: number | null
           start_at?: string | null
-          status?: Database["public"]["Enums"]["campaign_status"]
+          status?: string
           title: string
           total_raised?: number
           updated_at?: string
-          visibility?: Database["public"]["Enums"]["campaign_visibility"]
+          visibility?: string
         }
         Update: {
-          beneficiary_rule?:
-            | Database["public"]["Enums"]["beneficiary_rule"]
-            | null
+          beneficiary_rule?: string | null
           country?: string
           created_at?: string
           currency?: string
@@ -445,11 +463,11 @@ export type Database = {
           short_code?: string | null
           soft_cap?: number | null
           start_at?: string | null
-          status?: Database["public"]["Enums"]["campaign_status"]
+          status?: string
           title?: string
           total_raised?: number
           updated_at?: string
-          visibility?: Database["public"]["Enums"]["campaign_visibility"]
+          visibility?: string
         }
         Relationships: [
           {
@@ -562,11 +580,14 @@ export type Database = {
           connect_account_id: string | null
           created_at: string
           currency: string
+          donor_email: string | null
+          donor_name: string | null
           donor_user_id: string | null
           exchange_rate: number | null
           external_payout_receipt_url: string | null
           external_payout_ref: string | null
           id: string
+          is_anonymous: boolean
           message: string | null
           net_amount: number | null
           note: string | null
@@ -592,11 +613,14 @@ export type Database = {
           connect_account_id?: string | null
           created_at?: string
           currency: string
+          donor_email?: string | null
+          donor_name?: string | null
           donor_user_id?: string | null
           exchange_rate?: number | null
           external_payout_receipt_url?: string | null
           external_payout_ref?: string | null
           id?: string
+          is_anonymous?: boolean
           message?: string | null
           net_amount?: number | null
           note?: string | null
@@ -622,11 +646,14 @@ export type Database = {
           connect_account_id?: string | null
           created_at?: string
           currency?: string
+          donor_email?: string | null
+          donor_name?: string | null
           donor_user_id?: string | null
           exchange_rate?: number | null
           external_payout_receipt_url?: string | null
           external_payout_ref?: string | null
           id?: string
+          is_anonymous?: boolean
           message?: string | null
           net_amount?: number | null
           note?: string | null
@@ -1025,9 +1052,14 @@ export type Database = {
           country: string | null
           created_at: string
           default_currency: string
+          deleted_at: string | null
+          deletion_reason:
+            | Database["public"]["Enums"]["deletion_reason_type"]
+            | null
           display_name: string
           email: string
           id: string
+          is_deleted: boolean | null
           kyc_status: Database["public"]["Enums"]["kyc_status"]
           phone: string | null
           pin_set: boolean
@@ -1037,9 +1069,14 @@ export type Database = {
           country?: string | null
           created_at?: string
           default_currency?: string
+          deleted_at?: string | null
+          deletion_reason?:
+            | Database["public"]["Enums"]["deletion_reason_type"]
+            | null
           display_name: string
           email: string
           id: string
+          is_deleted?: boolean | null
           kyc_status?: Database["public"]["Enums"]["kyc_status"]
           phone?: string | null
           pin_set?: boolean
@@ -1049,9 +1086,14 @@ export type Database = {
           country?: string | null
           created_at?: string
           default_currency?: string
+          deleted_at?: string | null
+          deletion_reason?:
+            | Database["public"]["Enums"]["deletion_reason_type"]
+            | null
           display_name?: string
           email?: string
           id?: string
+          is_deleted?: boolean | null
           kyc_status?: Database["public"]["Enums"]["kyc_status"]
           phone?: string | null
           pin_set?: boolean
@@ -1270,7 +1312,7 @@ export type Database = {
         Row: {
           beneficiary_pool: number | null
           campaign_id: string | null
-          campaign_status: Database["public"]["Enums"]["campaign_status"] | null
+          campaign_status: string | null
           completed_payouts: number | null
           failed_payouts: number | null
           is_locked: boolean | null
@@ -1396,7 +1438,56 @@ export type Database = {
         }
         Returns: number
       }
+      get_original_email: {
+        Args: { anonymized_email: string }
+        Returns: string
+      }
+      insert_campaign: {
+        Args: {
+          p_beneficiary_rule: string
+          p_country: string
+          p_currency: string
+          p_description: string
+          p_end_at: string
+          p_goal_amount: number
+          p_hard_cap: number
+          p_has_diagnosis: boolean
+          p_owner_user_id: string
+          p_soft_cap: number
+          p_start_at: string
+          p_title: string
+          p_visibility: string
+        }
+        Returns: {
+          beneficiary_rule: string | null
+          country: string
+          created_at: string
+          currency: string
+          description: string | null
+          end_at: string | null
+          goal_amount: number | null
+          hard_cap: number | null
+          has_diagnosis: boolean
+          id: string
+          owner_user_id: string
+          short_code: string | null
+          soft_cap: number | null
+          start_at: string | null
+          status: string
+          title: string
+          total_raised: number
+          updated_at: string
+          visibility: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "campaigns"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       is_connect_supported: { Args: { p_country: string }; Returns: boolean }
+      is_user_deleted: { Args: { user_uuid: string }; Returns: boolean }
       search_users_for_beneficiaries: {
         Args: { exclude_user_id?: string; search_query: string }
         Returns: {
@@ -1419,6 +1510,26 @@ export type Database = {
       campaign_status: "draft" | "active" | "paused" | "completed" | "cancelled"
       campaign_visibility: "public" | "unlisted" | "private"
       country_code: "US" | "MX" | "CO" | "CL"
+      deletion_reason_type:
+        | "user_requested"
+        | "privacy_concerns"
+        | "not_using_app"
+        | "switching_platform"
+        | "too_complex"
+        | "missing_features"
+        | "technical_issues"
+        | "poor_performance"
+        | "payment_issues"
+        | "cost_concerns"
+        | "security_concerns"
+        | "fraud_suspected"
+        | "terms_violation"
+        | "spam_abuse"
+        | "fraudulent_activity"
+        | "duplicate_account"
+        | "migration_to_new_account"
+        | "deceased"
+        | "other"
       donation_status:
         | "initiated"
         | "authorized"
@@ -1586,6 +1697,27 @@ export const Constants = {
       campaign_status: ["draft", "active", "paused", "completed", "cancelled"],
       campaign_visibility: ["public", "unlisted", "private"],
       country_code: ["US", "MX", "CO", "CL"],
+      deletion_reason_type: [
+        "user_requested",
+        "privacy_concerns",
+        "not_using_app",
+        "switching_platform",
+        "too_complex",
+        "missing_features",
+        "technical_issues",
+        "poor_performance",
+        "payment_issues",
+        "cost_concerns",
+        "security_concerns",
+        "fraud_suspected",
+        "terms_violation",
+        "spam_abuse",
+        "fraudulent_activity",
+        "duplicate_account",
+        "migration_to_new_account",
+        "deceased",
+        "other",
+      ],
       donation_status: [
         "initiated",
         "authorized",
@@ -1622,5 +1754,4 @@ export const Constants = {
       vault_visibility: ["private", "beneficiaries", "public"],
     },
   },
-}
-
+} as const

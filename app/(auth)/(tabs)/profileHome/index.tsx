@@ -1,28 +1,33 @@
 // app/(auth)/(tabs)/profile/index.tsx
 
-import React, { useEffect } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  RefreshControl,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-} from 'react-native';
-import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import ButtonXL from '@/src/components/common/ButtonXL';
+import { GradientBackground } from '@/src/components/common/GradiendBackground';
+import { AlertBanner } from '@/src/components/home/AlertBanner';
 import { CampaignsList } from '@/src/components/home/CampaignList';
+import { DeleteAccountModal } from '@/src/components/home/DeleteUserModal';
 import { ProfileHeader } from '@/src/components/home/ProfileHeader';
 import { StatusCard } from '@/src/components/home/StatusCard';
-import { useProfileStore, profileSelectors } from '@/src/stores/profile.store';
-import { AlertBanner } from '@/src/components/home/AlertBanner';
-import { GradientBackground } from '@/src/components/common/GradiendBackground';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { supabase } from '@/src/lib/supabaseClient';
+import { profileSelectors, useProfileStore } from '@/src/stores/profile.store';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import {
+  Alert,
+  Linking,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function ProfileScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+   const [showDeleteModal, setShowDeleteModal] = useState(false); // ✅ Estado del modal
+  const [isDeleting, setIsDeleting] = useState(false); // ✅ Estado de carga
 
   // Store state
   const {
@@ -82,17 +87,17 @@ export default function ProfileScreen() {
   // Get Connect status details
   const getConnectDetails = () => {
     if (!beneficiaryAccount) return undefined;
-    
+
     const details: string[] = [];
-    
+
     if (beneficiaryAccount.bank_account_last4) {
       details.push(`Cuenta: ****${beneficiaryAccount.bank_account_last4}`);
     }
-    
+
     if (beneficiaryAccount.bank_name) {
       details.push(`Banco: ${beneficiaryAccount.bank_name}`);
     }
-    
+
     return details.length > 0 ? details : undefined;
   };
 
@@ -101,13 +106,13 @@ export default function ProfileScreen() {
     if (!isBeneficiary) {
       return 'No eres beneficiario de ninguna campaña';
     }
-    
+
     if (!countrySupportsConnect) {
       return 'Tu país requiere transferencia manual';
     }
-    
+
     const status = beneficiaryAccount?.connect_status;
-    
+
     switch (status) {
       case 'verified':
       case 'active':
@@ -121,7 +126,135 @@ export default function ProfileScreen() {
         return 'Verifica tu cuenta para recibir pagos automáticamente';
     }
   };
+    // ✅ Handle delete account - NUEVO
+  const handleDeleteAccount = async () => {
+    if (!user?.id) {
+      Alert.alert('Error', 'No se pudo identificar tu cuenta');
+      return;
+    }
 
+    setIsDeleting(true);
+
+    try {
+      console.log('🔍 Verificando si la cuenta puede ser eliminada...');
+
+      // 1. Verificar si tiene campañas activas con fondos
+      const { data: activeCampaigns, error: campaignsError } = await supabase
+        .from('campaigns')
+        .select('id, title, total_raised, status')
+        .eq('owner_user_id', user.id)
+        .in('status', ['active', 'triggered'])
+        .gt('total_raised', 0);
+
+      if (campaignsError) {
+        console.error('Error verificando campañas:', campaignsError);
+        throw new Error('No se pudo verificar el estado de tus campañas');
+      }
+
+      console.log('Campañas activas con fondos:', activeCampaigns?.length || 0);
+
+      if (activeCampaigns && activeCampaigns.length > 0) {
+        // 🚫 No puede eliminar
+        setIsDeleting(false);
+        
+        const campaignsList = activeCampaigns
+          .map(c => `• ${c.title}: $${c.total_raised}`)
+          .join('\n');
+
+        Alert.alert(
+          '⚠️ No se puede eliminar la cuenta',
+          `Tienes ${activeCampaigns.length} campaña(s) activa(s) con fondos:\n\n${campaignsList}\n\n` +
+          '⚖️ Por obligaciones legales y para proteger a los beneficiarios, debes primero:\n\n' +
+          '1️⃣ Completar la distribución de fondos, o\n' +
+          '2️⃣ Cancelar las campañas y procesar reembolsos\n\n' +
+          '📧 Contacta a soporte para asistencia.',
+          [
+            {
+              text: 'Contactar Soporte',
+              onPress: () => {
+                Linking.openURL(
+                  `mailto:support@lark.app?subject=Solicitud de Eliminación de Cuenta&body=User ID: ${user.id}%0A%0ACampañas activas: ${activeCampaigns.length}`
+                );
+              }
+            },
+            { text: 'Entendido', style: 'cancel' }
+          ]
+        );
+        return;
+      }
+
+      // 2. Si puede eliminar, mostrar modal de razones
+      setIsDeleting(false);
+      setShowDeleteModal(true);
+
+    } catch (error: any) {
+      setIsDeleting(false);
+      console.error('Error en handleDeleteAccount:', error);
+      Alert.alert('Error', error.message || 'No se pudo verificar el estado de tu cuenta.');
+    }
+  };
+
+  // ✅ Confirmar eliminación con razón - NUEVO
+  const confirmDeletion = async (reason: string) => {
+    if (!user?.id) return;
+
+    try {
+      console.log('🗑️ Eliminando cuenta con razón:', reason);
+
+      // Llamar a Edge Function
+      const { data, error } = await supabase.functions.invoke('delete-user-account', {
+        body: { 
+          userId: user.id,
+          reason: reason
+        }
+      });
+
+      console.log('Respuesta de función:', { data, error });
+
+      if (error) {
+        console.error('Error de función:', error);
+        throw new Error(error.message || 'Error al eliminar la cuenta');
+      }
+
+      if (data?.error) {
+        console.error('Error en data:', data.error);
+        Alert.alert('No se puede eliminar', data.error);
+        setShowDeleteModal(false);
+        return;
+      }
+
+      console.log('✅ Cuenta eliminada exitosamente');
+
+      // Cerrar modal
+      setShowDeleteModal(false);
+
+      // Cerrar sesión
+      await supabase.auth.signOut();
+
+      // Mostrar confirmación y redirigir
+      Alert.alert(
+        '✅ Cuenta Eliminada',
+        'Tu cuenta ha sido eliminada exitosamente. Ya no podrás acceder a L-ark con este email.',
+        [
+          { 
+            text: 'Entendido', 
+            onPress: () => {
+              router.replace('/(public)/welcome');
+            }
+          }
+        ],
+        { cancelable: false }
+      );
+
+    } catch (error: any) {
+      console.error('Error en confirmDeletion:', error);
+      setShowDeleteModal(false);
+      Alert.alert(
+        'Error', 
+        error.message || 'No se pudo eliminar la cuenta. Intenta nuevamente o contacta a soporte.'
+      );
+    }
+  };
   // Get KYC subtitle based on status
   const getKYCSubtitle = () => {
     switch (user?.kyc_status) {
@@ -138,11 +271,11 @@ export default function ProfileScreen() {
   };
 
   // Determine if should show KYC alert
-  const  shouldShowKYCAlert = () => {
+  const shouldShowKYCAlert = () => {
     if (!user) return false;
-    
+
     const hasActivities = ownedCampaigns.length > 0 || beneficiaryCampaigns.length > 0;
-    
+
     // Solo mostrar alert si tiene actividades Y está pending o rejected
     return hasActivities && (user.kyc_status === 'kyc_pending' || user.kyc_status === 'kyc_rejected');
   };
@@ -161,7 +294,7 @@ export default function ProfileScreen() {
   return (
     <GradientBackground>
 
-      <View style={{ paddingTop: insets.top, flex: 1 }}>    
+      <View style={{ paddingTop: insets.top, flex: 1 }}>
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
@@ -234,7 +367,7 @@ export default function ProfileScreen() {
                 ? () => router.push('/(auth)/kyc/welcome')
                 : undefined
             }
-            // ❌ Sin navegación a detalles (quitar onPress)
+          // ❌ Sin navegación a detalles (quitar onPress)
           />
 
           {/* Stripe Connect Card (solo si es beneficiario) */}
@@ -250,15 +383,15 @@ export default function ProfileScreen() {
               details={getConnectDetails()}
               actionLabel={
                 countrySupportsConnect &&
-                beneficiaryAccount?.connect_status !== 'verified' &&
-                beneficiaryAccount?.connect_status !== 'active'
+                  beneficiaryAccount?.connect_status !== 'verified' &&
+                  beneficiaryAccount?.connect_status !== 'active'
                   ? 'Completar verificación'
                   : undefined
               }
               onActionPress={
                 countrySupportsConnect &&
-                beneficiaryAccount?.connect_status !== 'verified' &&
-                beneficiaryAccount?.connect_status !== 'active'
+                  beneficiaryAccount?.connect_status !== 'verified' &&
+                  beneficiaryAccount?.connect_status !== 'active'
                   ? () => router.push('/profileHome/connect-details')
                   : undefined
               }
@@ -306,7 +439,7 @@ export default function ProfileScreen() {
             <CampaignsList
               type="owner"
               campaigns={ownedCampaigns}
-              onCampaignPress={(id) => {}}
+              onCampaignPress={(id) => { }}
               onSeeAll={() => router.push('/(auth)/(tabs)/arkHome')}
               maxItems={3}
             />
@@ -317,26 +450,35 @@ export default function ProfileScreen() {
             <CampaignsList
               type="beneficiary"
               campaigns={beneficiaryCampaigns}
-              onCampaignPress={(id) => {}}
+              onCampaignPress={(id) => { }}
               onSeeAll={() => router.push('/(auth)/(tabs)/profileHome')}
               maxItems={3}
             />
           )}
 
           {/* Logout Button */}
-          <TouchableOpacity
-            style={styles.logoutButton}
-            onPress={handleLogout}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="log-out-outline" size={20} color="#DC2626" />
-            <Text style={styles.logoutText}>Cerrar Sesión</Text>
-          </TouchableOpacity>
+
+          <View style={{ paddingHorizontal: 20 }}>
+            <ButtonXL
+              mode='void'
+              icon={'log-out-outline'}
+              title={'Cerrar Sesión'}
+              action={handleLogout} />
+            <ButtonXL
+              title={'Eliminar Cuenta'}
+              mode='danger'
+              action={handleDeleteAccount} />
+          </View>
 
           {/* Bottom spacing */}
           <View style={{ height: 142 }} />
         </ScrollView>
       </View>
+       <DeleteAccountModal
+        visible={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={confirmDeletion}
+      />
     </GradientBackground>
   );
 }

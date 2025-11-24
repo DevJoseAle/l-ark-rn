@@ -4,7 +4,7 @@ import { AuthError, Session } from '@supabase/supabase-js';
 
 interface AuthServiceResponse<T = void> {
   success: boolean;
-  message: string;
+  message?: string;
   data?: T;
 }
 
@@ -24,8 +24,6 @@ interface UserExist {
 
 // 🍎 Constantes para Apple Review
 const DEMO_EMAIL = 'demo@l-ark-review.com';
-const DEMO_OTP = '123456';
-const DEMO_PASSWORD = 'AppleReview2024!';
 
 export const authService = {
 
@@ -33,6 +31,7 @@ export const authService = {
     console.log("SendOTPData email:", email);
 
     try {
+
       // 🍎 DEMO MODE: Si es el email de Apple Review, NO enviar OTP
       if (email.toLowerCase() === DEMO_EMAIL.toLowerCase()) {
         console.log('🍎 Demo mode: Usando password en lugar de OTP');
@@ -83,7 +82,7 @@ export const authService = {
         if (error) {
           console.error('❌ Error en login demo:', error);
           throw new Error()
-          
+
         }
 
         console.log('✅ Login demo exitoso');
@@ -166,12 +165,44 @@ export const authService = {
 
     } catch (error) {
       console.error("❌ Error verificando OTP:", error);
-      
+
       return {
         success: false,
         message: "Error al verificar OTP (Falla servicio)",
       };
     }
+  },
+
+  verifyIsADeletedUser: async (email: string): Promise<AuthServiceResponse> => {
+    try {
+      console.log('Antes');
+      const { data, error } = await supabase.functions.invoke('check-account-status', {
+        body: {email}
+      })
+      console.log('Despues', {
+        data,
+        error
+      });
+      if (data.is_deleted === true) {
+        return {
+          success: false,
+          message: 'Esta cuenta ha sido eliminada y ya no puede acceder. Si crees que es un error o si necesitas reactivarla, contacta a soporte@l-ark.app',
+        }
+      }
+      if(error){
+        throw error
+      }
+      return {
+        success: true,
+      }
+    } catch (error){
+      console.log(error)
+      return {
+        success: false,
+        message: 'No se pudo Validar usuario',
+      }
+    }
+
   },
 
   /**

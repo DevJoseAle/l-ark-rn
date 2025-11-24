@@ -30,6 +30,13 @@ export const useLogin = (router: any) => {
 
     try {
       const cleanEmail = email.toLowerCase().trim();
+      const { success, message } = await authService.verifyIsADeletedUser(cleanEmail);
+      console.log('Post Login', { success, message });
+      if (!success) {
+        hideLoading();
+        Alert.alert(message!)
+        return;
+      }
 
       // 1. Verificar si el usuario existe
       const { data: existingUser, error } = await supabase
@@ -42,7 +49,7 @@ export const useLogin = (router: any) => {
         throw error;
       }
       console.log(error);
-      console.log('Existing',existingUser);
+      console.log('Existing', existingUser);
       hideLoading();
 
       if (existingUser) {
@@ -53,7 +60,7 @@ export const useLogin = (router: any) => {
           .select('id')
           .eq('user_id', existingUser.id)
           .eq('terms_version', CURRENT_TERMS_VERSION)
-        console.log('Acceptance',acceptance)
+        console.log('Acceptance', acceptance)
         if (accError) {
           console.log('Error verificando aceptación de términos:', accError);
         }
@@ -85,9 +92,7 @@ export const useLogin = (router: any) => {
   const sendOTP = async (emailToSend: string) => {
     setEmailStore(emailToSend);
     showLoading('Enviando código...');
-
     const response = await authService.loginSendOTP(emailToSend);
-
     if (response.success) {
       router.push({
         pathname: '/(public)/otp',
@@ -133,14 +138,14 @@ export const useLogin = (router: any) => {
 
 
 export function useOTPForm(length: number = 6, router: Router) {
-     const { showLoading, hideLoading } = useLoadingStore();
-     const {email} = useAuthStore();
+  const { showLoading, hideLoading } = useLoadingStore();
+  const { email } = useAuthStore();
   const [otp, setOtp] = useState<string[]>(Array(length).fill(''));
   const inputRefs = useRef<Array<TextInput | null>>([]);
   const isCodeComplete = useMemo(() => {
     return isValidOTPArray(otp);
   }, [otp]);
-const handleConfirm = async () => {
+  const handleConfirm = async () => {
     const code = otp.join('');
     console.log('******-------******');
     if (code.length !== 6) {
@@ -151,30 +156,29 @@ const handleConfirm = async () => {
     showLoading('Verificando código...');
     try {
       // Lógica de verificación
-     const response = await authService.verifyOTP(email, code);
-     console.log(email, code);
+      const response = await authService.verifyOTP(email, code);
+      console.log(email, code);
       console.log('✅ Código verificado:');
-      console.log("response",response);
-      if(!response.success){
+      console.log("response", response);
+      if (!response.success) {
         console.log('no response');
-         router.replace('/(public)/welcome');
-         Alert.alert('Error', 'Inténtalo nuevamente más tarde')
-         throw new Error();
+        router.replace('/(public)/welcome');
+        Alert.alert('Error', 'Inténtalo nuevamente más tarde')
+        throw new Error();
       }
 
       router.replace('/(auth)/(tabs)/arkHome');
       hideLoading();
-      Alert.alert('Éxito', 'Código verificado exitosamente');      
+      Alert.alert('Éxito', 'Código verificado exitosamente');
     } catch (error) {
       console.error('❌ Error:', error);
       hideLoading();
     }
   };
 
-    const handleResend = async () => {
+  const handleResend = async () => {
     showLoading('Reenviando código...');
     try {
-      await authService.loginSendOTP(email);
       Alert.alert('Éxito', 'Código reenviado');
       setOtp(['', '', '', '', '', '']); // Limpia el input
       inputRefs.current[0]?.focus();

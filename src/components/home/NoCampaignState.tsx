@@ -2,14 +2,15 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { GradientBackground } from "../common/GradiendBackground";
+import ButtonXL from "../common/ButtonXL";
+import { useThemeColors } from "@/hooks/use-theme-color";
 
 export function NoCampaignState() {
   const router = useRouter();
+  const colors = useThemeColors()
 
   const handleGoToCreateCampaign = () => {
-    // Navegar a la pantalla de home donde está el botón de crear campaña
-    // Ajusta la ruta según tu estructura de navegación
-    router.push('/(auth)/(tabs)/arkHome'); // O la ruta que corresponda
+    router.push('/(auth)/(tabs)/arkHome'); 
   };
 
   return (
@@ -21,12 +22,12 @@ export function NoCampaignState() {
         </View>
 
         {/* Título */}
-        <Text style={styles.title}>
+        <Text style={[styles.title,{color: colors.text}]}>
           Tu bóveda está esperando
         </Text>
 
         {/* Descripción */}
-        <Text style={styles.description}>
+        <Text style={[styles.description,{color: colors.text}]}>
           Para acceder a tu bóveda digital y almacenar archivos importantes,
           primero necesitas crear una campaña.
         </Text>
@@ -36,26 +37,26 @@ export function NoCampaignState() {
           <FeatureItem
             icon="shield-checkmark"
             text="Almacenamiento seguro en la nube"
+            color={colors.text}
+
           />
           <FeatureItem
             icon="lock-closed"
             text="Acceso privado y encriptado"
+            color={colors.text}
           />
           <FeatureItem
             icon="people"
             text="Documentos para tus beneficiarios"
+            color={colors.text}
           />
         </View>
 
         {/* Botón CTA */}
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleGoToCreateCampaign}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.buttonText}>Ir a crear campaña</Text>
-          <Ionicons name="arrow-forward" size={20} color="#FFFFFF" />
-        </TouchableOpacity>
+       <ButtonXL
+       title='Ir a crear campaña'
+       action={handleGoToCreateCampaign}
+       mode='default' />
 
         {/* Texto de ayuda */}
         <Text style={styles.helpText}>
@@ -70,13 +71,13 @@ export function NoCampaignState() {
 /**
  * Item de feature con icono y texto
  */
-function FeatureItem({ icon, text }: { icon: any; text: string }) {
+function FeatureItem({ icon, text, color }: { icon: any; text: string, color:string }) {
   return (
     <View style={styles.featureItem}>
       <View style={styles.featureIconContainer}>
         <Ionicons name={icon} size={20} color="#4BA3D9" />
       </View>
-      <Text style={styles.featureText}>{text}</Text>
+      <Text style={[styles.featureText, {color: color}]}>{text}</Text>
     </View>
   );
 }
@@ -138,7 +139,6 @@ const styles = StyleSheet.create({
   featureText: {
     flex: 1,
     fontSize: 15,
-    color: '#374151',
     lineHeight: 20,
   },
   button: {

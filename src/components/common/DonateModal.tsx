@@ -10,6 +10,11 @@ import {
   ActivityIndicator,
   Alert,
   TextInput,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColors } from '@/hooks/use-theme-color';
@@ -44,7 +49,8 @@ export default function DonateModal({
   const [selectedAmount, setSelectedAmount] = useState(1000); // $10 por defecto (en centavos)
   const [customAmount, setCustomAmount] = useState('');
   const [showCustomInput, setShowCustomInput] = useState(false);
-  const [isAnonymous, setIsAnonymous] = useState(false)
+  const [isAnonymous, setIsAnonymous] = useState(false);
+  
   // Montos predefinidos (en centavos)
   const presetAmounts = [
     { label: '$10', value: 1000 },
@@ -57,6 +63,7 @@ export default function DonateModal({
     setSelectedAmount(amount);
     setShowCustomInput(false);
     setCustomAmount('');
+    Keyboard.dismiss(); // ✅ Cerrar teclado al seleccionar preset
   };
 
   const handleCustomAmountChange = (text: string) => {
@@ -137,135 +144,164 @@ export default function DonateModal({
     <Modal
       visible={visible}
       transparent
-      animationType="fade"
+      animationType="slide"
       onRequestClose={onClose}
     >
-      <View style={styles.overlay}>
-        <View style={styles.modal}>
-          {/* Close button */}
-          <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
-            <Ionicons name="close" size={24} color={colors.icon} />
-          </TouchableOpacity>
-
-          {/* Icon */}
-          <View style={styles.iconContainer}>
-            <Ionicons name="heart" size={48} color={colors.success} />
-          </View>
-
-          {/* Title */}
-          <Text style={styles.title}>Donar a esta campaña</Text>
-          
-          <Text style={styles.campaignTitle} numberOfLines={2}>
-            {campaignTitle}
-          </Text>
-
-          {/* Amount Selector */}
-          <View style={styles.amountSection}>
-            <Text style={styles.amountLabel}>Selecciona un monto</Text>
-            
-            {/* Preset amounts */}
-            <View style={styles.presetGrid}>
-              {presetAmounts.map((preset) => (
-                <TouchableOpacity
-                  key={preset.value}
-                  style={[
-                    styles.presetBtn,
-                    selectedAmount === preset.value && !showCustomInput && styles.presetBtnActive,
-                  ]}
-                  onPress={() => handleSelectAmount(preset.value)}
+      {/* ✅ Wrapper para dismiss teclado al tocar fuera */}
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.overlay}>
+          {/* ✅ KeyboardAvoidingView */}
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={styles.keyboardAvoid}
+          >
+            {/* ✅ Prevenir propagación de touch al overlay */}
+            <TouchableWithoutFeedback>
+              <View style={styles.modal}>
+                {/* Close button */}
+                <TouchableOpacity 
+                  style={styles.closeBtn} 
+                  onPress={onClose}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                 >
-                  <Text
-                    style={[
-                      styles.presetText,
-                      selectedAmount === preset.value && !showCustomInput && styles.presetTextActive,
-                    ]}
-                  >
-                    {preset.label}
-                  </Text>
+                  <Ionicons name="close" size={24} color={colors.icon} />
                 </TouchableOpacity>
-              ))}
-            </View>
 
-            {/* Custom amount */}
-            <TouchableOpacity
-              style={[
-                styles.customBtn,
-                showCustomInput && styles.customBtnActive,
-              ]}
-              onPress={() => setShowCustomInput(true)}
-            >
-              <Text style={styles.customLabel}>Monto personalizado</Text>
-              {showCustomInput ? (
-                <View style={styles.customInputContainer}>
-                  <Text style={styles.currencySymbol}>$</Text>
-                  <TextInput
-                    style={styles.customInput}
-                    value={customAmount}
-                    onChangeText={handleCustomAmountChange}
-                    placeholder="50"
-                    placeholderTextColor={colors.icon}
-                    keyboardType="decimal-pad"
-                    autoFocus
-                  />
+                {/* ✅ ScrollView con keyboardShouldPersistTaps */}
+                <ScrollView
+                  showsVerticalScrollIndicator={false}
+                  keyboardShouldPersistTaps="handled" // ✅ Crucial: permite tocar botones con teclado abierto
+                  contentContainerStyle={styles.scrollContent}
+                >
+                  {/* Icon */}
+                  <View style={styles.iconContainer}>
+                    <Ionicons name="heart" size={48} color={colors.success} />
+                  </View>
+
+                  {/* Title */}
+                  <Text style={styles.title}>Donar a esta campaña</Text>
+                  
+                  <Text style={styles.campaignTitle} numberOfLines={2}>
+                    {campaignTitle}
+                  </Text>
+
+                  {/* Amount Selector */}
+                  <View style={styles.amountSection}>
+                    <Text style={styles.amountLabel}>Selecciona un monto</Text>
+                    
+                    {/* Preset amounts */}
+                    <View style={styles.presetGrid}>
+                      {presetAmounts.map((preset) => (
+                        <TouchableOpacity
+                          key={preset.value}
+                          style={[
+                            styles.presetBtn,
+                            selectedAmount === preset.value && !showCustomInput && styles.presetBtnActive,
+                          ]}
+                          onPress={() => handleSelectAmount(preset.value)}
+                        >
+                          <Text
+                            style={[
+                              styles.presetText,
+                              selectedAmount === preset.value && !showCustomInput && styles.presetTextActive,
+                            ]}
+                          >
+                            {preset.label}
+                          </Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+
+                    {/* Custom amount */}
+                    <TouchableOpacity
+                      style={[
+                        styles.customBtn,
+                        showCustomInput && styles.customBtnActive,
+                      ]}
+                      onPress={() => setShowCustomInput(true)}
+                    >
+                      <Text style={styles.customLabel}>Monto personalizado</Text>
+                      {showCustomInput ? (
+                        <View style={styles.customInputContainer}>
+                          <Text style={styles.currencySymbol}>$</Text>
+                          <TextInput
+                            style={styles.customInput}
+                            value={customAmount}
+                            onChangeText={handleCustomAmountChange}
+                            placeholder="50"
+                            placeholderTextColor={colors.icon}
+                            keyboardType="decimal-pad"
+                            autoFocus
+                            returnKeyType="done"
+                            onSubmitEditing={Keyboard.dismiss}
+                          />
+                        </View>
+                      ) : (
+                        <Ionicons name="chevron-forward" size={20} color={colors.icon} />
+                      )}
+                    </TouchableOpacity>
+
+                    <Text style={styles.minAmount}>Mínimo: $5 USD</Text>
+                  </View>
+
+                  {/* CHECKBOX */}
+                  <View style={styles.checkboxContainer}>
+                    <CheckBox
+                      setFn={() => setIsAnonymous(!isAnonymous)}
+                      isValid={isAnonymous}
+                      text='Donación Anónima'
+                    />
+                  </View>
+
+                  {/* Spacer para que los botones sean siempre visibles */}
+                  <View style={{ height: 20 }} />
+                </ScrollView>
+
+                {/* ✅ Action Buttons FUERA del ScrollView (siempre visibles) */}
+                <View style={styles.actions}>
+                  {/* Donar Ahora */}
+                  <TouchableOpacity
+                    style={[styles.actionBtn, styles.primaryBtn]}
+                    onPress={handleDonateNow}
+                    disabled={loading || selectedAmount < 500}
+                    activeOpacity={0.8}
+                  >
+                    {loading ? (
+                      <ActivityIndicator size="small" color={colors.customWhite} />
+                    ) : (
+                      <>
+                        <Text style={styles.actionBtnText}>
+                          Donar ${displayAmount.toFixed(2)}
+                        </Text>
+                        <Ionicons name="arrow-forward" size={20} color={colors.customWhite} />
+                      </>
+                    )}
+                  </TouchableOpacity>
+
+                  {/* Enviar email */}
+                  <TouchableOpacity
+                    style={[styles.actionBtn, styles.secondaryBtn]}
+                    onPress={handleSendEmail}
+                    disabled={sending}
+                    activeOpacity={0.8}
+                  >
+                    {sending ? (
+                      <ActivityIndicator size="small" color={colors.primary} />
+                    ) : (
+                      <>
+                        <Ionicons name="mail-outline" size={20} color={colors.primary} />
+                        <Text style={[styles.actionBtnText, { color: colors.primary }]}>
+                          Enviarme el Link
+                        </Text>
+                      </>
+                    )}
+                  </TouchableOpacity>
                 </View>
-              ) : (
-                <Ionicons name="chevron-forward" size={20} color={colors.icon} />
-              )}
-            </TouchableOpacity>
-
-            <Text style={styles.minAmount}>Mínimo: $5 USD</Text>
-          </View>
-
-          {/* CHECKBOX */}
-          <View >
-              <CheckBox
-              setFn={()=> setIsAnonymous(!isAnonymous)}
-              isValid={isAnonymous}
-              text='Donacion Anónima'
-              />
-          </View>
-          {/* Action Buttons */}
-          <View style={styles.actions}>
-            {/* Donar Ahora */}
-            <TouchableOpacity
-              style={[styles.actionBtn, styles.primaryBtn]}
-              onPress={handleDonateNow}
-              disabled={loading || selectedAmount < 500}
-              activeOpacity={0.8}
-            >
-              {loading ? (
-                <ActivityIndicator size="small" color={colors.customWhite} />
-              ) : (
-                <>
-                  <Text style={styles.actionBtnText}>
-                    Donar ${displayAmount.toFixed(2)}
-                  </Text>
-                  <Ionicons name="arrow-forward" size={20} color={colors.customWhite} />
-                </>
-              )}
-            </TouchableOpacity>
-
-            {/* Enviar email */}
-            <TouchableOpacity
-              style={[styles.actionBtn, styles.secondaryBtn]}
-              onPress={handleSendEmail}
-              disabled={sending}
-              activeOpacity={0.8}
-            >
-              {sending ? (
-                <ActivityIndicator size="small" color={colors.primary} />
-              ) : (
-                <>
-                  <Ionicons name="mail-outline" size={20} color={colors.primary} />
-                  <Text style={[styles.actionBtnText, { color: colors.primary }]}>
-                    Enviarme el Link
-                  </Text>
-                </>
-              )}
-            </TouchableOpacity>
-          </View>
+              </View>
+            </TouchableWithoutFeedback>
+          </KeyboardAvoidingView>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 }
@@ -276,20 +312,27 @@ const modalStyles = (colors: ThemeColors) => StyleSheet.create({
     backgroundColor: colors.overlay,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+  },
+  keyboardAvoid: {
+    width: '100%',
+    maxWidth: 420,
+    paddingHorizontal: 20,
   },
   modal: {
     backgroundColor: colors.cardBackground,
     borderRadius: 24,
-    padding: 24,
     width: '100%',
-    maxWidth: 400,
-    maxHeight: '90%',
+    maxHeight: '85%', // ✅ Dejar espacio para el teclado
     shadowColor: colors.customBlack,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
     shadowRadius: 16,
     elevation: 10,
+    overflow: 'hidden', // ✅ Para que el ScrollView no se salga
+  },
+  scrollContent: {
+    padding: 24,
+    paddingTop: 60, // ✅ Espacio para el botón close
   },
   closeBtn: {
     position: 'absolute',
@@ -301,7 +344,7 @@ const modalStyles = (colors: ThemeColors) => StyleSheet.create({
     backgroundColor: colors.separator,
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 1,
+    zIndex: 10, // ✅ Asegurar que esté encima
   },
   iconContainer: {
     width: 80,
@@ -327,7 +370,7 @@ const modalStyles = (colors: ThemeColors) => StyleSheet.create({
     marginBottom: 24,
   },
   amountSection: {
-    marginBottom: 24,
+    marginBottom: 16,
   },
   amountLabel: {
     fontSize: 16,
@@ -404,8 +447,16 @@ const modalStyles = (colors: ThemeColors) => StyleSheet.create({
     color: colors.secondaryText,
     marginTop: 8,
   },
+  checkboxContainer: {
+    marginBottom: 8,
+  },
   actions: {
     gap: 12,
+    padding: 20,
+    paddingBottom: Platform.OS === 'ios' ? 24 : 20,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    backgroundColor: colors.cardBackground, // ✅ Para que se vea sobre el scroll
   },
   actionBtn: {
     flexDirection: 'row',

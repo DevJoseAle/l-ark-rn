@@ -1,3 +1,5 @@
+// app/(public)/welcome.tsx - VERSIÓN CORREGIDA PARA ANDROID
+
 import React, { useEffect, useRef } from 'react';
 import { 
   View, 
@@ -5,22 +7,36 @@ import {
   TouchableOpacity, 
   StyleSheet, 
   Animated,
-  Easing,
   Platform,
   ColorSchemeName,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 import { GradientBackground } from '@/src/components/common/GradiendBackground';
 import { LarkLogo } from '@/src/components/common/LarkLogo';
 import { useThemeColors } from '@/hooks/use-theme-color';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
-export default function WelcomeScreenAlt() {
+// ============================================
+// COLORS CONFIGURATION
+// ============================================
+const getAdaptiveColors = (colorScheme: ColorSchemeName) => ({
+  text: colorScheme === 'dark' ? '#FFFFFF' : '#1F2937',
+  secondaryText: colorScheme === 'dark' ? '#9CA3AF' : '#6B7280',
+  cardBg: colorScheme === 'dark' ? '#1F2937' : '#FFFFFF',
+  cardBorder: colorScheme === 'dark' ? '#374151' : '#E5E7EB',
+  buttonBg: colorScheme === 'dark' ? '#3B82F6' : '#007AFF',
+  buttonBorder: colorScheme === 'dark' ? '#60A5FA' : '#0051D5',
+});
+
+// ============================================
+// MAIN COMPONENT
+// ============================================
+export default function WelcomeScreen() {
   const router = useRouter();
   const colors = useThemeColors();
   const colorScheme = useColorScheme();
+  const adaptiveColors = getAdaptiveColors(colorScheme);
 
   // Animated values
   const logoTranslateY = useRef(new Animated.Value(-30)).current;
@@ -105,27 +121,27 @@ export default function WelcomeScreenAlt() {
               icon="🔐"
               title="Seguro"
               description="Encriptación de nivel bancario"
-              colors={colors}
+              colors={adaptiveColors}
               colorScheme={colorScheme}
             />
             <FeatureCard
               icon="🌍"
               title="Global"
               description="Disponible en 4 países"
-              colors={colors}
+              colors={adaptiveColors}
               colorScheme={colorScheme}
             />
             <FeatureCard
               icon="⚡"
               title="Rápido"
               description="Activación automática"
-              colors={colors}
+              colors={adaptiveColors}
               colorScheme={colorScheme}
             />
           </View>
 
-          {/* Call to Action */}
-          <View style={styles.ctaContainer}>
+          {/* CTA Section */}
+          <View style={styles.ctaSection}>
             <Text style={[styles.ctaTitle, { color: colors.text }]}>
               Protege tu legado hoy
             </Text>
@@ -136,7 +152,7 @@ export default function WelcomeScreenAlt() {
             {/* Botones */}
             <GlassButton
               onPress={() => router.push('/(public)/login')}
-              colors={colors}
+              colors={adaptiveColors}
               colorScheme={colorScheme}
               primary
             >
@@ -145,7 +161,7 @@ export default function WelcomeScreenAlt() {
 
             <GlassButton
               onPress={() => router.push('/(public)/login')}
-              colors={colors}
+              colors={adaptiveColors}
               colorScheme={colorScheme}
             >
               Ya tengo cuenta
@@ -158,7 +174,7 @@ export default function WelcomeScreenAlt() {
 }
 
 // ============================================
-// COMPONENTE: Feature Card
+// COMPONENTE: Feature Card - FIX ANDROID
 // ============================================
 interface FeatureCardProps {
   icon: string;
@@ -174,14 +190,23 @@ function FeatureCard({ icon, title, description, colors, colorScheme }: FeatureC
       style={[
         styles.featureCard,
         {
-          backgroundColor:
-            colorScheme === 'dark'
-              ? 'rgba(255, 255, 255, 0.05)'
-              : 'rgba(255, 255, 255, 0.6)',
-          borderColor:
-            colorScheme === 'dark'
-              ? 'rgba(255, 255, 255, 0.1)'
-              : 'rgba(255, 255, 255, 0.8)',
+          // ✅ FIX: Usar color sólido en lugar de rgba para Android
+          backgroundColor: colors.cardBg,
+          borderColor: colors.cardBorder,
+          borderWidth: 1,
+          
+          // Shadow para iOS y elevation para Android
+          ...Platform.select({
+            ios: {
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 8,
+            },
+            android: {
+              elevation: 3,
+            },
+          }),
         },
       ]}
     >
@@ -197,7 +222,7 @@ function FeatureCard({ icon, title, description, colors, colorScheme }: FeatureC
 }
 
 // ============================================
-// COMPONENTE: Glass Button
+// COMPONENTE: Glass Button - FIX ANDROID
 // ============================================
 interface GlassButtonProps {
   onPress: () => void;
@@ -207,141 +232,93 @@ interface GlassButtonProps {
   primary?: boolean;
 }
 
-function GlassButton({ onPress, colors, colorScheme, children, primary }: GlassButtonProps) {
-  const scale = useRef(new Animated.Value(1)).current;
-  const opacity = useRef(new Animated.Value(1)).current;
-
-  const handlePressIn = () => {
-    Animated.parallel([
-      Animated.spring(scale, {
-        toValue: 0.97,
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacity, {
-        toValue: 0.8,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  };
-
-  const handlePressOut = () => {
-    Animated.parallel([
-      Animated.spring(scale, {
-        toValue: 1,
-        friction: 3,
-        tension: 40,
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  };
-
-  if (primary) {
-    return (
-      <Animated.View
-        style={[
-          styles.glassButtonWrapper,
-          {
-            transform: [{ scale }],
-            opacity,
-          },
-        ]}
-      >
-        <TouchableOpacity
-          activeOpacity={1}
-          onPressIn={handlePressIn}
-          onPressOut={handlePressOut}
-          onPress={onPress}
-        >
-          <LinearGradient
-            colors={
-              colorScheme === 'dark'
-                ? ['#4BA3D9', '#3A8FC7']
-                : ['#5CB0E0', '#4BA3D9']
-            }
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.primaryGlassButton}
-          >
-            <Text style={styles.primaryGlassButtonText}>{children}</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-      </Animated.View>
-    );
-  }
-
+function GlassButton({ 
+  onPress, 
+  colors, 
+  colorScheme, 
+  children, 
+  primary = false 
+}: GlassButtonProps) {
   return (
-    <Animated.View
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={0.8}
       style={[
-        styles.glassButtonWrapper,
+        styles.glassButton,
         {
-          transform: [{ scale }],
-          opacity,
+          // ✅ FIX: Usar colores sólidos con mejor contraste
+          backgroundColor: primary ? colors.buttonBg : colors.cardBg,
+          borderColor: primary ? colors.buttonBorder : colors.buttonBorder,
+          borderWidth: 1,
+          
+          // Shadow para iOS y elevation para Android
+          ...Platform.select({
+            ios: {
+              shadowColor: primary ? colors.buttonBg : '#000',
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: primary ? 0.3 : 0.1,
+              shadowRadius: 8,
+            },
+            android: {
+              elevation: primary ? 4 : 2,
+            },
+          }),
         },
       ]}
     >
-      <TouchableOpacity
-        activeOpacity={1}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        onPress={onPress}
+      <Text
+        style={[
+          styles.glassButtonText,
+          {
+            color: primary ? '#FFFFFF' : colors.buttonBg,
+            fontWeight: '600',
+          },
+        ]}
       >
-        <View
-          style={[
-            styles.secondaryGlassButton,
-            {
-              backgroundColor:
-                colorScheme === 'dark'
-                  ? 'rgba(255, 255, 255, 0.05)'
-                  : 'rgba(255, 255, 255, 0.4)',
-              borderColor:
-                colorScheme === 'dark'
-                  ? 'rgba(255, 255, 255, 0.1)'
-                  : 'rgba(255, 255, 255, 0.6)',
-            },
-          ]}
-        >
-          <Text style={[styles.secondaryGlassButtonText, { color: colors.text }]}>
-            {children}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    </Animated.View>
+        {children}
+      </Text>
+    </TouchableOpacity>
   );
 }
 
+// ============================================
+// STYLES
+// ============================================
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  
+  // Header
+  header: {
+    alignItems: 'center',
+    paddingTop: 40,
     paddingHorizontal: 24,
   },
-  header: {
-    paddingTop: 40,
-    alignItems: 'center',
-  },
   headerText: {
-    marginTop: 16,
     alignItems: 'center',
+    marginTop: 20,
   },
   appName: {
     fontSize: 48,
-    fontWeight: '700',
+    fontWeight: '800',
     letterSpacing: -1,
   },
   appSubtitle: {
-    fontSize: 16,
-    fontWeight: '400',
-    fontStyle: 'italic',
+    fontSize: 18,
+    fontWeight: '500',
     marginTop: 4,
+    letterSpacing: 0.5,
+    fontStyle: 'italic',
   },
+  
+  // Cards Container
   cardsContainer: {
+    paddingHorizontal: 24,
     paddingBottom: 40,
   },
+  
+  // Features
   featuresContainer: {
     flexDirection: 'row',
     gap: 12,
@@ -349,99 +326,55 @@ const styles = StyleSheet.create({
   },
   featureCard: {
     flex: 1,
-    padding: 16,
     borderRadius: 16,
-    borderWidth: 1,
+    padding: 16,
     alignItems: 'center',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 4,
-      },
-    }),
+    minHeight: 140,
+    justifyContent: 'center',
   },
   featureIcon: {
     fontSize: 32,
     marginBottom: 8,
   },
   featureTitle: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 15,
+    fontWeight: '700',
     marginBottom: 4,
     textAlign: 'center',
   },
   featureDescription: {
-    fontSize: 11,
+    fontSize: 12,
     textAlign: 'center',
-    lineHeight: 14,
+    lineHeight: 16,
   },
-  ctaContainer: {
-    alignItems: 'center',
+  
+  // CTA Section
+  ctaSection: {
+    gap: 12,
   },
   ctaTitle: {
     fontSize: 28,
-    fontWeight: '700',
-    marginBottom: 8,
+    fontWeight: '800',
     textAlign: 'center',
+    letterSpacing: -0.5,
+    marginBottom: 4,
   },
   ctaDescription: {
     fontSize: 16,
-    marginBottom: 32,
     textAlign: 'center',
-  },
-  glassButtonWrapper: {
-    width: '100%',
     marginBottom: 12,
   },
-  primaryGlassButton: {
+  
+  // Glass Button
+  glassButton: {
     paddingVertical: 18,
-    paddingHorizontal: 32,
+    paddingHorizontal: 24,
     borderRadius: 16,
     alignItems: 'center',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#4BA3D9',
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.4,
-        shadowRadius: 16,
-      },
-      android: {
-        elevation: 8,
-      },
-    }),
+    justifyContent: 'center',
+    minHeight: 56,
   },
-  primaryGlassButtonText: {
-    color: '#FFFFFF',
+  glassButtonText: {
     fontSize: 17,
-    fontWeight: '600',
-    letterSpacing: 0.5,
-  },
-  secondaryGlassButton: {
-    paddingVertical: 18,
-    paddingHorizontal: 32,
-    borderRadius: 16,
-    alignItems: 'center',
-    borderWidth: 1,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 2,
-      },
-    }),
-  },
-  secondaryGlassButtonText: {
-    fontSize: 17,
-    fontWeight: '600',
-    letterSpacing: 0.5,
   },
 });

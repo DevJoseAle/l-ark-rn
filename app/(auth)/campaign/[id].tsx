@@ -1,5 +1,6 @@
 // app/(auth)/campaign/[id].tsx
 import { Colors } from '@/constants/theme';
+import { CertificateGeneratorModal } from '@/src/components/common/CertificateGeneratorModal';
 import DonateModal from '@/src/components/common/DonateModal';
 import FloatingDonateButton from '@/src/components/common/FloatingDonatingButton';
 import { GradientBackground } from '@/src/components/common/GradiendBackground';
@@ -49,7 +50,7 @@ export default function CampaignDetailScreen() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showDonateModal, setShowDonateModal] = useState(false);
-
+  const [showCertificateModal, setShowCertificateModal] = useState(false);
 
   const campaignId = params.id as string;
   const handleBackPress = () => {
@@ -530,6 +531,19 @@ export default function CampaignDetailScreen() {
             campaignTitle={campaign.title}
             shortCode={campaign.short_code}
           />
+          {/* Botón para generar certificado */}
+      <TouchableOpacity
+        onPress={() => setShowCertificateModal(true)}
+      >
+        <Text>📜 Generar mi Certificado Digital</Text>
+      </TouchableOpacity>
+
+      {/* Modal */}
+      <CertificateGeneratorModal
+        visible={showCertificateModal}
+        campaign={campaign}
+        onClose={() => setShowCertificateModal(false)}
+      />
     </GradientBackground>
   );
 }

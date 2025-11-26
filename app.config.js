@@ -15,7 +15,7 @@ export default {
       resizeMode: "contain",
       backgroundColor: "#F8FBFF"
     },
-    
+
     ios: {
       supportsTablet: true,
       bundleIdentifier: "com.devjoseale.lark",
@@ -38,7 +38,7 @@ export default {
         }
       }
     },
-    
+
     android: {
       adaptiveIcon: {
         backgroundColor: "#E6F4FE",
@@ -89,7 +89,7 @@ export default {
         }
       }
     },
-    
+
     web: {
       output: "static",
       favicon: "./assets/images/favicon.png",
@@ -99,13 +99,31 @@ export default {
         backgroundColor: "#F8FBFF"
       }
     },
-    
+
     plugins: [
       "expo-router",
       [
         "expo-web-browser",
         {
           experimentalLauncherActivity: true
+        }
+      ],
+      [
+        "react-native-share",
+        {
+          "ios": [
+            "fb",
+            "instagram",
+            "twitter",
+            "tiktoksharesdk",
+          ],
+          "android": [
+            "com.facebook.katana",
+            "com.instagram.android",
+            "com.twitter.android",
+            "com.zhiliaoapp.musically",
+          ],
+          "enableBase64ShareAndroid": true
         }
       ],
       [
@@ -153,12 +171,12 @@ export default {
         }
       ]
     ],
-    
+
     experiments: {
       typedRoutes: true,
       reactCompiler: true
     },
-    
+
     extra: {
       supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL,
       supabaseAnonKey: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY,

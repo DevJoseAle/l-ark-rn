@@ -5,7 +5,7 @@ import { CampaignDetail } from "../types/campaign.types";
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import * as MediaLibrary from 'expo-media-library';
-
+import Share, { Social } from 'react-native-share';
 export type CertificateStyle = 'elegant' | 'modern' | 'warm';
 export type CertificateTone = 'inspirational' | 'direct' | 'emotional';
 
@@ -44,19 +44,16 @@ export class CertificateService {
 
     switch (tone) {
       case 'inspirational':
-        return `${ownerName} está escribiendo su legado digital.\nHa asegurado el futuro de ${beneficiariesCount} ${
-          beneficiariesCount === 1 ? 'ser querido' : 'seres queridos'
-        }.\n${formattedAmount} de tranquilidad para su familia.`;
+        return `${ownerName} está escribiendo su legado digital.\nHa asegurado el futuro de ${beneficiariesCount} ${beneficiariesCount === 1 ? 'ser querido' : 'seres queridos'
+          }.\n${formattedAmount} de tranquilidad para su familia.`;
 
       case 'direct':
-        return `${ownerName} ha creado su Plan de Herencia Digital.\nProtegiendo a ${beneficiariesCount} ${
-          beneficiariesCount === 1 ? 'beneficiario' : 'beneficiarios'
-        } con ${formattedAmount}.`;
+        return `${ownerName} ha creado su Plan de Herencia Digital.\nProtegiendo a ${beneficiariesCount} ${beneficiariesCount === 1 ? 'beneficiario' : 'beneficiarios'
+          } con ${formattedAmount}.`;
 
       case 'emotional':
-        return `${ownerName} eligió el amor sobre la incertidumbre.\n${beneficiariesCount} ${
-          beneficiariesCount === 1 ? 'persona dormirá' : 'personas dormirán'
-        } tranquila${beneficiariesCount === 1 ? '' : 's'} gracias a esta decisión.\n${formattedAmount} de protección y paz mental.`;
+        return `${ownerName} eligió el amor sobre la incertidumbre.\n${beneficiariesCount} ${beneficiariesCount === 1 ? 'persona dormirá' : 'personas dormirán'
+          } tranquila${beneficiariesCount === 1 ? '' : 's'} gracias a esta decisión.\n${formattedAmount} de protección y paz mental.`;
     }
   }
 
@@ -128,7 +125,7 @@ export class CertificateService {
     // Por ahora retornamos un placeholder
     // En el siguiente paso implementaremos react-native-view-shot
     console.log('Generando certificado:', { data, config });
-    
+
     // Placeholder: retornar una imagen de ejemplo
     return 'https://placehold.co/1080x1920/1E3A5F/white?text=Certificate+L-ark';
   }
@@ -139,7 +136,7 @@ export class CertificateService {
   static async share(imageUri: string, campaignShortCode: string): Promise<void> {
     try {
       const isAvailable = await Sharing.isAvailableAsync();
-      
+
       if (!isAvailable) {
         Alert.alert('Error', 'Sharing is not available on this device');
         return;
@@ -163,7 +160,7 @@ export class CertificateService {
     try {
       // Solicitar permisos
       const { status } = await MediaLibrary.requestPermissionsAsync();
-      
+
       if (status !== 'granted') {
         Alert.alert(
           'Permisos requeridos',
@@ -174,10 +171,10 @@ export class CertificateService {
 
       // Guardar
       const asset = await MediaLibrary.createAssetAsync(imageUri);
-      
+
       // Crear álbum si no existe
       const album = await MediaLibrary.getAlbumAsync('L-ark Certificates');
-      
+
       if (album) {
         await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
       } else {
@@ -219,5 +216,36 @@ export class CertificateService {
   static getQRCodeUrl(campaignShortCode: string, size: number = 200): string {
     const url = `https://lark.app/donate?code=${campaignShortCode}`;
     return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(url)}`;
+  }
+
+  static async shareToInstagramStories(imageUri: string, campaignShortCode: string): Promise<void> {
+    try {
+      // 1. Convertir la imagen a Base64
+      // Instagram suele procesar mejor los stickers/fondos recibiendo base64
+      // para evitar problemas de permisos de lectura de archivos temporales.
+      const base64Data = await FileSystem.readAsStringAsync(imageUri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      const imageBase64 = `data:image/png;base64,${base64Data}`;
+
+      const shareOptions = {
+        title: 'Compartir Legado L-Ark',
+        social: Social.Instagram,
+        url: imageBase64,
+        backgroundBottomColor: '#1E3A5F',
+        backgroundTopColor: '#0F172A',
+        // stickerImage: imageBase64, 
+        backgroundImage: imageBase64,
+        appId: 'tu_facebook_app_id', // Opcional, pero recomendado si tienes config de FB
+      };
+
+      // 2. Ejecutar shareSingle
+      await Share.shareSingle(shareOptions);
+
+    } catch (error) {
+      console.error('Error sharing to Instagram:', error);
+      // Fallback: Si falla el directo, abrimos el genérico
+      this.share(imageUri, campaignShortCode);
+    }
   }
 }

@@ -31,7 +31,7 @@ export default function ButtonXL({
         >
             <Text style={styles.buttonText}>{title}</Text>
            {
-            icon &&  <Ionicons name={icon} size={size} color={colors.invertedText} />
+            icon &&  <Ionicons name={icon} size={size} style={styles.icon} />
            }
         </TouchableOpacity>
     )
@@ -83,5 +83,8 @@ const newStyles = (colors: ThemeColors, mode: 'void' | 'warning' | 'danger' | 'd
             color: textColor,
             marginRight: 8,
         },
+        icon: {
+            color: textColor
+        }
     });
 }

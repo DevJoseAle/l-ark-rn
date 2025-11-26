@@ -1,5 +1,6 @@
 // app/(auth)/campaign/[id].tsx
 import { Colors } from '@/constants/theme';
+import ButtonXL from '@/src/components/common/ButtonXL';
 import { CertificateGeneratorModal } from '@/src/components/common/CertificateGeneratorModal';
 import DonateModal from '@/src/components/common/DonateModal';
 import FloatingDonateButton from '@/src/components/common/FloatingDonatingButton';
@@ -54,7 +55,7 @@ export default function CampaignDetailScreen() {
 
   const campaignId = params.id as string;
   const handleBackPress = () => {
-      router.replace('/(auth)/(tabs)/arkHome');
+    router.replace('/(auth)/(tabs)/arkHome');
   };
 
   // Determinar si es campaña propia
@@ -94,7 +95,7 @@ export default function CampaignDetailScreen() {
       Alert.alert('Error', 'No se pudo compartir la campaña');
     }
   };
-  
+
   if (isLoading) {
     return (
       <GradientBackground>
@@ -223,6 +224,13 @@ export default function CampaignDetailScreen() {
               por @{campaign.owner.display_name}
             </Text>
           </View>
+          <View>
+            <ButtonXL
+            icon={'share-social-outline'}
+              title=' Generar Certificado Digital '
+              action={() => {setShowCertificateModal(true) }} />
+          </View>
+
 
           {/* Progress Card */}
           <View
@@ -524,19 +532,14 @@ export default function CampaignDetailScreen() {
           disabled={campaign?.status !== 'active'}
         />
       )}
-       <DonateModal
-            visible={showDonateModal}
-            onClose={handleCloseDonateModal}
-            campaignId={campaign.id}
-            campaignTitle={campaign.title}
-            shortCode={campaign.short_code}
-          />
-          {/* Botón para generar certificado */}
-      <TouchableOpacity
-        onPress={() => setShowCertificateModal(true)}
-      >
-        <Text>📜 Generar mi Certificado Digital</Text>
-      </TouchableOpacity>
+      <DonateModal
+        visible={showDonateModal}
+        onClose={handleCloseDonateModal}
+        campaignId={campaign.id}
+        campaignTitle={campaign.title}
+        shortCode={campaign.short_code}
+      />
+      {/* Botón para generar certificado */}
 
       {/* Modal */}
       <CertificateGeneratorModal

@@ -19,7 +19,6 @@ export default {
     ios: {
       supportsTablet: true,
       bundleIdentifier: "com.devjoseale.lark",
-      supportsTablet: false,
       associatedDomains: [
         "applinks:l-ark.app",
         "applinks:www.l-ark.app"

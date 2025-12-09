@@ -127,9 +127,14 @@
             "noStorageBtnCancel":"Cancelar",
             "welcomeToPro":"¡Bienvenido a PRO! 🎉",
             "welcomeToProMessage":"Ahora tienes acceso a 5 GB de almacenamiento y todas las funciones premium.",
-            "welcomeToProButton":"Genial"
-            
-
+            "welcomeToProButton":"Genial",
+            "downloadedCompleted":"Descarga completa",
+            "downloadedCompletedMessage":"El archivo se guardó exitosamente",
+            "downloadedCompletedShare":"Compartir",
+            "downloadedCompletedOK":"OK",
+            "downloadFileError":"Error al descargar",
+            "downloadFileErrorMessage":"No se pudo descargar el archivo. Por favor, intenta nuevamente.",
+            "downloadFileErrorOK":"OK"
         }
     },
     "modals": {

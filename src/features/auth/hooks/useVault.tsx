@@ -161,21 +161,21 @@ export const useVault = () => {
 
         if (result.success && result.localUri) {
             Alert.alert(
-                'Descarga completa',
-                `El archivo se guardó exitosamente`,
+                translate("alert.vault.downloadedCompleted"),
+                translate("alert.vault.downloadedCompletedMessage"),
                 [
                     {
-                        text: 'Compartir',
+                        text: translate("alert.vault.downloadedCompletedShare"),
                         onPress: () => handleShareFile(result.localUri!),
                     },
-                    { text: 'OK' },
+                    { text: translate("alert.vault.downloadedCompletedOK") },
                 ]
             );
         } else {
             Alert.alert(
-                'Error al descargar',
-                result.error || 'No se pudo descargar el archivo',
-                [{ text: 'OK' }]
+                translate("alert.vault.downloadFileError"),
+                result.error || translate("alert.vault.downloadFileErrorMessage"),
+                [{ text: translate("alert.vault.downloadFileErrorOK") }]
             );
         }
     };
@@ -209,14 +209,14 @@ export const useVault = () => {
 
         if (success) {
             Alert.alert(
-                'Archivo eliminado',
-                'El archivo se eliminó correctamente de tu bóveda.',
+                translate("alert.vault.deleteFileSuccessTitle"),
+                translate("alert.vault.deleteFileSuccessMessage"),
                 [{ text: 'OK' }]
             );
         } else {
             Alert.alert(
-                'Error',
-                'No se pudo eliminar el archivo. Intenta nuevamente.',
+                translate("alert.vault.deleteFileErrorTitle"),
+                translate("alert.vault.deleteFileErrorMessage"),
                 [{ text: 'OK' }]
             );
         }
@@ -224,11 +224,11 @@ export const useVault = () => {
     const handleUploadPress = () => {
         if (isAtLimit) {
             Alert.alert(
-                'Sin espacio disponible',
-                'Has alcanzado el límite de almacenamiento. Actualiza a PRO para obtener más espacio.',
+                translate("alert.vault.noStorageAvailableTitle"),
+                translate("alert.vault.noStorageAvailableMessage"),
                 [
-                    { text: 'Cancelar', style: 'cancel' },
-                    { text: 'Ver planes', onPress: () => setShowUpgradeModal(true) },
+                    { text: translate("alert.vault.noStorageBtnCancel"), style: 'cancel' },
+                    { text: translate("alert.vault.noStorageBtnPlans"), onPress: () => setShowUpgradeModal(true) },
                 ]
             );
             return;

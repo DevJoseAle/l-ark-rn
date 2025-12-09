@@ -41,9 +41,18 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>18</string>
+	<string>17</string>
+	<key>EXDefaultScreenOrientationMask</key>
+	<string>UIInterfaceOrientationMaskPortrait</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fb</string>
+		<string>instagram</string>
+		<string>twitter</string>
+		<string>tiktoksharesdk</string>
+	</array>
 	<key>LSMinimumSystemVersion</key>
 	<string>12.0</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -59,6 +68,8 @@
 	<string>Necesitamos acceso a tu cámara para verificar tu identidad mediante fotos de tu documento y selfie</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Usamos Face ID para proteger tu Bóveda</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Allow $(PRODUCT_NAME) to save photos</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Necesitamos acceso a tus fotos para subir imágenes a campañas y la Bóveda</string>
 	<key>NSUserActivityTypes</key>
@@ -76,11 +87,25 @@
 	<key>UIRequiresFullScreen</key>
 	<false/>
 	<key>UIStatusBarStyle</key>
-	<string></string>
+	<string>UIStatusBarStyleDefault</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+	</array>
+	<key>UISupportedInterfaceOrientations_iPad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIUserInterfaceStyle</key>
 	<string>Automatic</string>

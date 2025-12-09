@@ -1,0 +1,186 @@
+{
+    "common": {
+        "loading": "Cargando...",
+        "error": "Ocurrió un error. Por favor, inténtalo de nuevo.",
+        "networkError": "Error de red. Por favor, verifica tu conexión.",
+        "backButton": "Atrás",
+        "sendingCode": "Enviando código...",
+        "verifyingCode": "Verificando código...",
+        "fullCodeMsj": "Por favor ingresa el código completo",
+        "codeVerified": "Código verificado exitosamente",
+        "resendedCode": "Código reenviado",
+        "resendedCodeLoading": "Reenviando código..",
+        "resendedCodeFailed": "No se pudo reenviar el código'"
+    },
+    "public": {
+        "welcome": {
+            "card1": {
+                "title": "Seguro",
+                "subtitle": "Encriptacion de Nivel Bancario"
+            },
+            "card2": {
+                "title": "Global",
+                "subtitle": "Disponible en 4 Paises"
+            },
+            "card3": {
+                "title": "Rápido",
+                "subtitle": "Activación Automática"
+            },
+            "title": "Protege tu legado Hoy",
+            "subtitle": "Únete a miles de usuarios que confian en L-Ark",
+            "getStartedButton": "Comenzar Ahora",
+            "iHaveAccountButton": "Ya tengo Cuenta"
+        },
+        "login": {
+            "title": "Ingresar",
+            "checkbox": "Entiendo que, si no existe una nueva cuenta con este correo, se registrará una nueva cuenta.",
+            "continueButton": "Continuar",
+            "inputPlaceholder": "Email"
+        },
+        "otp": {
+            "title": "Ingresar",
+            "subtitle": "Ingresa el código enviado a tu correo",
+            "resendCode": "Reenviar",
+            "confirmCodeButton": "Confirmar Código",
+            "enterCode": "Ingresa el código de 6 dígitos"
+        },
+        "tyc": {
+            "requiredModalTitle": "Términos y Condiciones Requeridos",
+            "requiredModalMessage": "Debes aceptar los Términos y Condiciones para usar L-ark.",
+            "viewTermsButton": "Ver Términos"
+        }
+    },
+    "private": {
+        "home": {
+            "title": "Inicio",
+            "emptyStateMessage": "Aun no tienes campaña.\nPresiona aquí para crear una",
+            "errorCampaignMessage": "Error al Consultar tus Campañas",
+            "retryButton": "Reintentar",
+            "donationSectionTitle": "Donaciones:",
+            "noDonationsMessage": "Aún no hay donaciones para esta campaña.",
+            "campaignCard": {
+                "totalRaised": "Total Recaudado:",
+                "toMyCampaignButton": "Ver mi Campaña",
+                "yourGoal": "Tu Meta",
+                "goalPercentage": "¡Llevas un {{percentage}}% de tu meta!",
+                "sendLinkButton": "Enviar Enlace",
+                "visibilityOn": "Visibilidad: Pública",
+                "visibilityOff": "Visibilidad: Privada",
+                "shareButton": "Compartir",
+                "sendCampaign": "Enviar Campaña"
+            }
+        },
+        "campaign": {},
+        "vault": {
+            "loading": "Cargando Bóveda...",
+            "myFiles": "Mis Archivos",
+            "uploading": "Cargando archivos ...",
+            "noCampaignStateTitle": "Tu bóveda está esperando",
+            "noCampaignStateMessage": " Para acceder a tu bóveda digital y almacenar archivos importantes,\nprimero necesitas crear una campaña.",
+            "featButton1":"Almacenamiento seguro en la nube",
+            "featButton2":"Acceso privado y encriptado",
+            "featButton3":"Documentos para tus beneficiarios",
+            "createCampaignButton": "Ir a Crear Campaña",
+            "noCampaignStateText": "Las campañas te permiten recaudar fondos y crear un legado digital\npara tus seres queridos",
+            "emptyStateTitle": "Aún no has subido archivos",
+            "emptyStateMessage": "Guarda documentos importantes, fotos y videos de forma segura en tu\nbóveda digital",
+            "typeItemsTitle":"Puedes subir:",
+            "typeItem1":"Fotos y videos",
+            "typeItem2":"PDFs y documentos",
+            "typeItem3":"Audios",
+            "emptyStateButton": "Subir Archivo",
+            "invitation": "Toca el botón + abajo para comenzar",
+            "planBadgeFree":"Plan Free",
+            "upgradeButton":"Actualizar a PRO",
+            "planBadgePro":"Plan PRO",
+            "proBenefits":"Tienes acceso completo a todas las funciones",
+            "storageBarTitle":"Almacenamiento",
+            "actualStorage":"{{used}} de {{total}} usado",
+            "storageUsed":"⚠️ Te quedan {{remaining}} de espacio",
+            "totalUsed":"🚫 Has alcanzado el límite de almacenamiento"
+            
+
+        },
+        "profile": {},
+        "kyc": {}
+    },
+    "errors": {
+        "vault": {
+            "uploadVaultFile": "Error al subir el archivo",
+            "downloadFileTitle": "Error al descargar",
+            "downloadFileMessage": "No se pudo descargar el archivo",
+            "proErrorTitle":"Error",
+            "proErrorMessage":"No se pudo procesar la suscripción. Por favor intenta nuevamente."
+        }
+    },
+    "alert": {
+        "vault": {
+            "downloadSuccessTitle": "",
+            "downloadSuccessMessage": "El archivo se guardó exitosamente",
+            "deleteFileSuccessTitle": "Archivo Eliminado",
+            "deleteFileSuccessMessage": "El archivo se eliminó correctamente de tu bóveda.",
+            "deleteFileErrorTitle": "Error al Eliminar",
+            "deleteFileErrorMessage": "No se pudo eliminar el archivo. Intenta nuevamente.",
+            "noStorageAvailableTitle":"Sin Espacio Disponible",
+            "noStorageAvailableMessage":"Has alcanzado el límite de almacenamiento. Actualiza a PRO para obtener más espacio.",
+            "noStorageBtnPlans":"Ver Planes",
+            "noStorageBtnCancel":"Cancelar",
+            "welcomeToPro":"¡Bienvenido a PRO! 🎉",
+            "welcomeToProMessage":"Ahora tienes acceso a 5 GB de almacenamiento y todas las funciones premium.",
+            "welcomeToProButton":"Genial"
+            
+
+        }
+    },
+    "modals": {
+        "vault": {
+            "uploading": "Subiendo Archivo...",
+            "uploadSuccess":"¡Archivo subido!",
+            "uploadError": "Error al subir el archivo. Intenta nuevamente.",
+            "uploadSuccessMessage": "Tu archivo se ha guardado en la bóveda"
+        },
+        "filePreview": {
+            "imageLoading": "Cargando Imagen ...",
+            "pdfTitle":"Documento PDF",
+            "mainButton": "Presiona el botón de descarga para abrir este archivo",
+            "filePreviewFailed": "Vista previa no disponible para este tipo de archivo",
+            "name":"Nombre",
+            "type":"Tipo",
+            "size": "Tamaño:",
+            "upload": "Subido:",
+            "id": "ID:"
+        },
+        "filePicker": {
+            "title":"Subir Archivo",
+            "subtitle":"Elige de donde quieres subir tu archivo",
+            "option1Title":"Galería",
+            "option1Subtitle":"Fotos y Videos",
+            "option2Title":"Archivos",
+            "option2Subtitle":"PDFs y Documentos",
+            "cancelButton":"Cancelar"
+        },
+        "deleteDialog":{
+            "title":"¿Eliminar archivo?",
+            "disclaimer":"Esta acción no se puede deshacer. El archivo será eliminado permanentemente.",
+            "cancelButton":"Cancelar",
+            "deleteButton":"Eliminar"
+        },
+        "upgradeModal":{
+            "modalHeader": "Actualizar a Pro",
+            "modalTitle":"Desbloquea todo el potencial de tu bóveda",
+            "modalSubtitle":"Obtén más espacio y funciones exclusivas para proteger tu legado digital",
+            "benefitsSectionTitle":"Con Pro obtienes:",
+            "benefit1":"5 GB de almacenamiento",
+            "benefit1Subtitle":"10 veces más espacio que el plan FREE",
+            "benefit2":"Soporte prioritario",
+            "benefit2Subtitle":"Respuesta rápida a tus consultas",
+            "benefit3":"SSD físico para beneficiarios",
+            "benefit3Subtitle":"Tus archivos se entregarán en un disco físico",
+            "benefit4":"Respaldo seguro",
+            "benefit4Subtitle":"Encriptación y múltiples copias de seguridad",
+            "upgradeButton":"Suscribirse a PRO",
+            "modalDisclaimer": "Cancela cuando quieras. Sin compromisos."
+        }
+        
+    }
+}

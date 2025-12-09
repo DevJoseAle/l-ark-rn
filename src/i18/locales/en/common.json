@@ -1,0 +1,181 @@
+{
+    "common": {
+        "loading": "Loading...",
+        "error": "An error occurred. Please try again.",
+        "networkError": "Network error. Please check your connection.",
+        "backButton": "Back",
+        "sendingCode": "Sending code...",
+        "verifyingCode": "Verifying code...",
+        "fullCodeMsj": "Please enter the complete code",
+        "codeVerified": "Code verified successfully",
+        "resendedCode": "Code resent",
+        "resendedCodeLoading": "Resending code...",
+        "resendedCodeFailed": "Could not resend the code"
+    },
+    "public": {
+        "welcome": {
+            "card1": {
+                "title": "Secure",
+                "subtitle": "Bank-Level Encryption"
+            },
+            "card2": {
+                "title": "Global",
+                "subtitle": "Available in 4 Countries"
+            },
+            "card3": {
+                "title": "Fast",
+                "subtitle": "Automatic Activation"
+            },
+            "title": "Protect Your Legacy Today",
+            "subtitle": "Join thousands of users who trust L-Ark",
+            "getStartedButton": "Get Started",
+            "iHaveAccountButton": "I Have an Account"
+        },
+        "login": {
+            "title": "Sign In",
+            "checkbox": "I understand that if an account with this email doesn't exist, a new account will be registered.",
+            "continueButton": "Continue",
+            "inputPlaceholder": "Email"
+        },
+        "otp": {
+            "title": "Sign In",
+            "subtitle": "Enter the code sent to your email",
+            "resendCode": "Resend",
+            "confirmCodeButton": "Confirm Code",
+            "enterCode": "Enter the 6-digit code"
+        },
+        "tyc": {
+            "requiredModalTitle": "Terms and Conditions Required",
+            "requiredModalMessage": "You must accept the Terms and Conditions to use L-ark.",
+            "viewTermsButton": "View Terms"
+        }
+    },
+    "private": {
+        "home": {
+            "title": "Home",
+            "emptyStateMessage": "You don't have a campaign yet.\nTap here to create one",
+            "errorCampaignMessage": "Error fetching your campaigns",
+            "retryButton": "Retry",
+            "donationSectionTitle": "Donations:",
+            "noDonationsMessage": "There are no donations for this campaign yet.",
+            "campaignCard": {
+                "totalRaised": "Total Raised:",
+                "toMyCampaignButton": "View My Campaign",
+                "yourGoal": "Your Goal",
+                "goalPercentage": "You've reached {{percentage}}% of your goal!",
+                "sendLinkButton": "Send Link",
+                "visibilityOn": "Visibility: Public",
+                "visibilityOff": "Visibility: Private",
+                "shareButton": "Share",
+                "sendCampaign": "Send Campaign"
+            }
+        },
+        "campaign": {},
+        "vault": {
+            "loading": "Loading Vault...",
+            "myFiles": "My Files",
+            "uploading": "Uploading files...",
+            "noCampaignStateTitle": "Your vault is waiting",
+            "noCampaignStateMessage": "To access your digital vault and store important files,\nyou first need to create a campaign.",
+            "featButton1": "Secure cloud storage",
+            "featButton2": "Private and encrypted access",
+            "featButton3": "Documents for your beneficiaries",
+            "createCampaignButton": "Go to Create Campaign",
+            "noCampaignStateText": "Campaigns allow you to raise funds and create a digital legacy\nfor your loved ones",
+            "emptyStateTitle": "You haven't uploaded any files yet",
+            "emptyStateMessage": "Store important documents, photos and videos securely in your\ndigital vault",
+            "typeItemsTitle": "You can upload:",
+            "typeItem1": "Photos and videos",
+            "typeItem2": "PDFs and documents",
+            "typeItem3": "Audio files",
+            "emptyStateButton": "Upload File",
+            "invitation": "Tap the + button below to get started",
+            "planBadgeFree": "Free Plan",
+            "upgradeButton": "Upgrade to PRO",
+            "planBadgePro": "PRO Plan",
+            "proBenefits": "You have full access to all features",
+            "storageBarTitle": "Storage",
+            "actualStorage": "{{used}} of {{total}} used",
+            "storageUsed": "⚠️ You have {{remaining}} of space left",
+            "totalUsed": "🚫 You have reached the storage limit"
+        },
+        "profile": {},
+        "kyc": {}
+    },
+    "errors": {
+        "vault": {
+            "uploadVaultFile": "Error uploading file",
+            "downloadFileTitle": "Download Error",
+            "downloadFileMessage": "Could not download the file",
+            "proErrorTitle": "Error",
+            "proErrorMessage": "Could not process the subscription. Please try again."
+        }
+    },
+    "alert": {
+        "vault": {
+            "downloadSuccessTitle": "",
+            "downloadSuccessMessage": "The file was saved successfully",
+            "deleteFileSuccessTitle": "File Deleted",
+            "deleteFileSuccessMessage": "The file was successfully removed from your vault.",
+            "deleteFileErrorTitle": "Delete Error",
+            "deleteFileErrorMessage": "Could not delete the file. Please try again.",
+            "noStorageAvailableTitle": "No Storage Available",
+            "noStorageAvailableMessage": "You have reached the storage limit. Upgrade to PRO to get more space.",
+            "noStorageBtnPlans": "View Plans",
+            "noStorageBtnCancel": "Cancel",
+            "welcomeToPro": "Welcome to PRO! 🎉",
+            "welcomeToProMessage": "You now have access to 5 GB of storage and all premium features.",
+            "welcomeToProButton": "Great"
+        }
+    },
+    "modals": {
+        "vault": {
+            "uploading": "Uploading File...",
+            "uploadSuccess": "File uploaded!",
+            "uploadError": "Error uploading file. Please try again.",
+            "uploadSuccessMessage": "Your file has been saved in the vault"
+        },
+        "filePreview": {
+            "imageLoading": "Loading Image...",
+            "pdfTitle": "PDF Document",
+            "mainButton": "Press the download button to open this file",
+            "filePreviewFailed": "Preview not available for this file type",
+            "name": "Name",
+            "type": "Type",
+            "size": "Size:",
+            "upload": "Uploaded:",
+            "id": "ID:"
+        },
+        "filePicker": {
+            "title": "Upload File",
+            "subtitle": "Choose where you want to upload your file from",
+            "option1Title": "Gallery",
+            "option1Subtitle": "Photos and Videos",
+            "option2Title": "Files",
+            "option2Subtitle": "PDFs and Documents",
+            "cancelButton": "Cancel"
+        },
+        "deleteDialog": {
+            "title": "Delete file?",
+            "disclaimer": "This action cannot be undone. The file will be permanently deleted.",
+            "cancelButton": "Cancel",
+            "deleteButton": "Delete"
+        },
+        "upgradeModal": {
+            "modalHeader": "Upgrade to Pro",
+            "modalTitle": "Unlock your vault's full potential",
+            "modalSubtitle": "Get more space and exclusive features to protect your digital legacy",
+            "benefitsSectionTitle": "With Pro you get:",
+            "benefit1": "5 GB of storage",
+            "benefit1Subtitle": "10 times more space than the FREE plan",
+            "benefit2": "Priority support",
+            "benefit2Subtitle": "Fast response to your inquiries",
+            "benefit3": "Physical SSD for beneficiaries",
+            "benefit3Subtitle": "Your files will be delivered on a physical drive",
+            "benefit4": "Secure backup",
+            "benefit4Subtitle": "Encryption and multiple security backups",
+            "upgradeButton": "Subscribe to PRO",
+            "modalDisclaimer": "Cancel anytime. No commitments."
+        }
+    }
+}

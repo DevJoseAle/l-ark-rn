@@ -11,6 +11,7 @@ import {
   Animated,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 interface FilePickerSheetProps {
   visible: boolean;
@@ -29,7 +30,7 @@ export function FilePickerSheet({
   onPickDocument,
 }: FilePickerSheetProps) {
   const [slideAnim] = React.useState(new Animated.Value(0));
-
+  const {t:translate} = useTranslation("common")
   React.useEffect(() => {
     if (visible) {
       Animated.spring(slideAnim, {
@@ -73,9 +74,9 @@ export function FilePickerSheet({
               <View style={styles.handle} />
 
               {/* Título */}
-              <Text style={styles.title}>Subir archivo</Text>
+              <Text style={styles.title}>{translate("modals.filePicker.title")}</Text>
               <Text style={styles.subtitle}>
-                Elige de dónde quieres subir tu archivo
+                {translate("modals.filePicker.subtitle")}
               </Text>
 
               {/* Opciones */}
@@ -83,8 +84,8 @@ export function FilePickerSheet({
                 <OptionButton
                   icon="images"
                   iconColor="#10B981"
-                  title="Galería"
-                  description="Fotos y videos"
+                  title={translate("modals.filePicker.option1Title")}
+                  description={translate("modals.filePicker.option1Subtitle")}
                   onPress={() => {
                     onClose();
                     setTimeout(onPickGallery, 300);
@@ -94,8 +95,8 @@ export function FilePickerSheet({
                 <OptionButton
                   icon="document-text"
                   iconColor="#3B82F6"
-                  title="Archivos"
-                  description="PDFs y documentos"
+                  title={translate("modals.filePicker.option2Title")}
+                  description={translate("modals.filePicker.option2Subtitle")}
                   onPress={() => {
                     onClose();
                     setTimeout(onPickDocument, 300);
@@ -109,7 +110,7 @@ export function FilePickerSheet({
                 onPress={onClose}
                 activeOpacity={0.7}
               >
-                <Text style={styles.cancelText}>Cancelar</Text>
+                <Text style={styles.cancelText}>{translate("modals.filePicker.cancelButton")}</Text>
               </TouchableOpacity>
             </Animated.View>
           </TouchableWithoutFeedback>

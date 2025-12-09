@@ -16,10 +16,8 @@ import { GradientBackground } from '@/src/components/common/GradiendBackground';
 import { LarkLogo } from '@/src/components/common/LarkLogo';
 import { useThemeColors } from '@/hooks/use-theme-color';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useTranslation } from 'react-i18next';
 
-// ============================================
-// COLORS CONFIGURATION
-// ============================================
 const getAdaptiveColors = (colorScheme: ColorSchemeName) => ({
   text: colorScheme === 'dark' ? '#FFFFFF' : '#1F2937',
   secondaryText: colorScheme === 'dark' ? '#9CA3AF' : '#6B7280',
@@ -29,9 +27,6 @@ const getAdaptiveColors = (colorScheme: ColorSchemeName) => ({
   buttonBorder: colorScheme === 'dark' ? '#60A5FA' : '#0051D5',
 });
 
-// ============================================
-// MAIN COMPONENT
-// ============================================
 export default function WelcomeScreen() {
   const router = useRouter();
   const colors = useThemeColors();
@@ -43,7 +38,8 @@ export default function WelcomeScreen() {
   const logoOpacity = useRef(new Animated.Value(0)).current;
   const cardsTranslateY = useRef(new Animated.Value(50)).current;
   const cardsOpacity = useRef(new Animated.Value(0)).current;
-
+  const {t} = useTranslation("common");
+  console.log(t("public.welcome.card1.title"));
   useEffect(() => {
     Animated.stagger(200, [
       // Logo
@@ -119,22 +115,22 @@ export default function WelcomeScreen() {
           <View style={styles.featuresContainer}>
             <FeatureCard
               icon="🔐"
-              title="Seguro"
-              description="Encriptación de nivel bancario"
+              title={t("public.welcome.card1.title")}
+              description={t("public.welcome.card1.subtitle")}
               colors={adaptiveColors}
               colorScheme={colorScheme}
             />
             <FeatureCard
               icon="🌍"
-              title="Global"
-              description="Disponible en 4 países"
+              title={t("public.welcome.card2.title")}
+              description={t("public.welcome.card2.subtitle")}
               colors={adaptiveColors}
               colorScheme={colorScheme}
             />
             <FeatureCard
               icon="⚡"
-              title="Rápido"
-              description="Activación automática"
+              title={t("public.welcome.card3.title")}
+              description={t("public.welcome.card3.subtitle")}
               colors={adaptiveColors}
               colorScheme={colorScheme}
             />
@@ -143,10 +139,10 @@ export default function WelcomeScreen() {
           {/* CTA Section */}
           <View style={styles.ctaSection}>
             <Text style={[styles.ctaTitle, { color: colors.text }]}>
-              Protege tu legado hoy
+              {t("public.welcome.title")}
             </Text>
             <Text style={[styles.ctaDescription, { color: colors.secondaryText }]}>
-              Únete a miles de usuarios que confían en L-Ark
+              {t("public.welcome.subtitle")}
             </Text>
 
             {/* Botones */}
@@ -156,7 +152,7 @@ export default function WelcomeScreen() {
               colorScheme={colorScheme}
               primary
             >
-              Comenzar Ahora
+              {t("public.welcome.getStartedButton")}
             </GlassButton>
 
             <GlassButton
@@ -164,7 +160,7 @@ export default function WelcomeScreen() {
               colors={adaptiveColors}
               colorScheme={colorScheme}
             >
-              Ya tengo cuenta
+              {t("public.welcome.iHaveAccountButton")}
             </GlassButton>
           </View>
         </Animated.View>

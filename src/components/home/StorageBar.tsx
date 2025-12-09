@@ -3,6 +3,7 @@
 import { useStorageStatus } from '@/src/stores/vault.store';
 import { getStorageBarColor, formatBytes } from '@/src/utils/vaultUtils';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { View, Text, StyleSheet } from 'react-native';
 
 
@@ -11,6 +12,7 @@ import { View, Text, StyleSheet } from 'react-native';
  */
 export function StorageBar() {
   const { quota } = useStorageStatus();
+  const { t: translate } = useTranslation("common");
 
   if (!quota) return null;
 
@@ -22,7 +24,7 @@ export function StorageBar() {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Almacenamiento</Text>
+        <Text style={styles.title}>{translate("private.vault.storageBarTitle")}</Text>
         <Text style={styles.percentage}>
           {quota.percentage.toFixed(0)}%
         </Text>
@@ -44,7 +46,10 @@ export function StorageBar() {
       {/* Texto de uso */}
       <View style={styles.usageContainer}>
         <Text style={styles.usageText}>
-          {formatBytes(quota.used)} de {formatBytes(quota.total)} usados
+          {translate("private.vault.actualStorage",{
+            used: formatBytes(quota.used),
+            total: formatBytes(quota.total)
+          })}
         </Text>
       </View>
 
@@ -52,7 +57,9 @@ export function StorageBar() {
       {showWarning && (
         <View style={[styles.messageContainer, styles.warningContainer]}>
           <Text style={styles.warningText}>
-            ⚠️ Te quedan {formatBytes(quota.remaining)} de espacio
+            {translate("private.vault.storageUsed",{
+              remaining: formatBytes(quota.remaining),
+            })}
           </Text>
         </View>
       )}
@@ -60,7 +67,7 @@ export function StorageBar() {
       {showError && (
         <View style={[styles.messageContainer, styles.errorContainer]}>
           <Text style={styles.errorText}>
-            🚫 Has alcanzado el límite de almacenamiento
+            {translate("private.vault.totalUsed")}
           </Text>
         </View>
       )}

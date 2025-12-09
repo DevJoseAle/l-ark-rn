@@ -9,6 +9,7 @@ import { useMemo, useRef, useState } from "react";
 import { Alert, TextInput } from "react-native";
 import { authService } from "../service/auth.service";
 import { createLoginStyles } from "../styles/loginStyles";
+import { useTranslation } from "react-i18next";
 
 export const useLogin = (router: any) => {
   const colors = useThemeColors();
@@ -22,11 +23,11 @@ export const useLogin = (router: any) => {
   const [pendingEmail, setPendingEmail] = useState('');
 
   const isFormValid = email.length > 0 && isChecked && /\S+@\S+\.\S+/.test(email);
-
+  const { t: translate } = useTranslation("common");
   const handleContinue = async () => {
     if (!isFormValid) return;
 
-    showLoading('Verificando...');
+    showLoading(translate("common.loading"));
 
     try {
       const cleanEmail = email.toLowerCase().trim();
@@ -85,13 +86,13 @@ export const useLogin = (router: any) => {
     } catch (error: any) {
       hideLoading();
       console.error('Error verificando usuario:', error);
-      Alert.alert('Error', 'Hubo un problema. Intenta nuevamente.');
+      Alert.alert('Error', translate("common.error") );
     }
   };
 
   const sendOTP = async (emailToSend: string) => {
     setEmailStore(emailToSend);
-    showLoading('Enviando código...');
+    showLoading(translate("common.sendingCode"));
     const response = await authService.loginSendOTP(emailToSend);
     if (response.success) {
       router.push({
@@ -107,7 +108,6 @@ export const useLogin = (router: any) => {
 
   const handleAcceptTerms = async () => {
     setShowTermsModal(false);
-    // El registro de aceptación se hará después de verificar OTP
     await sendOTP(pendingEmail);
   };
 
@@ -115,8 +115,8 @@ export const useLogin = (router: any) => {
     setShowTermsModal(false);
     setPendingEmail('');
     Alert.alert(
-      'Términos requeridos',
-      'Debes aceptar los Términos y Condiciones para usar L-ark.'
+      translate("public.tyc.requiredModalTitle"),
+      translate("public.tyc.requiredModalMessage")
     );
   };
 
@@ -132,6 +132,7 @@ export const useLogin = (router: any) => {
     showTermsModal,
     handleAcceptTerms,
     handleDeclineTerms,
+    translate
   };
 };
 // src/features/auth/hooks/useAuthForm.ts
@@ -142,6 +143,7 @@ export function useOTPForm(length: number = 6, router: Router) {
   const { email } = useAuthStore();
   const [otp, setOtp] = useState<string[]>(Array(length).fill(''));
   const inputRefs = useRef<Array<TextInput | null>>([]);
+  const { t: translate }=useTranslation("common");
   const isCodeComplete = useMemo(() => {
     return isValidOTPArray(otp);
   }, [otp]);
@@ -149,11 +151,11 @@ export function useOTPForm(length: number = 6, router: Router) {
     const code = otp.join('');
     console.log('******-------******');
     if (code.length !== 6) {
-      Alert.alert('Error', 'Por favor ingresa el código completo');
+      Alert.alert('Error', translate("common.fullCodeMsj"));
       return;
     }
 
-    showLoading('Verificando código...');
+    showLoading(translate("common.verifyingCode"));
     try {
       // Lógica de verificación
       const response = await authService.verifyOTP(email, code);
@@ -163,13 +165,13 @@ export function useOTPForm(length: number = 6, router: Router) {
       if (!response.success) {
         console.log('no response');
         router.replace('/(public)/welcome');
-        Alert.alert('Error', 'Inténtalo nuevamente más tarde')
+        Alert.alert('Error', translate("common.error") )
         throw new Error();
       }
 
       router.replace('/(auth)/(tabs)/arkHome');
       hideLoading();
-      Alert.alert('Éxito', 'Código verificado exitosamente');
+      Alert.alert('Éxito', translate("common.codeVerified"));
     } catch (error) {
       console.error('❌ Error:', error);
       hideLoading();
@@ -177,14 +179,14 @@ export function useOTPForm(length: number = 6, router: Router) {
   };
 
   const handleResend = async () => {
-    showLoading('Reenviando código...');
+    showLoading(translate("common.resendedCodeLoading"));
     try {
-      Alert.alert('Éxito', 'Código reenviado');
+      Alert.alert('Éxito', translate("common.resendedCode"));
       setOtp(['', '', '', '', '', '']); // Limpia el input
       inputRefs.current[0]?.focus();
       hideLoading();
     } catch (error) {
-      Alert.alert('Error', 'No se pudo reenviar el código');
+      Alert.alert('Error', translate("common.resendedCodeFailed"));
     } finally {
       hideLoading();
     }
@@ -220,7 +222,8 @@ export function useOTPForm(length: number = 6, router: Router) {
     handleResend,
     inputRefs,
     handleKeyPress,
-    handleOtpChange
+    handleOtpChange,
+    translate
   };
 }
 

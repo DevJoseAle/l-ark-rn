@@ -190,7 +190,11 @@ export default {
         {
           initialOrientation: "PORTRAIT"
         }
+      ],
+      [
+        "expo-localization"
       ]
+
     ],
 
     experiments: {

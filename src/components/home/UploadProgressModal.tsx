@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { formatBytes } from '@/src/utils/vaultUtils';
+import { useTranslation } from 'react-i18next';
 
 interface UploadProgressModalProps {
   visible: boolean;
@@ -33,6 +34,7 @@ export function UploadProgressModal({
   isError,
   errorMessage,
 }: UploadProgressModalProps) {
+  const {t:translate} = useTranslation('common');
   return (
     <Modal
       visible={visible}
@@ -60,9 +62,9 @@ export function UploadProgressModal({
 
           {/* Título */}
           <Text style={styles.title}>
-            {isUploading && 'Subiendo archivo...'}
-            {isSuccess && '¡Archivo subido!'}
-            {isError && 'Error al subir'}
+            {isUploading && translate("modals.vault.uploading")}
+            {isSuccess && translate("modals.vault.uploadSuccess")}
+            {isError && translate("modals.vault.uploadError")}
           </Text>
 
           {/* Descripción */}
@@ -84,7 +86,7 @@ export function UploadProgressModal({
           {/* Mensaje de éxito */}
           {isSuccess && (
             <Text style={styles.successMessage}>
-              Tu archivo se ha guardado en la bóveda
+              {translate("modals.vault.uploadSuccessMessage")}
             </Text>
           )}
         </View>

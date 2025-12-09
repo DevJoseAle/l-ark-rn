@@ -24,6 +24,7 @@ export default function OTPScreen() {
     handleResend,
     handleKeyPress,
     handleOtpChange,
+    translate,
     inputRefs } = useOTPForm(6, router);
 
   return (
@@ -41,7 +42,7 @@ export default function OTPScreen() {
               onPress={() => router.back()}
             >
               <Ionicons name="chevron-back" size={24} color={colors.primary} />
-              <Text style={styles.backText}>Atrás</Text>
+              <Text style={styles.backText}>{translate("common.backButton")}</Text>
             </TouchableOpacity>
 
             {/* Logo y título */}
@@ -52,11 +53,11 @@ export default function OTPScreen() {
             </View>
 
             {/* Título de sección */}
-            <Text style={styles.heading}>Ingresar</Text>
+            <Text style={styles.heading}>{translate("public.otp.title")}</Text>
 
             {/* Subtítulo */}
             <Text style={styles.description}>
-              Ingresa el código para crear tu cuenta
+              {translate("public.otp.subtitle")}
             </Text>
 
             {/* Input de OTP (6 dígitos) */}
@@ -81,7 +82,7 @@ export default function OTPScreen() {
             </View>
 
             {/* Texto descriptivo del input */}
-            <Text style={styles.inputLabel}>Ingresa Código de 6 dígitos</Text>
+            <Text style={styles.inputLabel}>{translate("public.otp.enterCode")}</Text>
 
             {/* Botón confirmar */}
             <TouchableOpacity
@@ -97,7 +98,7 @@ export default function OTPScreen() {
                 styles.confirmButtonText,
                 !isCodeComplete && styles.confirmButtonTextDisabled
               ]}>
-                Confirmar código
+                {translate("public.otp.confirmCodeButton")}
               </Text>
             </TouchableOpacity>
 
@@ -107,7 +108,7 @@ export default function OTPScreen() {
               onPress={handleResend}
               activeOpacity={0.7}
             >
-              <Text style={styles.resendText}>Reenviar</Text>
+              <Text style={styles.resendText}>{translate("public.otp.resendCode")}</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>

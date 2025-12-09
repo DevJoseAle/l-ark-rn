@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColors } from '@/hooks/use-theme-color';
 import { ThemeColors } from '@/constants/theme';
+import { useTranslation } from 'react-i18next';
 
 interface ErrorStateProps {
   onRetry?: () => void;
@@ -12,19 +13,22 @@ interface ErrorStateProps {
 export default function ErrorState({ onRetry }: ErrorStateProps) {
     const colors = useThemeColors();
     const styles = errorStateStyles(colors);
+    const {t: translate} = useTranslation("common")
   return (
     <View style={styles.container}>
       <View style={styles.iconContainer}>
         <Ionicons name="warning-outline" size={60} color="#fc4d4dff" />
       </View>
       
-      <Text style={styles.message}>Error al Consultar tus Campañas</Text>
+      <Text style={styles.message}>
+        {translate("private.home.errorStateMessage")}
+      </Text>
       
       <TouchableOpacity 
         style={styles.retryButton}
         onPress={onRetry}
       >
-        <Text style={styles.retryButtonText}>Reintentar</Text>
+        <Text style={styles.retryButtonText}>{translate("private.home.retryButton")}</Text>
       </TouchableOpacity>
     </View>
   );

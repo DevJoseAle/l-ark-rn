@@ -4,11 +4,12 @@ import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { GradientBackground } from "../common/GradiendBackground";
 import ButtonXL from "../common/ButtonXL";
 import { useThemeColors } from "@/hooks/use-theme-color";
+import { useTranslation } from "react-i18next";
 
 export function NoCampaignState() {
   const router = useRouter();
   const colors = useThemeColors()
-
+  const {t:translate} = useTranslation("common")
   const handleGoToCreateCampaign = () => {
     router.push('/(auth)/(tabs)/arkHome'); 
   };
@@ -23,45 +24,43 @@ export function NoCampaignState() {
 
         {/* Título */}
         <Text style={[styles.title,{color: colors.text}]}>
-          Tu bóveda está esperando
+          {translate("private.vault.noCampaignStateTitle")}
         </Text>
 
         {/* Descripción */}
         <Text style={[styles.description,{color: colors.text}]}>
-          Para acceder a tu bóveda digital y almacenar archivos importantes,
-          primero necesitas crear una campaña.
+          {translate("private.vault.noCampaignStateMessage")}
         </Text>
 
         {/* Features */}
         <View style={styles.featuresContainer}>
           <FeatureItem
             icon="shield-checkmark"
-            text="Almacenamiento seguro en la nube"
+            text={translate("private.vault.featButton1")}
             color={colors.text}
 
           />
           <FeatureItem
             icon="lock-closed"
-            text="Acceso privado y encriptado"
+           text={translate("private.vault.featButton2")}
             color={colors.text}
           />
           <FeatureItem
             icon="people"
-            text="Documentos para tus beneficiarios"
+            text={translate("private.vault.featButton3")}
             color={colors.text}
           />
         </View>
 
         {/* Botón CTA */}
        <ButtonXL
-       title='Ir a crear campaña'
+       title={translate("private.vault.createCampaignButton")}
        action={handleGoToCreateCampaign}
        mode='default' />
 
         {/* Texto de ayuda */}
         <Text style={styles.helpText}>
-          Las campañas te permiten recaudar fondos y crear un legado digital
-          para tus seres queridos
+          {translate("private.vault.noCampaignStateText")}
         </Text>
       </View>
     </GradientBackground>

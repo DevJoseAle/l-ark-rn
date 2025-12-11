@@ -544,8 +544,8 @@
             "whyYouLeave": "Why are you leaving? 😢",
             "feedback": "Your feedback helps us improve",
             "warning": "This action is irreversible. Your account will be permanently deleted.",
-            "deleteButton": "",
-            "cancelButton": ""
+            "deleteButton": "Delete Account",
+            "cancelButton": "Cancel"
         }
     },
     "countries": {

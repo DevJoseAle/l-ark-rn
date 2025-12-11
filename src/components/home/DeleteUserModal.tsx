@@ -156,7 +156,7 @@ export function DeleteAccountModal({ visible, onClose, onConfirm }: DeleteAccoun
               disabled={isDeleting}
               activeOpacity={0.8}
             >
-              <Text style={[styles.cancelButtonText, { color: colors.secondaryText }]}>
+              <Text style={[styles.cancelButtonText, { color: colors.text }]}>
                 {translate("modals.deleteAccount.cancelButton")}
               </Text>
             </TouchableOpacity>

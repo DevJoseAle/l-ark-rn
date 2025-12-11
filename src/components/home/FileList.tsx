@@ -11,6 +11,8 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { formatBytes, formatRelativeDate } from '@/src/utils/vaultUtils';
+import { useTranslation } from "react-i18next";
+
 
 interface FileListProps {
   files: any[]; // VaultFile[]
@@ -23,10 +25,11 @@ interface FileListProps {
  * Lista de archivos de la bóveda con acciones
  */
 export function FileList({ files, onFilePress, onDownload, onDelete }: FileListProps) {
+  const {t:translate} = useTranslation("common");
   return (
     <View style={styles.container}>
       <Text style={styles.header}>
-        Mis archivos ({files.length})
+        {translate("private.vault.myFiles")} ({files.length})
       </Text>
 
       <FlatList

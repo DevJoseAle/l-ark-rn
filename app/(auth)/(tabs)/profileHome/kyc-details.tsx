@@ -11,35 +11,38 @@ import {
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useProfileStore } from '../../../../src/stores/profile.store';
+import { useTranslation } from 'react-i18next';
 
-const DOCUMENT_LABELS: Record<string, string> = {
-  id_front: 'Cédula de identidad - Frontal',
-  id_back: 'Cédula de identidad - Reverso',
-  selfie: 'Selfie de verificación',
-  proof_of_address: 'Comprobante de domicilio',
-};
-
-const STATUS_CONFIG: Record<string, { color: string; icon: keyof typeof Ionicons.glyphMap; label: string }> = {
-  pending: {
-    color: '#F59E0B',
-    icon: 'hourglass-outline',
-    label: 'Pendiente',
-  },
-  approved: {
-    color: '#10B981',
-    icon: 'checkmark-circle',
-    label: 'Aprobado',
-  },
-  rejected: {
-    color: '#DC2626',
-    icon: 'close-circle',
-    label: 'Rechazado',
-  },
-};
 
 export default function KYCDetailsScreen() {
   const router = useRouter();
+  const {t:translate} = useTranslation("common");
   const { user, kycDocuments } = useProfileStore();
+
+  const DOCUMENT_LABELS: Record<string, string> = {
+    id_front: translate("private.kyc.labelFrontId"),
+    id_back: translate("private.kyc.labelBackId"),
+    selfie: translate("private.kyc.labelSelfie"),
+    proof_of_address: translate("private.kyc.labelPOA"),
+  };
+  
+  const STATUS_CONFIG: Record<string, { color: string; icon: keyof typeof Ionicons.glyphMap; label: string }> = {
+    pending: {
+      color: '#F59E0B',
+      icon: 'hourglass-outline',
+      label: translate("common.pending"),
+    },
+    approved: {
+      color: '#10B981',
+      icon: 'checkmark-circle',
+      label: translate("common.approved"),
+    },
+    rejected: {
+      color: '#DC2626',
+      icon: 'close-circle',
+      label: translate("common.rejected"),
+    },
+  };
 
   const getKYCStatusInfo = () => {
     switch (user?.kyc_status) {
@@ -48,32 +51,32 @@ export default function KYCDetailsScreen() {
           color: '#10B981',
           backgroundColor: '#D1FAE5',
           icon: 'checkmark-circle' as const,
-          title: '✅ Verificación Completada',
-          message: 'Tu identidad ha sido verificada exitosamente. Ya puedes crear campañas y recibir donaciones.',
+          title: translate("private.kyc.statusVerifiedTitle"),
+          message: translate("private.kyc.messageVerified"),
         };
       case 'kyc_review':
         return {
           color: '#F59E0B',
           backgroundColor: '#FEF3C7',
           icon: 'time-outline' as const,
-          title: '⏳ En Revisión',
-          message: 'Estamos revisando tus documentos. Esto puede tomar 1-2 días hábiles. Te notificaremos cuando esté listo.',
+          title: translate("private.kyc.statusReviewTitle"),
+          message: translate("private.kyc.messageReview"),
         };
       case 'kyc_rejected':
         return {
           color: '#DC2626',
           backgroundColor: '#FEE2E2',
           icon: 'close-circle' as const,
-          title: '❌ Verificación Rechazada',
-          message: 'Algunos de tus documentos fueron rechazados. Por favor, revisa los detalles y vuelve a subirlos.',
+          title: translate("private.kyc.statusRejectedTitle"),
+          message: translate("private.kyc.messageRejected"),
         };
       default:
         return {
           color: '#6B7280',
           backgroundColor: '#F3F4F6',
           icon: 'hourglass-outline' as const,
-          title: '⏸️ Sin Verificar',
-          message: 'Completa tu verificación de identidad para poder crear campañas y recibir donaciones.',
+          title: translate("private.kyc.statusPendingTitle"),
+          message: translate("private.kyc.messagePending"),
         };
     }
   };
@@ -96,17 +99,24 @@ export default function KYCDetailsScreen() {
 
       {/* Documents List */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Documentos Subidos</Text>
+        <Text style={styles.sectionTitle}>
+          {translate("private.kyc.documentsUploaded")}
+        </Text>
 
         {kycDocuments.length === 0 ? (
           <View style={styles.emptyState}>
             <Ionicons name="document-outline" size={48} color="#D1D5DB" />
-            <Text style={styles.emptyText}>No has subido ningún documento</Text>
+            <Text style={styles.emptyText}>
+
+              {translate("private.kyc.noDocuments")}
+            </Text>
             <TouchableOpacity
               style={styles.uploadButton}
               onPress={() => router.push('/(auth)/kyc/welcome')}
             >
-              <Text style={styles.uploadButtonText}>Subir documentos</Text>
+              <Text style={styles.uploadButtonText}>
+                {translate("private.kyc.uploadDocuments")}
+                </Text>
             </TouchableOpacity>
           </View>
         ) : (
@@ -177,7 +187,10 @@ export default function KYCDetailsScreen() {
           onPress={() => router.push('/(auth)/kyc/welcome')}
         >
           <Ionicons name="cloud-upload-outline" size={20} color="#FFF" />
-          <Text style={styles.primaryButtonText}>Subir documentos</Text>
+          <Text style={styles.primaryButtonText}>
+            {translate("private.kyc.uploadDocuments")}
+            
+          </Text>
         </TouchableOpacity>
       )}
 
@@ -187,7 +200,9 @@ export default function KYCDetailsScreen() {
           onPress={() => router.push('/(auth)/kyc/welcome')}
         >
           <Ionicons name="refresh-outline" size={20} color="#FFF" />
-          <Text style={styles.primaryButtonText}>Volver a subir documentos</Text>
+          <Text style={styles.primaryButtonText}>
+            {translate("private.kyc.uploadAgain")}
+          </Text>
         </TouchableOpacity>
       )}
 
@@ -195,10 +210,9 @@ export default function KYCDetailsScreen() {
       <View style={styles.infoBox}>
         <Ionicons name="information-circle-outline" size={24} color="#007AFF" />
         <View style={styles.infoTextContainer}>
-          <Text style={styles.infoTitle}>¿Por qué verificamos tu identidad?</Text>
+          <Text style={styles.infoTitle}>{translate("private.kyc.infoTitle")}</Text>
           <Text style={styles.infoText}>
-            La verificación KYC (Know Your Customer) es un requisito legal para prevenir fraude
-            y lavado de dinero. Tus documentos están protegidos y encriptados.
+          {translate("private.kyc.infoText")}
           </Text>
         </View>
       </View>
@@ -206,7 +220,9 @@ export default function KYCDetailsScreen() {
       {/* Contact Support */}
       <TouchableOpacity style={styles.supportButton}>
         <Ionicons name="help-circle-outline" size={20} color="#007AFF" />
-        <Text style={styles.supportText}>¿Necesitas ayuda? Contacta a soporte</Text>
+        <Text style={styles.supportText}>
+          {translate("private.kyc.supportText")}
+        </Text>
       </TouchableOpacity>
 
       <View style={{ height: 32 }} />

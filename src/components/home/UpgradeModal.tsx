@@ -16,6 +16,7 @@ import { IS_MOCK_PAYMENTS_ENABLED, MOCK_PAYMENT_MESSAGES } from '@/src/services/
 import { useVaultStore } from '@/src/stores/vault.store';
 import { BillingInterval } from '@/src/types/vault.types';
 import { PLAN_PRICES } from '@/src/utils/vaultConstants';
+import { useTranslation } from 'react-i18next';
 
 interface UpgradeModalProps {
   visible: boolean;
@@ -28,6 +29,7 @@ interface UpgradeModalProps {
 export function UpgradeModal({ visible, onClose }: UpgradeModalProps) {
   const [selectedInterval, setSelectedInterval] = useState<BillingInterval>('monthly');
   const [isProcessing, setIsProcessing] = useState(false);
+  const {t:translate} = useTranslation("common")
   
   const upgradeToPro = useVaultStore(state => state.upgradeToPro);
 
@@ -64,11 +66,11 @@ export function UpgradeModal({ visible, onClose }: UpgradeModalProps) {
 
     if (success) {
       Alert.alert(
-        '¡Bienvenido a PRO! 🎉',
-        'Ahora tienes acceso a 5 GB de almacenamiento y todas las funciones premium.',
+        translate("alert.vault.welcomeToPro"),
+        translate("alert.vault.welcomeToProMessage"),
         [
           {
-            text: 'Genial',
+            text: translate("alert.vault.welcomeToProButton"),
             onPress: () => {
               onClose();
             },
@@ -77,8 +79,8 @@ export function UpgradeModal({ visible, onClose }: UpgradeModalProps) {
       );
     } else {
       Alert.alert(
-        'Error',
-        'No se pudo procesar la suscripción. Por favor intenta nuevamente.',
+        translate("errors.vault.proErrorTitle"),
+        translate("errors.vault.proErrorMessage"),
         [{ text: 'OK' }]
       );
     }
@@ -101,7 +103,7 @@ export function UpgradeModal({ visible, onClose }: UpgradeModalProps) {
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
             <Ionicons name="close" size={28} color="#111827" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Actualizar a PRO</Text>
+          <Text style={styles.headerTitle}>{translate("modals.upgradeModal.modalHeader")}</Text>
           <View style={styles.closeButtonPlaceholder} />
         </View>
 
@@ -117,12 +119,12 @@ export function UpgradeModal({ visible, onClose }: UpgradeModalProps) {
 
           {/* Título */}
           <Text style={styles.title}>
-            Desbloquea todo el potencial de tu bóveda
+            {translate("modals.upgradeModal.modalTitle")}
           </Text>
 
           {/* Descripción */}
           <Text style={styles.description}>
-            Obtén más espacio y funciones exclusivas para proteger tu legado digital
+            {translate("modals.upgradeModal.modalSubtitle")}
           </Text>
 
           {/* Selector de intervalo */}
@@ -209,30 +211,30 @@ export function UpgradeModal({ visible, onClose }: UpgradeModalProps) {
 
           {/* Features */}
           <View style={styles.featuresContainer}>
-            <Text style={styles.featuresTitle}>Con PRO obtienes:</Text>
+            <Text style={styles.featuresTitle}>{translate("modals.upgradeModal.benefitsSectionTitle")}</Text>
             
             <FeatureItem
               icon="expand"
-              title="5 GB de almacenamiento"
-              description="10 veces más espacio que el plan FREE"
+              title={translate("modals.upgradeModal.benefit1")}
+              description={translate("modals.upgradeModal.benefit1Subtitle")}
             />
             
             <FeatureItem
               icon="headset"
-              title="Soporte prioritario"
-              description="Respuesta rápida a tus consultas"
+              title={translate("modals.upgradeModal.benefit2")}
+              description={translate("modals.upgradeModal.benefit2Subtitle")}
             />
             
             <FeatureItem
               icon="hardware-chip"
-              title="SSD físico para beneficiarios"
-              description="Tus archivos se entregarán en un disco físico"
+              title={translate("modals.upgradeModal.benefit3")}
+              description={translate("modals.upgradeModal.benefit3Subtitle")}
             />
             
             <FeatureItem
               icon="shield-checkmark"
-              title="Respaldo seguro"
-              description="Encriptación y múltiples copias de seguridad"
+              title={translate("modals.upgradeModal.benefit4")}
+              description={translate("modals.upgradeModal.benefit4Subtitle")}
             />
           </View>
 
@@ -260,7 +262,7 @@ export function UpgradeModal({ visible, onClose }: UpgradeModalProps) {
             ) : (
               <>
                 <Text style={styles.purchaseButtonText}>
-                  Suscribirse a PRO
+                  {translate("modals.upgradeModal.upgradeButton")}
                 </Text>
                 <Ionicons name="arrow-forward" size={20} color="#FFFFFF" />
               </>
@@ -268,7 +270,7 @@ export function UpgradeModal({ visible, onClose }: UpgradeModalProps) {
           </TouchableOpacity>
           
           <Text style={styles.footerNote}>
-            Cancela cuando quieras. Sin compromisos.
+            {translate("modals.upgradeModal.modalDisclaimer")}
           </Text>
         </View>
       </View>

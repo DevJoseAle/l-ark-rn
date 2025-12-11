@@ -4,6 +4,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useVaultPlan } from '@/src/stores/vault.store';
+import { useTranslation } from 'react-i18next';
 
 interface PlanBadgeProps {
   onUpgradePress?: () => void;
@@ -14,6 +15,7 @@ interface PlanBadgeProps {
  */
 export function PlanBadge({ onUpgradePress }: PlanBadgeProps) {
   const { isFree, isPro, planType } = useVaultPlan();
+  const { t: translate } = useTranslation("common");
 
   if (isFree) {
     return (
@@ -22,7 +24,7 @@ export function PlanBadge({ onUpgradePress }: PlanBadgeProps) {
         <View style={[styles.badge, styles.freeBadge]}>
           <Ionicons name="gift-outline" size={16} color="#059669" />
           <Text style={[styles.badgeText, styles.freeText]}>
-            Plan FREE
+            {translate("private.vault.planBadgeFree")}
           </Text>
         </View>
 
@@ -33,7 +35,7 @@ export function PlanBadge({ onUpgradePress }: PlanBadgeProps) {
             onPress={onUpgradePress}
             activeOpacity={0.7}
           >
-            <Text style={styles.upgradeButtonText}>Actualizar a PRO</Text>
+            <Text style={styles.upgradeButtonText}>{translate("private.vault.upgradeButton")}</Text>
             <Ionicons name="arrow-up-circle" size={18} color="#FFFFFF" />
           </TouchableOpacity>
         )}
@@ -48,13 +50,13 @@ export function PlanBadge({ onUpgradePress }: PlanBadgeProps) {
         <View style={[styles.badge, styles.proBadge]}>
           <Ionicons name="star" size={16} color="#FBBF24" />
           <Text style={[styles.badgeText, styles.proText]}>
-            Plan PRO
+            {translate("private.vault.planBadgePro")}
           </Text>
         </View>
 
         {/* Texto descriptivo */}
         <Text style={styles.proDescription}>
-          Tienes acceso completo a todas las funciones
+          {translate("private.vault.proBenefits")}
         </Text>
       </View>
     );

@@ -16,6 +16,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   Alert,
@@ -52,7 +53,7 @@ export default function CampaignDetailScreen() {
   const [error, setError] = useState<string | null>(null);
   const [showDonateModal, setShowDonateModal] = useState(false);
   const [showCertificateModal, setShowCertificateModal] = useState(false);
-
+  const { t: translate } = useTranslation("common");
   const campaignId = params.id as string;
   const handleBackPress = () => {
     router.replace('/(auth)/(tabs)/arkHome');
@@ -221,16 +222,20 @@ export default function CampaignDetailScreen() {
               {campaign.title}
             </Text>
             <Text style={[styles.owner, { color: colors.secondaryText }]}>
-              por @{campaign.owner.display_name}
+              {translate("private.campaign.campaignDetail.campaignOwner", { owner: campaign.owner.display_name })}
             </Text>
           </View>
-          <View>
-            <ButtonXL
-            icon={'share-social-outline'}
-              title=' Generar Certificado Digital '
-              action={() => {setShowCertificateModal(true) }} />
-          </View>
+          {
+            !canDonate && (
+              <View>
+                <ButtonXL
+                  icon={'share-social-outline'}
+                  title={translate("private.campaign.campaignDetail.generateButton")}
+                  action={() => { setShowCertificateModal(true) }} />
+              </View>
+            )
 
+          }
 
           {/* Progress Card */}
           <View
@@ -255,7 +260,7 @@ export default function CampaignDetailScreen() {
               <View style={styles.daysContainer}>
                 <Ionicons name="time-outline" size={16} color={colors.secondaryText} />
                 <Text style={[styles.daysText, { color: colors.secondaryText }]}>
-                  {daysRemaining} días restantes
+                  {translate("private.campaign.campaignDetail.daysRemaining", { count: daysRemaining })}
                 </Text>
               </View>
             </View>
@@ -277,7 +282,7 @@ export default function CampaignDetailScreen() {
             <View style={styles.amountsRow}>
               <View>
                 <Text style={[styles.amountLabel, { color: colors.secondaryText }]}>
-                  Recaudado
+                  {translate("private.campaign.campaignDetail.collected")}
                 </Text>
                 <Text style={[styles.amountValue, { color: colors.text }]}>
                   {Formatters.formatCLP(campaign.total_raised)}
@@ -285,7 +290,7 @@ export default function CampaignDetailScreen() {
               </View>
               <View style={{ alignItems: 'flex-end' }}>
                 <Text style={[styles.amountLabel, { color: colors.secondaryText }]}>
-                  Meta
+                  {translate("private.campaign.campaignDetail.goal")}
                 </Text>
                 <Text style={[styles.amountValue, { color: colors.text }]}>
                   {Formatters.formatCLP(campaign.goal_amount ?? 0)}
@@ -313,7 +318,7 @@ export default function CampaignDetailScreen() {
             <View style={styles.cardHeader}>
               <Ionicons name="document-text-outline" size={24} color={colors.primary} />
               <Text style={[styles.cardTitle, { color: colors.text }]}>
-                Descripción
+                {translate("private.campaign.campaignDetail.description")}
               </Text>
             </View>
             <Text style={[styles.description, { color: colors.text }]}>
@@ -339,7 +344,9 @@ export default function CampaignDetailScreen() {
           >
             <View style={styles.cardHeader}>
               <Ionicons name="flag-outline" size={24} color={colors.primary} />
-              <Text style={[styles.cardTitle, { color: colors.text }]}>Metas</Text>
+              <Text style={[styles.cardTitle, { color: colors.text }]}>
+                {translate("private.campaign.campaignDetail.goals")}
+              </Text>
             </View>
 
             <View style={styles.goalItem}>
@@ -348,7 +355,7 @@ export default function CampaignDetailScreen() {
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={[styles.goalLabel, { color: colors.secondaryText }]}>
-                  Meta total
+                  {translate("private.campaign.campaignDetail.totalGoal")}
                 </Text>
                 <Text style={[styles.goalValue, { color: colors.text }]}>
                   {Formatters.formatCLP(campaign.goal_amount ?? 0)}
@@ -362,7 +369,7 @@ export default function CampaignDetailScreen() {
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={[styles.goalLabel, { color: colors.secondaryText }]}>
-                  Meta mínima
+                  {translate("private.campaign.campaignDetail.minimunGoal")}
                 </Text>
                 <Text style={[styles.goalValue, { color: colors.text }]}>
                   {Formatters.formatCLP(campaign.soft_cap ?? 0)}
@@ -377,7 +384,7 @@ export default function CampaignDetailScreen() {
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={[styles.goalLabel, { color: colors.secondaryText }]}>
-                    Meta media
+                    {translate("private.campaign.campaignDetail.mediumGoal")}
                   </Text>
                   <Text style={[styles.goalValue, { color: colors.text }]}>
                     {Formatters.formatCLP(campaign.hard_cap)}
@@ -407,7 +414,7 @@ export default function CampaignDetailScreen() {
               <View style={styles.cardHeader}>
                 <Ionicons name="people-outline" size={24} color={colors.primary} />
                 <Text style={[styles.cardTitle, { color: colors.text }]}>
-                  Beneficiarios
+                  {translate("private.campaign.campaignDetail.beneficiaries")}
                 </Text>
               </View>
 
@@ -464,7 +471,9 @@ export default function CampaignDetailScreen() {
             >
               <View style={styles.cardHeader}>
                 <Ionicons name="images-outline" size={24} color={colors.primary} />
-                <Text style={[styles.cardTitle, { color: colors.text }]}>Galería</Text>
+                <Text style={[styles.cardTitle, { color: colors.text }]}>
+                  {translate("private.campaign.campaignDetail.gallery")}
+                </Text>
               </View>
 
               <View style={styles.galleryGrid}>
@@ -528,6 +537,7 @@ export default function CampaignDetailScreen() {
       </ScrollView>
       {canDonate && (
         <FloatingDonateButton
+          text={translate("common.donate")}
           onPress={handleOpenDonateModal}
           disabled={campaign?.status !== 'active'}
         />

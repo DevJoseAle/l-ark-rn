@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { formatBytes } from '@/src/utils/vaultUtils';
+import { useTranslation } from 'react-i18next';
 
 interface DeleteConfirmDialogProps {
   visible: boolean;
@@ -27,8 +28,8 @@ export function DeleteConfirmDialog({
   onConfirm,
   onCancel,
 }: DeleteConfirmDialogProps) {
+  const {t:translate} = useTranslation("common")
   if (!file) return null;
-
   return (
     <Modal
       visible={visible}
@@ -45,11 +46,11 @@ export function DeleteConfirmDialog({
           </View>
 
           {/* Title */}
-          <Text style={styles.title}>¿Eliminar archivo?</Text>
+          <Text style={styles.title}>{translate("modals.deleteDialog.title")}</Text>
 
           {/* Message */}
           <Text style={styles.message}>
-            Esta acción no se puede deshacer. El archivo será eliminado permanentemente.
+           {translate("modals.deleteDialog.disclaimer")}
           </Text>
 
           {/* File info */}
@@ -82,7 +83,7 @@ export function DeleteConfirmDialog({
               disabled={isDeleting}
               activeOpacity={0.7}
             >
-              <Text style={styles.cancelButtonText}>Cancelar</Text>
+              <Text style={styles.cancelButtonText}>{translate("modals.deleteDialog.cancelButton")}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -96,7 +97,7 @@ export function DeleteConfirmDialog({
               ) : (
                 <>
                   <Ionicons name="trash-outline" size={18} color="white" />
-                  <Text style={styles.deleteButtonText}>Eliminar</Text>
+                  <Text style={styles.deleteButtonText}>{translate("modals.deleteDialog.title")}</Text>
                 </>
               )}
             </TouchableOpacity>

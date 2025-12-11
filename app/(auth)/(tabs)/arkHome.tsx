@@ -26,6 +26,7 @@ export default function ArkHomePage() {
     handleRetry,
     handleToggleVisibility,
     handleRefresh,
+    translate
   } = useHomeData();
 
   const [refreshing, setRefreshing] = useState(false);
@@ -72,7 +73,7 @@ export default function ArkHomePage() {
       case 'loading':
         return (
           <View style={styles.centerContent}>
-            <Text style={styles.loadingText}>Cargando...</Text>
+            <Text style={styles.loadingText}>{translate("common.loading")}</Text>
           </View>
         );
 
@@ -114,12 +115,15 @@ export default function ArkHomePage() {
               onSendLink={handleSendLink}
               onToggleVisibility={handleToggleVisibility}
               handleBottomSheetOpen={handleBottomSheetOpen}
+              translate={translate}
             />
 
             {/* Donations Section */}
             {donations.length > 0 && (
               <View style={styles.donationsSection}>
-                <Text style={styles.donationsTitle}>Donaciones:</Text>
+                <Text style={styles.donationsTitle}>
+                  {translate("private.home.donationSectionTitle")}
+                </Text>
                 
                 {donations.map((donation) => (
                   <DonationItem
@@ -136,7 +140,7 @@ export default function ArkHomePage() {
             {donations.length === 0 && (
               <View style={styles.emptyDonations}>
                 <Text style={styles.emptyDonationsText}>
-                  Aún no hay donaciones para esta campaña
+                  {translate("private.home.noDonationsMessage")}
                 </Text>
               </View>
             )}

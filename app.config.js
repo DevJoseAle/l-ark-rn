@@ -18,13 +18,29 @@ export default {
 
     ios: {
       supportsTablet: true,
+      requireFullScreen: false,
       bundleIdentifier: "com.devjoseale.lark",
       associatedDomains: [
         "applinks:l-ark.app",
         "applinks:www.l-ark.app"
       ],
       infoPlist: {
-        ITSAppUsesNonExemptEncryption: false
+        ITSAppUsesNonExemptEncryption: false,
+
+        // ✅ iPhone: Solo Portrait (se respeta automáticamente)
+        UISupportedInterfaceOrientations: [
+          "UIInterfaceOrientationPortrait",
+          "UIInterfaceOrientationPortraitUpsideDown"
+        ],
+
+        // ✅ iPad: TODAS las orientaciones (requerido para multitasking)
+        // NOTA: Aunque declaramos landscape, lo bloqueamos en código
+        UISupportedInterfaceOrientations_iPad: [
+          "UIInterfaceOrientationPortrait",
+          "UIInterfaceOrientationPortraitUpsideDown",
+          "UIInterfaceOrientationLandscapeLeft",      // Solo para Apple
+          "UIInterfaceOrientationLandscapeRight"      // Solo para Apple
+        ],
       },
       splash: {
         image: "./assets/images/Logo_lark.png",
@@ -168,7 +184,17 @@ export default {
         {
           appleTeamId: "G2VZD86Z48"
         }
+      ],
+      [
+        "expo-screen-orientation",
+        {
+          initialOrientation: "PORTRAIT"
+        }
+      ],
+      [
+        "expo-localization"
       ]
+
     ],
 
     experiments: {

@@ -4,6 +4,7 @@ import { useCampaignStore } from "@/src/stores/campaign.store";
 import { useDonationStore } from "@/src/stores/donation.store";
 import { useExchangeRatesStore } from "@/src/stores/exchangeRates.store";
 import { useState, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 
 export type HomeViewState = 'loading' | 'error' | 'empty' | 'success';
 
@@ -103,6 +104,8 @@ export function useHomeData() {
     isVisible: campaign.visibility === 'public',
   } : null;
 
+  const {t: translate} = useTranslation("common");
+
   return {
     viewState,
     campaign,
@@ -114,6 +117,7 @@ export function useHomeData() {
     handleToggleVisibility,
     handleRefresh,
     loadData,
+    translate
   };
 }
 

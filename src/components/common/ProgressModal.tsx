@@ -11,22 +11,13 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/theme';
+import { useTranslation } from 'react-i18next';
 
 interface ProgressStep {
-  label: string;
+  labelKey: string;
   progress: number;
   icon: keyof typeof Ionicons.glyphMap;
 }
-
-const STEPS: ProgressStep[] = [
-  { label: 'Verificando usuario', progress: 10, icon: 'person-outline' },
-  { label: 'Creando campaña', progress: 20, icon: 'create-outline' },
-  { label: 'Subiendo imágenes de campaña', progress: 30, icon: 'images-outline' },
-  { label: 'Guardando imágenes', progress: 50, icon: 'save-outline' },
-  { label: 'Subiendo imágenes de diagnóstico', progress: 60, icon: 'medical-outline' },
-  { label: 'Creando beneficiarios', progress: 70, icon: 'people-outline' },
-  { label: 'Finalizando', progress: 100, icon: 'checkmark-circle-outline' },
-];
 
 interface ProgressModalProps {
   visible: boolean;
@@ -47,6 +38,17 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
 }) => {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const { t: translate } = useTranslation("common");
+
+  const STEPS: ProgressStep[] = [
+    { labelKey: 'private.createCampaign.progressStep1', progress: 10, icon: 'person-outline' },
+    { labelKey: 'private.createCampaign.progressStep2', progress: 20, icon: 'create-outline' },
+    { labelKey: 'private.createCampaign.progressStep3', progress: 30, icon: 'images-outline' },
+    { labelKey: 'private.createCampaign.progressStep4', progress: 50, icon: 'save-outline' },
+    { labelKey: 'private.createCampaign.progressStep5', progress: 60, icon: 'medical-outline' },
+    { labelKey: 'private.createCampaign.progressStep6', progress: 70, icon: 'people-outline' },
+    { labelKey: 'private.createCampaign.progressStep7', progress: 100, icon: 'checkmark-circle-outline' },
+  ];
 
   const getCurrentStepIndex = () => {
     return STEPS.findIndex((step) => step.progress >= progress);
@@ -78,10 +80,10 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
                 <ActivityIndicator size="large" color={colors.primary} />
               </View>
               <Text style={[styles.title, { color: colors.text }]}>
-                Creando tu campaña
+                {translate("private.createCampaign.progressModalTitle")}
               </Text>
               <Text style={[styles.subtitle, { color: colors.secondaryText }]}>
-                Por favor espera, esto puede tomar unos momentos
+                {translate("private.createCampaign.progressModalSubtitle")}
               </Text>
             </View>
           ) : (
@@ -90,7 +92,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
                 <Ionicons name="alert-circle" size={48} color={colors.error} />
               </View>
               <Text style={[styles.title, { color: colors.text }]}>
-                Error al crear campaña
+                {translate("private.createCampaign.progressModalErrorTitle")}
               </Text>
               <Text style={[styles.subtitle, { color: colors.secondaryText }]}>
                 {error}
@@ -131,7 +133,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
               const isPending = progress < step.progress;
 
               return (
-                <View key={step.label} style={styles.stepItem}>
+                <View key={step.labelKey} style={styles.stepItem}>
                   {/* Icon */}
                   <View
                     style={[
@@ -176,7 +178,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
                       },
                     ]}
                   >
-                    {step.label}
+                    {translate(step.labelKey)}
                   </Text>
 
                   {/* Loading indicator for current step */}
@@ -201,7 +203,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
                   onPress={onCancel}
                 >
                   <Text style={[styles.buttonText, { color: colors.text }]}>
-                    Cancelar
+                    {translate("private.createCampaign.progressModalCancelButton")}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -211,7 +213,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
                   onPress={onRetry}
                 >
                   <Text style={[styles.buttonText, { color: colors.customWhite }]}>
-                    Reintentar
+                    {translate("private.createCampaign.progressModalRetryButton")}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -222,7 +224,6 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
     </Modal>
   );
 };
-
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,

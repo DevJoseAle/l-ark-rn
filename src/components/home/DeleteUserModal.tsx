@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColors } from '@/hooks/use-theme-color';
+import { useTranslation } from 'react-i18next';
 
 interface DeleteAccountModalProps {
   visible: boolean;
@@ -20,19 +21,20 @@ interface DeleteAccountModalProps {
   onConfirm: (reason: string) => Promise<void>;
 }
 
-const DELETION_REASONS = [
-  { value: 'user_requested', label: 'Simplemente quiero irme', icon: 'log-out-outline' },
-  { value: 'privacy_concerns', label: 'Preocupaciones de privacidad', icon: 'shield-outline' },
-  { value: 'not_using_app', label: 'Ya no uso la app', icon: 'time-outline' },
-  { value: 'switching_platform', label: 'Voy a usar otra plataforma', icon: 'swap-horizontal-outline' },
-  { value: 'too_complex', label: 'Es muy complicada', icon: 'construct-outline' },
-  { value: 'missing_features', label: 'Falta alguna característica', icon: 'apps-outline' },
-  { value: 'technical_issues', label: 'Problemas técnicos', icon: 'bug-outline' },
-  { value: 'cost_concerns', label: 'Costo muy alto', icon: 'cash-outline' },
-  { value: 'other', label: 'Otra razón', icon: 'ellipsis-horizontal-outline' },
-];
 
 export function DeleteAccountModal({ visible, onClose, onConfirm }: DeleteAccountModalProps) {
+  const {t:translate} = useTranslation("common")
+  const DELETION_REASONS = [
+    { value: 'user_requested',     label: translate("modals.deleteAccount.option1"), icon: 'log-out-outline' },
+    { value: 'privacy_concerns',   label: translate("modals.deleteAccount.option2"), icon: 'shield-outline' },
+    { value: 'not_using_app',      label: translate("modals.deleteAccount.option3"), icon: 'time-outline' },
+    { value: 'switching_platform', label: translate("modals.deleteAccount.option4"), icon: 'swap-horizontal-outline' },
+    { value: 'too_complex',        label: translate("modals.deleteAccount.option5"), icon: 'construct-outline' },
+    { value: 'missing_features',   label: translate("modals.deleteAccount.option6"), icon: 'apps-outline' },
+    { value: 'technical_issues',   label: translate("modals.deleteAccount.option7"), icon: 'bug-outline' },
+    { value: 'cost_concerns',      label: translate("modals.deleteAccount.option8"), icon: 'cash-outline' },
+    { value: 'other',              label: translate("modals.deleteAccount.option9"), icon: 'ellipsis-horizontal-outline' },
+  ];
   const colors = useThemeColors();
   const [selectedReason, setSelectedReason] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -71,10 +73,10 @@ export function DeleteAccountModal({ visible, onClose, onConfirm }: DeleteAccoun
               <Ionicons name="warning" size={32} color="#EF4444" />
             </View>
             <Text style={[styles.title, { color: colors.text }]}>
-              ¿Por qué te vas? 😢
+              {translate("modals.deleteAccount.whyYouLeave")}
             </Text>
             <Text style={[styles.subtitle, { color: colors.secondaryText }]}>
-              Tu feedback nos ayuda a mejorar
+             {translate("modals.deleteAccount.feedback")}
             </Text>
           </View>
 
@@ -121,7 +123,7 @@ export function DeleteAccountModal({ visible, onClose, onConfirm }: DeleteAccoun
           <View style={[styles.warningBox, { backgroundColor: '#FEF2F2' }]}>
             <Ionicons name="alert-circle" size={20} color="#EF4444" />
             <Text style={styles.warningText}>
-              Esta acción es irreversible. Tu cuenta será eliminada permanentemente.
+              {translate("modals.deleteAccount.warning")}
             </Text>
           </View>
 
@@ -142,7 +144,7 @@ export function DeleteAccountModal({ visible, onClose, onConfirm }: DeleteAccoun
                 <>
                   <Ionicons name="trash-outline" size={20} color="#FFF" />
                   <Text style={styles.confirmButtonText}>
-                    Eliminar Cuenta
+                    {translate("modals.deleteAccount.deleteButton")}
                   </Text>
                 </>
               )}
@@ -155,7 +157,7 @@ export function DeleteAccountModal({ visible, onClose, onConfirm }: DeleteAccoun
               activeOpacity={0.8}
             >
               <Text style={[styles.cancelButtonText, { color: colors.secondaryText }]}>
-                Cancelar
+                {translate("modals.deleteAccount.cancelButton")}
               </Text>
             </TouchableOpacity>
           </View>

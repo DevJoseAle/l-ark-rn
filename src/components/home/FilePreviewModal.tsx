@@ -15,6 +15,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { formatBytes, formatRelativeDate } from '@/src/utils/vaultUtils';
 import { GradientBackground } from '@/src/components/common/GradiendBackground';
+import { useTranslation } from 'react-i18next';
 
 const { width, height } = Dimensions.get('window');
 
@@ -36,7 +37,7 @@ export function FilePreviewModal({
   onDelete,
 }: FilePreviewModalProps) {
   const [imageLoading, setImageLoading] = React.useState(true);
-
+  const {t:translate} = useTranslation("common")
   if (!file) return null;
 
   const isImage = file.file_type === 'image';
@@ -95,7 +96,9 @@ export function FilePreviewModal({
               {imageLoading && (
                 <View style={styles.loadingContainer}>
                   <ActivityIndicator size="large" color="white" />
-                  <Text style={styles.loadingText}>Cargando imagen...</Text>
+                  <Text style={styles.loadingText}>
+                    {translate("modals.filePreview.imageLoading")}
+                  </Text>
                 </View>
               )}
               
@@ -111,9 +114,9 @@ export function FilePreviewModal({
           ) : isPDF ? (
             <View style={styles.pdfContainer}>
               <Ionicons name="document-text" size={80} color="rgba(255,255,255,0.3)" />
-              <Text style={styles.pdfTitle}>Documento PDF</Text>
+              <Text style={styles.pdfTitle}>{translate("modals.filePreview.mainButton")}</Text>
               <Text style={styles.pdfSubtitle}>
-                Presiona el botón de descarga para abrir este archivo
+                {translate("modals.filePreview.filePreviewFailed")}
               </Text>
             </View>
           ) : (
@@ -123,7 +126,7 @@ export function FilePreviewModal({
                 {file.file_type.toUpperCase()}
               </Text>
               <Text style={styles.unsupportedSubtitle}>
-                Vista previa no disponible para este tipo de archivo
+                {translate("modals.filePreview.filePreviewFailed")}
               </Text>
             </View>
           )}
@@ -133,31 +136,31 @@ export function FilePreviewModal({
         <View style={styles.details}>
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Nombre:</Text>
+              <Text style={styles.detailLabel}>{translate("modals.filePreview.name")}</Text>
               <Text style={styles.detailValue}>{file.file_name}</Text>
             </View>
 
             <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Tipo:</Text>
+              <Text style={styles.detailLabel}>{translate("modals.filePreview.type")}</Text>
               <Text style={styles.detailValue}>{file.mime_type}</Text>
             </View>
 
             <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Tamaño:</Text>
+              <Text style={styles.detailLabel}>{translate("modals.filePreview.size")}</Text>
               <Text style={styles.detailValue}>
                 {formatBytes(file.file_size_bytes)}
               </Text>
             </View>
 
             <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Subido:</Text>
+              <Text style={styles.detailLabel}>{translate("modals.filePreview.upload")}</Text>
               <Text style={styles.detailValue}>
                 {formatRelativeDate(file.created_at)}
               </Text>
             </View>
 
             <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>ID:</Text>
+              <Text style={styles.detailLabel}>{translate("modals.filePreview.id")}</Text>
               <Text style={[styles.detailValue, styles.idText]} numberOfLines={1}>
                 {file.id}
               </Text>

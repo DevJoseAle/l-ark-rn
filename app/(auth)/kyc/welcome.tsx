@@ -12,27 +12,29 @@ import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/theme';
 import { GradientBackground } from '@/src/components/common/GradiendBackground';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 
 export default function KYCIntroScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const { t: translate } = useTranslation("common");
 
   const steps = [
     {
       icon: 'card-outline' as const,
-      title: 'Cédula de identidad - Frontal',
-      description: 'Foto clara del frente de tu cédula',
+      titleKey: 'private.kyc.step1Title',
+      descriptionKey: 'private.kyc.step1Description',
     },
     {
       icon: 'card-outline' as const,
-      title: 'Cédula de identidad - Reverso',
-      description: 'Foto clara del reverso de tu cédula',
+      titleKey: 'private.kyc.step2Title',
+      descriptionKey: 'private.kyc.step2Description',
     },
     {
       icon: 'person-circle-outline' as const,
-      title: 'Selfie',
-      description: 'Una foto tuya para verificar tu identidad',
+      titleKey: 'private.kyc.step3Title',
+      descriptionKey: 'private.kyc.step3Description',
     },
   ];
 
@@ -48,12 +50,12 @@ export default function KYCIntroScreen() {
 
         {/* Title */}
         <Text style={[styles.title, { color: colors.text }]}>
-          Verificación de identidad
+          {translate("private.kyc.introTitle")}
         </Text>
 
         {/* Subtitle */}
         <Text style={[styles.subtitle, { color: colors.secondaryText }]}>
-          Para crear campañas necesitamos verificar tu identidad
+          {translate("private.kyc.introSubtitle")}
         </Text>
 
         {/* Steps */}
@@ -85,10 +87,10 @@ export default function KYCIntroScreen() {
               </View>
               <View style={styles.stepContent}>
                 <Text style={[styles.stepTitle, { color: colors.text }]}>
-                  {step.title}
+                  {translate(step.titleKey)}
                 </Text>
                 <Text style={[styles.stepDescription, { color: colors.secondaryText }]}>
-                  {step.description}
+                  {translate(step.descriptionKey)}
                 </Text>
               </View>
             </View>
@@ -105,7 +107,7 @@ export default function KYCIntroScreen() {
             onPress={() => router.push('/(auth)/kyc/documents')}
           >
             <Text style={[styles.buttonText, { color: colors.customWhite }]}>
-              Continuar
+              {translate("private.kyc.continueButton")}
             </Text>
           </TouchableOpacity>
 
@@ -114,7 +116,7 @@ export default function KYCIntroScreen() {
             onPress={() => router.back()}
           >
             <Text style={[styles.buttonOutlineText, { color: colors.primary }]}>
-              Regresar
+              {translate("private.kyc.backButton")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -122,12 +124,11 @@ export default function KYCIntroScreen() {
     </GradientBackground>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 24,
-    paddingTop: 80,
+    paddingTop: 50,
     paddingBottom: 40,
   },
   iconContainer: {
@@ -152,7 +153,8 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   stepsContainer: {
-    gap: 16,
+    gap: 8,
+    marginBottom:8
   },
   stepCard: {
     flexDirection: 'row',

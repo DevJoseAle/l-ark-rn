@@ -11,6 +11,7 @@ import { useCampaignStore } from '@/src/stores/campaign.store';
 import { CountryCode, getCountryFlag, getCurrencyCode } from '@/src/types/campaign-create.types';
 import { useExchangeRatesStore } from '@/src/stores/exchangeRates.store';
 import { fromUSDNumberToCurrencyString } from '@/src/utils/ratesUtils';
+import { TFunction } from 'i18next';
 
 interface CampaignCardProps {
   totalRaised: string;
@@ -23,6 +24,7 @@ interface CampaignCardProps {
   onSendLink?: () => void;
   onToggleVisibility?: () => void;
   handleBottomSheetOpen: () => void;
+  translate: TFunction<"common", undefined>
 }
 
 export default function CampaignCard({
@@ -33,7 +35,8 @@ export default function CampaignCard({
   isVisible = true,
   onShare,
   onSendLink,
-  handleBottomSheetOpen
+  handleBottomSheetOpen,
+  translate
 }: CampaignCardProps) {
   const theme = useThemeColors();
   const styles = cardCampaignStyles(theme);
@@ -60,11 +63,11 @@ export default function CampaignCard({
       {/* Header con Total Recaudado */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.headerLabel}>Total Recaudado:</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <Text style={styles.headerLabel}>Estatus Campaña:</Text> 
             <Text style={styles.headerLabel}>{isVisible ? "Visible" : "Oculta"}</Text>
           </View>
+          <Text style={styles.headerLabel}>{translate("private.home.campaignCard.totalRaised")}</Text>
             <View style={{flexDirection: 'row'}}>
             <Text style={styles.totalAmountCode}>
             {getCurrencyCode(country)}
@@ -85,7 +88,7 @@ export default function CampaignCard({
 
       {/* Progress Section */}
       <View style={styles.progressSection}>
-        <Text style={styles.progressLabel}>Tu meta:</Text>
+        <Text style={styles.progressLabel}>{translate("private.home.campaignCard.yourGoal")}</Text>
         
         <View style={styles.progressAmounts}>
           <Text style={styles.currentAmount}>{getCurrencyCode(country)}: {fromUSDNumberToCurrencyString(currentAmount, country)}</Text>
@@ -97,7 +100,7 @@ export default function CampaignCard({
           <View style={[styles.progressBarFill, { width: `${percentage}%` }]} />
         </View>
 
-        <Text style={styles.percentage}>¡Llevas un {percentage}% de tu meta!</Text>
+        <Text style={styles.percentage}>{translate("private.home.campaignCard.goalPercentage", { percentage })}</Text>
       </View>
 
       {/* Action Buttons */}
@@ -106,7 +109,7 @@ export default function CampaignCard({
         onPress={handleViewCampaign}
         disabled={!isBtnActive}
       >
-        <Text style={styles.primaryButtonText}>Ver mi Campaña</Text>
+        <Text style={styles.primaryButtonText}>{translate("private.home.campaignCard.toMyCampaignButton")}</Text>
         <Ionicons name="document-text-outline" size={20} color="#0f1c3a" />
       </TouchableOpacity>
 
@@ -115,7 +118,9 @@ export default function CampaignCard({
           style={styles.secondaryButton}
           onPress={onShare}
         >
-          <Text style={styles.secondaryButtonText}>Compartir</Text>
+          <Text style={styles.secondaryButtonText}>
+            {translate("private.home.campaignCard.shareButton")}
+          </Text>
           <Ionicons name="share-outline" size={18} color="#0f1c3a" />
         </TouchableOpacity>
 
@@ -123,7 +128,7 @@ export default function CampaignCard({
           style={styles.secondaryButton}
           onPress={onSendLink}
         >
-          <Text style={styles.secondaryButtonText}>Enviar Campaña</Text>
+          <Text style={styles.secondaryButtonText}>{translate("private.home.campaignCard.sendCampaign")}</Text>
           <Ionicons name="link-outline" size={18} color="#0f1c3a" />
         </TouchableOpacity>
       </View>

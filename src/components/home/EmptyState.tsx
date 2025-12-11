@@ -7,6 +7,7 @@ import { useThemeColors } from '@/hooks/use-theme-color';
 import { useRouter } from 'expo-router';
 import { useAuthStore } from '@/src/stores/authStore';
 import { KYCUserStatus } from '@/src/types/kyc.types';
+import { useTranslation } from 'react-i18next';
 
 interface EmptyStateProps {
   onCreateCampaign?: () => void;
@@ -17,6 +18,7 @@ export default function EmptyState({ onCreateCampaign }: EmptyStateProps) {
     const styles = emptyStateStyles(color);
     const router = useRouter()
     const kycStatus = useAuthStore((state) => state.kycStatus);
+    const { t: translate } = useTranslation("common")
     const handleCreateCampaign = () =>{
       switch (kycStatus) {
         case KYCUserStatus.PENDING:
@@ -43,8 +45,7 @@ export default function EmptyState({ onCreateCampaign }: EmptyStateProps) {
       </TouchableOpacity>
       
       <Text style={styles.message}>
-        Aun no tienes campaña.{'\n'}
-        Presiona aquí para crear una
+        {translate("private.home.emptyStateMessage")}
       </Text>
     </View>
   );

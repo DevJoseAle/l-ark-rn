@@ -3,8 +3,10 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 export function EmptyFilesList() {
+  const {t:translate} = useTranslation("common")
   return (
     <View style={styles.container}>
       {/* Icono */}
@@ -14,28 +16,27 @@ export function EmptyFilesList() {
 
       {/* Título */}
       <Text style={styles.title}>
-        Aún no has subido archivos
+        {translate("private.vault.emptyStateTitle")}
       </Text>
 
       {/* Descripción */}
       <Text style={styles.description}>
-        Guarda documentos importantes, fotos y videos de forma segura en tu
-        bóveda digital
+       {translate("private.vault.emptyStateMessage")}
       </Text>
 
       {/* Lista de tipos aceptados */}
       <View style={styles.typesContainer}>
-        <Text style={styles.typesTitle}>Puedes subir:</Text>
+        <Text style={styles.typesTitle}>{translate("private.vault.typeItemsTitle")}</Text>
         <View style={styles.typesList}>
-          <TypeItem icon="image" text="Fotos y videos" />
-          <TypeItem icon="document-text" text="PDFs y documentos" />
-          <TypeItem icon="musical-notes" text="Audio" />
+          <TypeItem icon="image" text={translate("private.vault.typeItem1")} />
+          <TypeItem icon="document-text" text={translate("private.vault.typeItem2")} />
+          <TypeItem icon="musical-notes" text={translate("private.vault.typeItem3")} />
         </View>
       </View>
 
       {/* Nota */}
       <Text style={styles.note}>
-        Toca el botón + abajo para comenzar
+        {translate("private.vault.invitation")}
       </Text>
     </View>
   );

@@ -23,9 +23,9 @@ export default function LoginScreen() {
     showTermsModal,
     handleAcceptTerms,
     handleDeclineTerms,
+    translate
   } = useLogin(router);
 
-  console.log('🔍 showTermsModal en render:', showTermsModal); // ✅ Debug
   const OS = Platform.OS
   return (
     <GradientBackground>
@@ -45,7 +45,7 @@ export default function LoginScreen() {
               onPress={() => router.back()}
             >
               <Ionicons name="chevron-back" size={24} color={colors.primary} />
-              <Text style={styles.backText}>Atrás</Text>
+              <Text style={styles.backText}>{translate("common.backButton")}</Text>
             </TouchableOpacity>
 
             {/* Logo y título */}
@@ -56,7 +56,7 @@ export default function LoginScreen() {
             </View>
 
             {/* Título de sección */}
-            <Text style={styles.heading}>Ingresar</Text>
+            <Text style={styles.heading}>{translate("public.login.title")}</Text>
 
             {/* Input de email */}
             <View style={styles.inputContainer}>
@@ -68,7 +68,7 @@ export default function LoginScreen() {
               />
               <TextInput
                 style={styles.input}
-                placeholder="Email"
+                placeholder={translate("public.login.inputPlaceholder")}
                 placeholderTextColor={colors.secondaryText}
                 value={email}
                 onChangeText={setEmail}
@@ -82,7 +82,7 @@ export default function LoginScreen() {
             <CheckBox
               setFn={() => setIsChecked(!isChecked)}
               isValid={isChecked}
-              text="Entiendo que, si no existe una cuenta con este correo, se registrará una nueva"
+              text={translate("public.login.checkbox")}
             />
 
             {/* Botón continuar */}
@@ -99,7 +99,7 @@ export default function LoginScreen() {
                 styles.continueButtonText,
                 !isFormValid && styles.continueButtonTextDisabled
               ]}>
-                Continuar
+                {translate("public.login.continueButton")}
               </Text>
             </TouchableOpacity>
           </View>

@@ -10,6 +10,9 @@ import { DarkNavigationTheme, LightNavigationTheme } from '@/hooks/use-theme-col
 import { GlobalLoadingProvider } from '@/src/Providers/GlobalLoadingProvider';
 import { useDeepLinking } from '@/src/features/home/useDeepLinking';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { useEffect } from 'react';
+import * as ScreenOrientation from 'expo-screen-orientation';
+
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -18,6 +21,26 @@ export const unstable_settings = {
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   useDeepLinking();
+    useEffect(() => {
+    async function lockOrientation() {
+      try {
+        // Bloquear a portrait vertical
+        await ScreenOrientation.lockAsync(
+          ScreenOrientation.OrientationLock.PORTRAIT_UP
+        );
+        console.log('✅ Orientación bloqueada a Portrait');
+      } catch (error) {
+        console.error('❌ Error bloqueando orientación:', error);
+      }
+    }
+
+    lockOrientation();
+
+    // Cleanup: desbloquear cuando el componente se desmonte
+    return () => {
+      ScreenOrientation.unlockAsync();
+    };
+  }, []);
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <BottomSheetModalProvider>

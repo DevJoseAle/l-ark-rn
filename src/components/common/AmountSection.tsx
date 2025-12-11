@@ -15,10 +15,12 @@ import { Formatters } from '@/src/utils/formatters';
 import { getCurrencyCode } from '@/src/types/campaign-create.types';
 import { HARD_CAP_AMOUNTS_BY_COUNTRY, MAX_AMOUNTS_BY_COUNTRY, SOFT_CAP_AMOUNTS_BY_COUNTRY } from '@/src/utils/campaingConstants';
 import { fromUSDtoCurrencyString } from '@/src/utils/ratesUtils';
+import { useTranslation } from 'react-i18next';
 
 export const AmountsSection = () => {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const { t: translate } = useTranslation("common");
 
   const {
     formData,
@@ -29,11 +31,19 @@ export const AmountsSection = () => {
     maxGoalAmount,
     minGoalAmount
   } = useCreateCampaignStore();
+  
   const selectedCountry = formData.country;
-  const minAndMaxAmountsGoal = () => `Entre ${Formatters.formatCLPInput((minGoalAmount()))} ${getCurrencyCode(selectedCountry)} y ${Formatters.formatCLPInput(maxGoalAmount())} ${getCurrencyCode(selectedCountry)}`
+  
+  const minAndMaxAmountsGoal = () => translate("private.createCampaign.goalAmountHint", {
+    min: Formatters.formatCLPInput(minGoalAmount()),
+    max: Formatters.formatCLPInput(maxGoalAmount()),
+    currency: getCurrencyCode(selectedCountry)
+  });
+  
   const softCapPlaceholder = fromUSDtoCurrencyString(SOFT_CAP_AMOUNTS_BY_COUNTRY[selectedCountry], selectedCountry);
   const hardCapPlaceholder = fromUSDtoCurrencyString(HARD_CAP_AMOUNTS_BY_COUNTRY[selectedCountry], selectedCountry);
   const totalAmountPlaceholder = fromUSDtoCurrencyString(MAX_AMOUNTS_BY_COUNTRY[selectedCountry], selectedCountry);
+  
   // Estado local para formateo
   const [goalDisplay, setGoalDisplay] = useState('');
   const [softCapDisplay, setSoftCapDisplay] = useState('');
@@ -51,6 +61,7 @@ export const AmountsSection = () => {
       setHardCapDisplay(Formatters.formatCLPInput(formData.hardCap));
     }
   }, []);
+  
   useEffect(() => {
     setGoalDisplay('')
     setSoftCapDisplay('')
@@ -81,18 +92,22 @@ export const AmountsSection = () => {
   const goalError = errors.find((e) => e.field === 'goalAmount');
   const softCapError = errors.find((e) => e.field === 'softCap');
   const hardCapError = errors.find((e) => e.field === 'hardCap');
+  
   const actualCurrencyText = () => {
     switch (selectedCountry) {
       case 'US':
-        return 'USD - Dólares Americanos';
+        return translate("private.createCampaign.currencyUSD");
       case 'CL':
-        return 'CLP - Pesos Chilenos';
+        return translate("private.createCampaign.currencyCLP");
       case 'MX':
-        return 'MXN - Pesos Mexicanos';
+        return translate("private.createCampaign.currencyMXN");
       case 'CO':
-        return 'COP - Pesos Colombianos';
+        return translate("private.createCampaign.currencyCOP");
+      default:
+        return translate("private.createCampaign.currencyUSD");
     }
   }
+  
   return (
     <View style={styles.container}>
       <View
@@ -112,14 +127,14 @@ export const AmountsSection = () => {
       >
         {/* HEADER */}
         <Text style={[styles.sectionTitle, { color: colors.text }]}>
-          Montos
+          {translate("private.createCampaign.amountsSectionTitle")}
         </Text>
 
         {/* META TOTAL */}
         <View style={styles.inputGroup}>
           <View style={styles.labelContainer}>
             <Text style={[styles.label, { color: colors.text }]}>
-              Meta de recaudación
+              {translate("private.createCampaign.goalAmountLabel")}
             </Text>
             <Text style={[styles.required, { color: colors.error }]}> *</Text>
           </View>
@@ -162,9 +177,11 @@ export const AmountsSection = () => {
             </Text>
           )}
 
-          {selectedCountry !== 'US' && <Text style={[styles.hintText, { color: colors.secondaryText }]}>
-            El cálculo se realiza en la moneda seleccionada a la tasa del momento
-          </Text>}
+          {selectedCountry !== 'US' && (
+            <Text style={[styles.hintText, { color: colors.secondaryText }]}>
+              {translate("private.createCampaign.goalAmountDisclaimer")}
+            </Text>
+          )}
         </View>
 
         {/* META MÍNIMA Y MEDIA EN ROW */}
@@ -172,7 +189,7 @@ export const AmountsSection = () => {
           {/* META MÍNIMA */}
           <View style={styles.halfWidth}>
             <Text style={[styles.label, { color: colors.text }]}>
-              Meta Mínima
+              {translate("private.createCampaign.softCapLabel")}
             </Text>
             <View
               style={[
@@ -205,7 +222,7 @@ export const AmountsSection = () => {
           {/* META MEDIA */}
           <View style={styles.halfWidth}>
             <Text style={[styles.label, { color: colors.text }]}>
-              Meta Media
+              {translate("private.createCampaign.hardCapLabel")}
             </Text>
             <View
               style={[
@@ -238,7 +255,9 @@ export const AmountsSection = () => {
 
         {/* MONEDA */}
         <View style={styles.currencyContainer}>
-          <Text style={[styles.label, { color: colors.text }]}>Moneda</Text>
+          <Text style={[styles.label, { color: colors.text }]}>
+            {translate("private.createCampaign.currencyLabel")}
+          </Text>
           <View
             style={[
               styles.currencyButton,

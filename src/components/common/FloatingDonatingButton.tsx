@@ -9,10 +9,12 @@ import { ThemeColors } from '@/constants/theme';
 interface FloatingDonateButtonProps {
   onPress: () => void;
   disabled?: boolean;
+  text: any
 }
 
 export default function FloatingDonateButton({ 
-  onPress, 
+  onPress,
+  text, 
   disabled = false 
 }: FloatingDonateButtonProps) {
   const colors = useThemeColors();
@@ -26,7 +28,7 @@ export default function FloatingDonateButton({
       activeOpacity={0.8}
     >
       <Ionicons name="heart" size={24} color={colors.customWhite} />
-      <Text style={styles.text}>Donar</Text>
+      <Text style={styles.text}>{text}</Text>
     </TouchableOpacity>
   );
 }

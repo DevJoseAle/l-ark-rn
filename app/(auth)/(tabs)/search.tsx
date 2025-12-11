@@ -20,11 +20,13 @@ import { useThemeColors } from '@/hooks/use-theme-color';
 import { ThemeColors } from '@/constants/theme';
 import { CampaignSearchResult } from '@/src/types/campaign.types';
 import { CampaignService } from '@/src/services/campaign.service';
+import { useTranslation } from 'react-i18next';
 
 export default function SearchScreen() {
   const router = useRouter();
   const colors = useThemeColors();
   const styles = searchStyles(colors);
+  const {t:translate} = useTranslation("common")
 
   const [searchMode, setSearchMode] = useState<'code' | 'text'>('code');
   const [query, setQuery] = useState('');
@@ -138,19 +140,25 @@ export default function SearchScreen() {
               <Text style={styles.statValue}>
                 ${campaign.total_raised.toLocaleString()}
               </Text>
-              <Text style={styles.statLabel}>recaudado</Text>
+              <Text style={styles.statLabel}>
+                {translate("private.search.cardCollected")}
+              </Text>
             </View>
 
             <View style={styles.stat}>
               <Text style={styles.statValue}>
                 ${campaign.goal_amount.toLocaleString()}
               </Text>
-              <Text style={styles.statLabel}>meta</Text>
+              <Text style={styles.statLabel}>
+                {translate("private.search.cardGoal")}
+              </Text>
             </View>
 
             <View style={styles.stat}>
               <Text style={styles.statValue}>{campaign.country}</Text>
-              <Text style={styles.statLabel}>país</Text>
+              <Text style={styles.statLabel}>
+                {translate("private.search.cardCountry")}
+              </Text>
             </View>
           </View>
         </View>
@@ -164,7 +172,9 @@ export default function SearchScreen() {
         <View style={styles.container}>
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.headerTitle}>Buscar</Text>
+            <Text style={styles.headerTitle}>
+              {translate("private.search.screenTitle")}
+            </Text>
             
             <View style={styles.modeSwitcher}>
               <TouchableOpacity
@@ -183,7 +193,7 @@ export default function SearchScreen() {
                   styles.modeBtnText, 
                   searchMode === 'code' && styles.modeBtnTextActive
                 ]}>
-                  Por Código
+                  {translate("private.search.searchButton1")}
                 </Text>
               </TouchableOpacity>
 
@@ -203,7 +213,7 @@ export default function SearchScreen() {
                   styles.modeBtnText, 
                   searchMode === 'text' && styles.modeBtnTextActive
                 ]}>
-                  Por Texto
+                  {translate("private.search.searchButton2")}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -220,8 +230,8 @@ export default function SearchScreen() {
                 onChangeText={setQuery}
                 placeholder={
                   searchMode === 'code' 
-                    ? 'Ej: abc1234' 
-                    : 'Buscar por título...'
+                    ? translate("private.search.inputPlaceholderCode")
+                    : translate("private.search.inputPlaceholderText")
                 }
                 placeholderTextColor={colors.icon}
                 autoCapitalize={searchMode === 'code' ? 'none' : 'sentences'}
@@ -271,7 +281,7 @@ export default function SearchScreen() {
                   <View style={styles.infoCard}>
                     <Ionicons name="information-circle-outline" size={24} color={colors.primary} />
                     <Text style={styles.infoText}>
-                      Ingresa el código de 7 caracteres de la campaña
+                      {translate("private.search.searchDisclaimer")}
                     </Text>
                   </View>
                 )}
@@ -286,9 +296,9 @@ export default function SearchScreen() {
                 {featured.length === 0 && !loading && (
                   <View style={styles.emptyState}>
                     <Ionicons name="planet-outline" size={80} color={colors.icon} />
-                    <Text style={styles.emptyTitle}>Aún no hay campañas</Text>
+                    <Text style={styles.emptyTitle}>{translate("private.search.emptySearchListTitle")}</Text>
                     <Text style={styles.emptyText}>
-                      Las campañas destacadas aparecerán aquí
+                      {translate("private.search.emptySearchListMessage")}
                     </Text>
                   </View>
                 )}
@@ -299,11 +309,12 @@ export default function SearchScreen() {
             {notFound && (
               <View style={styles.emptyState}>
                 <Ionicons name="sad-outline" size={80} color={colors.error} />
-                <Text style={styles.emptyTitle}>No se encontraron resultados</Text>
+                <Text style={styles.emptyTitle}>{translate("private.search.searchErrorTitle")}</Text>
                 <Text style={styles.emptyText}>
                   {searchMode === 'code' 
-                    ? 'Verifica que el código sea correcto' 
-                    : 'Intenta con otras palabras clave'}
+                    ? translate("private.search.searchByCodeErrorMessage")
+                    : translate("private.search.searchByTextErrorMessage")
+                    }
                 </Text>
               </View>
             )}
@@ -315,7 +326,9 @@ export default function SearchScreen() {
             {results.length > 0 && (
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>
-                  {results.length} resultado{results.length !== 1 ? 's' : ''}
+                  {translate("private.search.resultsCount",{
+                    count: results.length
+                  })}
                 </Text>
                 {results.map(renderCampaignCard)}
               </View>

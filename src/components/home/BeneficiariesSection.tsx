@@ -25,12 +25,15 @@ import {
     getPayoutMode // 👈 Importar helper
 } from '@/src/types/campaign-create.types';
 import { BeneficiaryCard } from './BeneficiaryCard';
+import { useTranslation } from 'react-i18next';
+
+
 
 export const BeneficiariesSection = () => {
     const colorScheme = useColorScheme();
     const colors = Colors[colorScheme ?? 'light'];
+    const { t: translate } = useTranslation("common");
 
-    // 👇 CAMBIO: Obtener country y setCountry del STORE
     const { formData, addBeneficiary, errors, setCountry, resetAmounts } = useCreateCampaignStore();
 
     // Estados de búsqueda
@@ -42,10 +45,12 @@ export const BeneficiariesSection = () => {
     const debouncedSearch = useDebounce(searchQuery, 300);
     const selectedCountry = formData.country;
     const payoutMode = selectedCountry ? getPayoutMode(selectedCountry) : null;
-    const handleChangeCountry = (code : CountryCode) =>{
-      setCountry(code);
-      resetAmounts();
+
+    const handleChangeCountry = (code: CountryCode) => {
+        setCountry(code);
+        resetAmounts();
     }
+
     useEffect(() => {
         const fetchCurrentUser = async () => {
             const { data: { user } } = await supabase.auth.getUser();
@@ -89,7 +94,10 @@ export const BeneficiariesSection = () => {
         );
 
         if (isAlreadyAdded) {
-            Alert.alert('Ya agregado', 'Este usuario ya es beneficiario de la campaña.');
+            Alert.alert(
+                translate("alert.createCampaign.beneficiaryAlreadyAddedTitle"),
+                translate("alert.createCampaign.beneficiaryAlreadyAddedMessage")
+            );
             return;
         }
 
@@ -127,7 +135,7 @@ export const BeneficiariesSection = () => {
                 <View style={styles.header}>
                     <View style={styles.titleContainer}>
                         <Text style={[styles.sectionTitle, { color: colors.text }]}>
-                            Beneficiarios
+                            {translate("private.createCampaign.beneficiariesSectionTitle")}
                         </Text>
                         <Text style={[styles.required, { color: colors.error }]}> *</Text>
                     </View>
@@ -156,19 +164,19 @@ export const BeneficiariesSection = () => {
                     )}
                 </View>
 
-                {/* 👇 SELECTOR DE PAÍS - MOVIDO AQUÍ ARRIBA */}
+                {/* SELECTOR DE PAÍS */}
                 <View style={styles.countrySection}>
                     <Text style={[styles.countryTitle, { color: colors.text }]}>
-                        País de entrega del beneficio *
+                        {translate("private.createCampaign.countryTitle")}
                     </Text>
                     <Text style={[styles.countrySubtitle, { color: colors.secondaryText }]}>
-                        Todos los beneficiarios deben estar en el mismo país
+                        {translate("private.createCampaign.countrySubtitle")}
                     </Text>
 
                     <View style={styles.countriesRow}>
                         {COUNTRIES.map((cty) => (
                             <CountryButton
-                                fn={() => handleChangeCountry(cty.code)} 
+                                fn={() => handleChangeCountry(cty.code)}
                                 key={cty.code}
                                 country={`${cty.flag} ${cty.code}`}
                                 isSelected={selectedCountry === cty.code}
@@ -183,14 +191,14 @@ export const BeneficiariesSection = () => {
                                 <View style={[styles.payoutBadge, { backgroundColor: colors.success + '20' }]}>
                                     <Text style={styles.badgeIcon}>✓</Text>
                                     <Text style={[styles.badgeText, { color: colors.success }]}>
-                                        Pago automático vía Stripe Connect
+                                        {translate("private.createCampaign.payoutAutomatic")}
                                     </Text>
                                 </View>
                             ) : (
                                 <View style={[styles.payoutBadge, { backgroundColor: colors.warning + '20' }]}>
                                     <Text style={styles.badgeIcon}>⚠️</Text>
                                     <Text style={[styles.badgeText, { color: colors.warning }]}>
-                                        Pago manual requerido (transferencia bancaria)
+                                        {translate("private.createCampaign.payoutManual")}
                                     </Text>
                                 </View>
                             )}
@@ -220,7 +228,7 @@ export const BeneficiariesSection = () => {
                     <Ionicons name="search" size={20} color="rgba(255, 255, 255, 0.6)" />
                     <TextInput
                         style={styles.searchInput}
-                        placeholder="Buscar por email del beneficiario"
+                        placeholder={translate("private.createCampaign.searchPlaceholder")}
                         placeholderTextColor="rgba(255, 255, 255, 0.5)"
                         value={searchQuery}
                         onChangeText={setSearchQuery}
@@ -286,7 +294,7 @@ export const BeneficiariesSection = () => {
                     <View style={styles.noResults}>
                         <Ionicons name="search-outline" size={32} color={colors.secondaryText} />
                         <Text style={[styles.noResultsText, { color: colors.secondaryText }]}>
-                            No se encontraron usuarios
+                            {translate("private.createCampaign.noUsersFound")}
                         </Text>
                     </View>
                 )}
@@ -327,7 +335,7 @@ export const CountryButton = ({
         <TouchableOpacity
             onPress={() => fn(country)}
             style={{
-                width: 70, // 👈 Un poco más ancho para los flags
+                width: 70,
                 height: 44,
                 borderColor: colors.separator,
                 borderWidth: 1,
@@ -345,7 +353,6 @@ export const CountryButton = ({
         </TouchableOpacity>
     );
 };
-
 const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 16,

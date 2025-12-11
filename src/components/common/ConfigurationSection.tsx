@@ -14,64 +14,66 @@ import { Ionicons } from '@expo/vector-icons';
 import { CreateCampaignFormData } from '@/src/types/campaign-create.types';
 import { Colors } from '@/constants/theme';
 import { useCreateCampaignStore } from '@/src/stores/createCampaign.store';
+import { useTranslation } from 'react-i18next';
 
 
 type VisibilityOption = CreateCampaignFormData['visibility'];
 type DistributionOption = CreateCampaignFormData['distributionRule'];
-
+type PickerType = 'visibility' | 'distribution' | null;
 interface Option<T> {
   value: T;
-  label: string;
-  description: string;
+  labelKey: string;
+  descriptionKey: string;
   icon: keyof typeof Ionicons.glyphMap;
 }
-
-const VISIBILITY_OPTIONS: Option<VisibilityOption>[] = [
-  {
-    value: 'public',
-    label: 'Pública',
-    description: 'Visible para todos los usuarios',
-    icon: 'globe-outline',
-  },
-  {
-    value: 'private',
-    label: 'Privada',
-    description: 'Solo visible con enlace directo',
-    icon: 'lock-closed-outline',
-  },
-];
-
-const DISTRIBUTION_OPTIONS: Option<DistributionOption>[] = [
-  {
-    value: 'percentage',
-    label: 'Porcentaje',
-    description: 'Distribuir por porcentajes (debe sumar 100%)',
-    icon: 'pie-chart-outline',
-  },
-  {
-    value: 'fixed_parts',
-    label: 'Partes fijas',
-    description: 'Cada beneficiario recibe partes iguales',
-    icon: 'grid-outline',
-  },
-];
-
-type PickerType = 'visibility' | 'distribution' | null;
 
 export const ConfigurationSection = () => {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const { t: translate } = useTranslation("common");
 
   const { formData, setVisibility, setDistributionRule } = useCreateCampaignStore();
 
   const [activePicker, setActivePicker] = useState<PickerType>(null);
 
+  // Opciones con keys de traducción
+  const VISIBILITY_OPTIONS: Option<VisibilityOption>[] = [
+    {
+      value: 'public',
+      labelKey: 'private.createCampaign.visibilityPublicLabel',
+      descriptionKey: 'private.createCampaign.visibilityPublicDesc',
+      icon: 'globe-outline',
+    },
+    {
+      value: 'private',
+      labelKey: 'private.createCampaign.visibilityPrivateLabel',
+      descriptionKey: 'private.createCampaign.visibilityPrivateDesc',
+      icon: 'lock-closed-outline',
+    },
+  ];
+
+  const DISTRIBUTION_OPTIONS: Option<DistributionOption>[] = [
+    {
+      value: 'percentage',
+      labelKey: 'private.createCampaign.distributionPercentageLabel',
+      descriptionKey: 'private.createCampaign.distributionPercentageDesc',
+      icon: 'pie-chart-outline',
+    },
+    {
+      value: 'fixed_parts',
+      labelKey: 'private.createCampaign.distributionFixedLabel',
+      descriptionKey: 'private.createCampaign.distributionFixedDesc',
+      icon: 'grid-outline',
+    },
+  ];
+
   // Encontrar labels actuales
   const visibilityLabel =
-    VISIBILITY_OPTIONS.find((o) => o.value === formData.visibility)?.label || 'Pública';
+    VISIBILITY_OPTIONS.find((o) => o.value === formData.visibility)?.labelKey || 
+    'private.createCampaign.visibilityPublicLabel';
   const distributionLabel =
-    DISTRIBUTION_OPTIONS.find((o) => o.value === formData.distributionRule)?.label ||
-    'Porcentaje';
+    DISTRIBUTION_OPTIONS.find((o) => o.value === formData.distributionRule)?.labelKey ||
+    'private.createCampaign.distributionPercentageLabel';
 
   // Handlers
   const handleVisibilitySelect = (value: VisibilityOption) => {
@@ -103,12 +105,14 @@ export const ConfigurationSection = () => {
       >
         {/* HEADER */}
         <Text style={[styles.sectionTitle, { color: colors.text }]}>
-          Configuración
+          {translate("private.createCampaign.configSectionTitle")}
         </Text>
 
         {/* VISIBILIDAD */}
         <View style={styles.optionGroup}>
-          <Text style={[styles.label, { color: colors.text }]}>Visibilidad</Text>
+          <Text style={[styles.label, { color: colors.text }]}>
+            {translate("private.createCampaign.visibilityLabel")}
+          </Text>
           <TouchableOpacity
             style={[
               styles.optionButton,
@@ -122,7 +126,7 @@ export const ConfigurationSection = () => {
             onPress={() => setActivePicker('visibility')}
           >
             <Text style={[styles.optionText, { color: colors.text }]}>
-              {visibilityLabel}
+              {translate(visibilityLabel)}
             </Text>
             <Ionicons name="chevron-down" size={18} color={colors.icon} />
           </TouchableOpacity>
@@ -131,7 +135,7 @@ export const ConfigurationSection = () => {
         {/* REGLA DE DISTRIBUCIÓN */}
         <View style={styles.optionGroup}>
           <Text style={[styles.label, { color: colors.text }]}>
-            Regla de distribución
+            {translate("private.createCampaign.distributionLabel")}
           </Text>
           <TouchableOpacity
             style={[
@@ -146,7 +150,7 @@ export const ConfigurationSection = () => {
             onPress={() => setActivePicker('distribution')}
           >
             <Text style={[styles.optionText, { color: colors.text }]}>
-              {distributionLabel}
+              {translate(distributionLabel)}
             </Text>
             <Ionicons name="chevron-down" size={18} color={colors.icon} />
           </TouchableOpacity>
@@ -177,7 +181,7 @@ export const ConfigurationSection = () => {
               {/* HEADER */}
               <View style={styles.modalHeader}>
                 <Text style={[styles.modalTitle, { color: colors.text }]}>
-                  Visibilidad
+                  {translate("private.createCampaign.visibilityModalTitle")}
                 </Text>
                 <TouchableOpacity onPress={() => setActivePicker(null)}>
                   <Ionicons name="close" size={24} color={colors.icon} />
@@ -223,12 +227,12 @@ export const ConfigurationSection = () => {
                     </View>
                     <View style={styles.optionTextContainer}>
                       <Text style={[styles.optionLabel, { color: colors.text }]}>
-                        {option.label}
+                        {translate(option.labelKey)}
                       </Text>
                       <Text
                         style={[styles.optionDescription, { color: colors.secondaryText }]}
                       >
-                        {option.description}
+                        {translate(option.descriptionKey)}
                       </Text>
                     </View>
                   </View>
@@ -266,7 +270,7 @@ export const ConfigurationSection = () => {
               {/* HEADER */}
               <View style={styles.modalHeader}>
                 <Text style={[styles.modalTitle, { color: colors.text }]}>
-                  Regla de distribución
+                  {translate("private.createCampaign.distributionModalTitle")}
                 </Text>
                 <TouchableOpacity onPress={() => setActivePicker(null)}>
                   <Ionicons name="close" size={24} color={colors.icon} />
@@ -312,12 +316,12 @@ export const ConfigurationSection = () => {
                     </View>
                     <View style={styles.optionTextContainer}>
                       <Text style={[styles.optionLabel, { color: colors.text }]}>
-                        {option.label}
+                        {translate(option.labelKey)}
                       </Text>
                       <Text
                         style={[styles.optionDescription, { color: colors.secondaryText }]}
                       >
-                        {option.description}
+                        {translate(option.descriptionKey)}
                       </Text>
                     </View>
                   </View>

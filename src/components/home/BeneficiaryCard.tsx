@@ -18,6 +18,7 @@ import { Colors } from '@/constants/theme';
 import { ImageUploadService } from '@/src/services/imageUpload.service';
 import { useCreateCampaignStore } from '@/src/stores/createCampaign.store';
 import { CampaignBeneficiary, LocalImage } from '@/src/types/campaign-create.types';
+import { useTranslation } from 'react-i18next';
 
 
 interface BeneficiaryCardProps {
@@ -27,6 +28,7 @@ interface BeneficiaryCardProps {
 export const BeneficiaryCard: React.FC<BeneficiaryCardProps> = ({ beneficiary }) => {
     const colorScheme = useColorScheme();
     const colors = Colors[colorScheme ?? 'light'];
+    const { t: translate } = useTranslation("common");
 
     const {
         formData,
@@ -49,12 +51,12 @@ export const BeneficiaryCard: React.FC<BeneficiaryCardProps> = ({ beneficiary })
     // Handler para eliminar beneficiario
     const handleRemove = () => {
         Alert.alert(
-            'Eliminar beneficiario',
-            `¿Estás seguro de eliminar a ${beneficiary.user.display_name}?`,
+            translate("alert.createCampaign.removeBeneficiaryTitle"),
+            translate("alert.createCampaign.removeBeneficiaryMessage", { name: beneficiary.user.display_name }),
             [
-                { text: 'Cancelar', style: 'cancel' },
+                { text: translate("alert.createCampaign.removeBeneficiaryCancel"), style: 'cancel' },
                 {
-                    text: 'Eliminar',
+                    text: translate("alert.createCampaign.removeBeneficiaryConfirm"),
                     style: 'destructive',
                     onPress: () => removeBeneficiary(beneficiary.id),
                 },
@@ -66,13 +68,19 @@ export const BeneficiaryCard: React.FC<BeneficiaryCardProps> = ({ beneficiary })
     const handleAddDocument = async () => {
         try {
             if (beneficiary.documents.length >= 3) {
-                Alert.alert('Límite alcanzado', 'Solo puedes agregar 3 documentos por beneficiario.');
+                Alert.alert(
+                    translate("alert.createCampaign.documentLimitTitle"),
+                    translate("alert.createCampaign.documentLimitMessage")
+                );
                 return;
             }
 
             const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
             if (status !== 'granted') {
-                Alert.alert('Permisos necesarios', 'Necesitamos acceso a tu galería.');
+                Alert.alert(
+                    translate("alert.createCampaign.permissionsTitle"),
+                    translate("alert.createCampaign.permissionsMessage")
+                );
                 return;
             }
 
@@ -96,7 +104,7 @@ export const BeneficiaryCard: React.FC<BeneficiaryCardProps> = ({ beneficiary })
             const localImage: LocalImage = {
                 id: `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 uri: asset.uri,
-                name: fileName, // ✅ Agregamos name
+                name: fileName,
                 type: asset.mimeType || 'image/jpeg',
                 size: fileSize,
                 width: asset.width,
@@ -104,32 +112,41 @@ export const BeneficiaryCard: React.FC<BeneficiaryCardProps> = ({ beneficiary })
             };
             const validation = ImageUploadService.validateImage(localImage);
             if (!validation.valid) {
-                Alert.alert('Error', validation.error || 'Imagen inválida');
+                Alert.alert(
+                    translate("alert.createCampaign.documentErrorTitle"),
+                    validation.error || translate("alert.createCampaign.documentErrorMessage")
+                );
                 return;
             }
 
             addBeneficiaryDocument(beneficiary.id, localImage);
         } catch (error) {
             console.error('Error adding document:', error);
-            Alert.alert('Error', 'No se pudo cargar el documento.');
+            Alert.alert(
+                translate("alert.createCampaign.documentErrorTitle"),
+                translate("alert.createCampaign.documentErrorMessage")
+            );
         }
     };
 
     // Handler para eliminar documento
     const handleRemoveDocument = (documentId: string) => {
-        Alert.alert('Eliminar documento', '¿Estás seguro?', [
-            { text: 'Cancelar', style: 'cancel' },
-            {
-                text: 'Eliminar',
-                style: 'destructive',
-                onPress: () => removeBeneficiaryDocument(beneficiary.id, documentId),
-            },
-        ]);
+        Alert.alert(
+            translate("alert.createCampaign.removeDocumentTitle"),
+            translate("alert.createCampaign.removeDocumentMessage"),
+            [
+                { text: translate("alert.createCampaign.removeDocumentCancel"), style: 'cancel' },
+                {
+                    text: translate("alert.createCampaign.removeDocumentConfirm"),
+                    style: 'destructive',
+                    onPress: () => removeBeneficiaryDocument(beneficiary.id, documentId),
+                },
+            ]
+        );
     };
 
     // Cambiar tipo de participación
     const handleChangeShareType = (type: 'percentage' | 'fixed') => {
-        // Esto debería actualizar el tipo, pero por ahora está ligado a distributionRule global
         setShowSharePicker(false);
     };
 
@@ -176,7 +193,9 @@ export const BeneficiaryCard: React.FC<BeneficiaryCardProps> = ({ beneficiary })
 
             {/* SHARE SECTION */}
             <View style={styles.shareSection}>
-                <Text style={styles.shareLabel}>Tipo de participación</Text>
+                <Text style={styles.shareLabel}>
+                    {translate("private.createCampaign.shareTypeLabel")}
+                </Text>
                 <View style={styles.shareRow}>
                     <TouchableOpacity
                         style={[
@@ -191,7 +210,9 @@ export const BeneficiaryCard: React.FC<BeneficiaryCardProps> = ({ beneficiary })
                         onPress={() => setShowSharePicker(true)}
                     >
                         <Text style={[styles.shareTypeText, { color: colors.customWhite }]}>
-                            {formData.distributionRule === 'percentage' ? 'Porcentaje' : 'Partes fijas'}
+                            {formData.distributionRule === 'percentage' 
+                                ? translate("private.createCampaign.shareTypePercentage")
+                                : translate("private.createCampaign.shareTypeFixed")}
                         </Text>
                         <Ionicons name="chevron-down" size={16} color="rgba(255, 255, 255, 0.6)" />
                     </TouchableOpacity>
@@ -225,9 +246,11 @@ export const BeneficiaryCard: React.FC<BeneficiaryCardProps> = ({ beneficiary })
             {/* DOCUMENTS SECTION */}
             <View style={styles.documentsSection}>
                 <View style={styles.documentsHeader}>
-                    <Text style={styles.documentsLabel}>Documentos de relación</Text>
+                    <Text style={styles.documentsLabel}>
+                        {translate("private.createCampaign.documentsLabel")}
+                    </Text>
                     <Text style={[styles.documentsCounter, { color: colors.secondaryText }]}>
-                        {beneficiary.documents.length}/3
+                        {translate("private.createCampaign.documentsCounter", { count: beneficiary.documents.length })}
                     </Text>
                 </View>
 
@@ -261,13 +284,15 @@ export const BeneficiaryCard: React.FC<BeneficiaryCardProps> = ({ beneficiary })
                             onPress={handleAddDocument}
                         >
                             <Ionicons name="document-outline" size={24} color="rgba(255, 255, 255, 0.6)" />
-                            <Text style={styles.addDocText}>Agregar documento</Text>
+                            <Text style={styles.addDocText}>
+                                {translate("private.createCampaign.addDocumentButton")}
+                            </Text>
                         </TouchableOpacity>
                     )}
                 </View>
             </View>
 
-            {/* MODAL PARA CAMBIAR TIPO (aunque está bloqueado por distributionRule) */}
+            {/* MODAL PARA CAMBIAR TIPO */}
             <Modal
                 visible={showSharePicker}
                 transparent
@@ -285,17 +310,17 @@ export const BeneficiaryCard: React.FC<BeneficiaryCardProps> = ({ beneficiary })
                         ]}
                     >
                         <Text style={[styles.modalTitle, { color: colors.text }]}>
-                            Tipo de participación
+                            {translate("private.createCampaign.shareTypeModalTitle")}
                         </Text>
                         <Text style={[styles.modalDescription, { color: colors.secondaryText }]}>
-                            Este valor está definido globalmente en la configuración de la campaña.
+                            {translate("private.createCampaign.shareTypeModalDescription")}
                         </Text>
                         <TouchableOpacity
                             style={[styles.modalButton, { backgroundColor: colors.primary }]}
                             onPress={() => setShowSharePicker(false)}
                         >
                             <Text style={[styles.modalButtonText, { color: colors.customWhite }]}>
-                                Entendido
+                                {translate("private.createCampaign.shareTypeModalButton")}
                             </Text>
                         </TouchableOpacity>
                     </View>

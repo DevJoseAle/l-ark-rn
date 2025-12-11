@@ -28,8 +28,8 @@ export function DeleteConfirmDialog({
   onConfirm,
   onCancel,
 }: DeleteConfirmDialogProps) {
-  if (!file) return null;
   const {t:translate} = useTranslation("common")
+  if (!file) return null;
   return (
     <Modal
       visible={visible}
@@ -97,7 +97,7 @@ export function DeleteConfirmDialog({
               ) : (
                 <>
                   <Ionicons name="trash-outline" size={18} color="white" />
-                  <Text style={styles.deleteButtonText}>{translate("modals.deleteDialog.deleteButton")}</Text>
+                  <Text style={styles.deleteButtonText}>{translate("modals.deleteDialog.title")}</Text>
                 </>
               )}
             </TouchableOpacity>

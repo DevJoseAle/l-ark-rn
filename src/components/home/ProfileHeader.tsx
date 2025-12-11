@@ -5,6 +5,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTranslation } from 'react-i18next';
 
 interface ProfileHeaderProps {
   displayName: string;
@@ -13,27 +14,7 @@ interface ProfileHeaderProps {
   onEdit: () => void;
 }
 
-const getCountryFlag = (country: string | null): string => {
-  const flags: Record<string, string> = {
-    US: '🇺🇸',
-    MX: '🇲🇽',
-    CO: '🇨🇴',
-    CL: '🇨🇱',
-    ES: '🇪🇸',
-  };
-  return country ? flags[country] || '🌎' : '🌎';
-};
 
-const getCountryName = (country: string | null): string => {
-  const names: Record<string, string> = {
-    US: 'Estados Unidos',
-    MX: 'México',
-    CO: 'Colombia',
-    CL: 'Chile',
-    ES: 'España',
-  };
-  return country ? names[country] || 'No especificado' : 'No especificado';
-};
 
 export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   displayName,
@@ -41,6 +22,30 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   country,
   onEdit,
 }) => {
+  const {t:translate} = useTranslation("common")
+
+
+  const getCountryFlag = (country: string | null): string => {
+    const flags: Record<string, string> = {
+      US: '🇺🇸',
+      MX: '🇲🇽',
+      CO: '🇨🇴',
+      CL: '🇨🇱',
+      ES: '🇪🇸',
+    };
+    return country ? flags[country] || '🌎' : '🌎';
+  };
+
+  const getCountryName = (country: string | null): string => {
+    const names: Record<string, string> = {
+      US: translate("countries.US"),
+      MX: translate("countries.MX"),
+      CO: translate("countries.CO"),
+      CL: translate("countries.CL"),
+      ES: translate("countries.ES"),
+    };
+    return country ? names[country] || 'No especificado' : 'No especificado';
+  };
   // Generar iniciales del nombre
   const getInitials = (name: string): string => {
     const parts = name.trim().split(' ');
@@ -70,7 +75,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           <View style={styles.infoContainer}>
             <Text style={styles.name}>{displayName}</Text>
             <Text style={styles.email}>{email}</Text>
-            
+
             <View style={styles.countryBadge}>
               <Text style={styles.countryFlag}>{getCountryFlag(country)}</Text>
               <Text style={styles.countryName}>{getCountryName(country)}</Text>

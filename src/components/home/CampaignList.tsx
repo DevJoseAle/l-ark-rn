@@ -8,6 +8,7 @@ import {
 import { Colors } from '@/constants/theme';
 import { useTheme } from '@react-navigation/native';
 import { useThemeColors } from '@/hooks/use-theme-color';
+import { useTranslation } from 'react-i18next';
 
 interface CampaignsListProps {
   type: 'owner' | 'beneficiary';
@@ -21,47 +22,49 @@ const formatCurrency = (amount: number, currency: string): string => {
   return `${currency} ${amount.toLocaleString('es-CL')}`;
 };
 
-const getStatusConfig = (status: string) => {
-  const configs: Record<string, { color: string; label: string; icon: keyof typeof Ionicons.glyphMap }> = {
-    draft: {
-      color: '#6B7280',
-      label: 'Borrador',
-      icon: 'document-outline',
-    },
-    active: {
-      color: '#10B981',
-      label: 'Activa',
-      icon: 'checkmark-circle',
-    },
-    paused: {
-      color: '#F59E0B',
-      label: 'Pausada',
-      icon: 'pause-circle',
-    },
-    completed: {
-      color: '#3B82F6',
-      label: 'Completada',
-      icon: 'checkmark-done-circle',
-    },
-    cancelled: {
-      color: '#DC2626',
-      label: 'Cancelada',
-      icon: 'close-circle',
-    },
-  };
-  return configs[status] || configs.draft;
-};
+
 
 const CampaignCard: React.FC<{
   campaign: ProfileCampaign | ProfileBeneficiaryCampaign;
   type: 'owner' | 'beneficiary';
   onPress?: () => void;
 }> = ({ campaign, type, onPress }) => {
+  const { t: translate } = useTranslation("common")
   // Type guards
   const isOwnerCampaign = (c: any): c is ProfileCampaign => type === 'owner';
   const isBeneficiaryCampaign = (c: any): c is ProfileBeneficiaryCampaign =>
     type === 'beneficiary';
 
+  const getStatusConfig = (status: string) => {
+    const configs: Record<string, { color: string; label: string; icon: keyof typeof Ionicons.glyphMap }> = {
+      draft: {
+        color: '#6B7280',
+        label: translate("common.draft"),
+        icon: 'document-outline',
+      },
+      active: {
+        color: '#10B981',
+        label: translate("common.active"),
+        icon: 'checkmark-circle',
+      },
+      paused: {
+        color: '#F59E0B',
+        label: translate("common.paused"),
+        icon: 'pause-circle',
+      },
+      completed: {
+        color: '#3B82F6',
+        label: translate("common.completed"),
+        icon: 'checkmark-done-circle',
+      },
+      cancelled: {
+        color: '#DC2626',
+        label: translate("common.canceled"),
+        icon: 'close-circle',
+      },
+    };
+    return configs[status] || configs.draft;
+  };
   // ✅ INICIALIZAR VARIABLES CON VALORES POR DEFECTO
   let title: string = '';
   let status: string = 'draft';
@@ -75,7 +78,7 @@ const CampaignCard: React.FC<{
   if (isOwnerCampaign(campaign)) {
     title = campaign.title;
     status = campaign.status;
-    currentAmount = campaign.total_raised|| 0;
+    currentAmount = campaign.total_raised || 0;
     goalAmount = campaign.goal_amount || 0;
     currency = campaign.currency;
   } else if (isBeneficiaryCampaign(campaign)) {
@@ -88,9 +91,9 @@ const CampaignCard: React.FC<{
 
     // Calculate share info
     if (campaign.share_type === 'percent') {
-      shareInfo = `${campaign.share_value}% de participación`;
+      shareInfo = `${campaign.share_value}% ${translate("private.profile.participation")}`;
     } else {
-      shareInfo = `${formatCurrency(campaign.share_value, currency)} fijo`;
+      shareInfo = `${formatCurrency(campaign.share_value, currency)}  ${translate("private.profile.fixed")}`;
     }
   }
 
@@ -115,7 +118,7 @@ const CampaignCard: React.FC<{
             </Text>
           )}
         </View>
-        
+
         <View style={[styles.statusBadge, { backgroundColor: `${statusConfig.color}20` }]}>
           <Ionicons name={statusConfig.icon} size={14} color={statusConfig.color} />
           <Text style={[styles.statusText, { color: statusConfig.color }]}>
@@ -137,7 +140,7 @@ const CampaignCard: React.FC<{
         <View style={styles.progressBar}>
           <View style={[styles.progressFill, { width: `${Math.min(progress, 100)}%` }]} />
         </View>
-        
+
         <View style={styles.amountsContainer}>
           <Text style={styles.currentAmount}>
             {formatCurrency(currentAmount, currency)}
@@ -149,7 +152,7 @@ const CampaignCard: React.FC<{
       </View>
 
       {/* Progress percentage */}
-      <Text style={styles.progressPercentage}>{progress.toFixed(0)}% alcanzado</Text>
+      <Text style={styles.progressPercentage}>{progress.toFixed(0)}% {translate("private.profile.completed")}</Text>
     </TouchableOpacity>
   );
 };
@@ -161,12 +164,13 @@ export const CampaignsList: React.FC<CampaignsListProps> = ({
   onSeeAll,
   maxItems = 3,
 }) => {
-    const theme = useColorScheme()
-  const title = type === 'owner' ? 'Mis Campañas' : 'Soy Beneficiario';
+  const theme = useColorScheme()
+  const { t: translate } = useTranslation("common")
+  const title = type === 'owner' ? translate("private.profile.myCampaigns") : translate("private.profile.iamBeneficiary");
   const emptyMessage =
     type === 'owner'
-      ? 'Aún no has creado ninguna campaña'
-      : 'No eres beneficiario de ninguna campaña';
+      ? translate("private.profile.noCampaignCreated")
+      : translate("private.profile.noBeneficiary");
 
   const displayCampaigns = maxItems
     ? campaigns.slice(0, maxItems)
@@ -178,7 +182,7 @@ export const CampaignsList: React.FC<CampaignsListProps> = ({
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={[styles.title, {color: titleColor}]}>{title}</Text>
+          <Text style={[styles.title, { color: titleColor }]}>{title}</Text>
           <View style={styles.countBadge}>
             <Text style={styles.countText}>0</Text>
           </View>
@@ -201,7 +205,7 @@ export const CampaignsList: React.FC<CampaignsListProps> = ({
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.titleRow}>
-          <Text style={[styles.title, {color: titleColor}]}>{title}</Text>
+          <Text style={[styles.title, { color: titleColor }]}>{title}</Text>
           <View style={styles.countBadge}>
             <Text style={styles.countText}>{campaigns.length}</Text>
           </View>

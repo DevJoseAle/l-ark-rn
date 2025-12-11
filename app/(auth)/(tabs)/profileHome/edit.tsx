@@ -17,19 +17,21 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useProfileStore } from '../../../../src/stores/profile.store';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 // Tipo simple para los países
 type CountryCode = 'US' | 'MX' | 'CO' | 'CL';
 
-const COUNTRIES: { code: CountryCode; name: string; flag: string }[] = [
-  { code: 'US', name: 'Estados Unidos', flag: '🇺🇸' },
-  { code: 'MX', name: 'México', flag: '🇲🇽' },
-  { code: 'CO', name: 'Colombia', flag: '🇨🇴' },
-  { code: 'CL', name: 'Chile', flag: '🇨🇱' },
-];
 
 export default function EditProfileScreen() {
   const router = useRouter();
+  const {t:translate} = useTranslation("common");
+  const COUNTRIES: { code: CountryCode; name: string; flag: string }[] = [
+    { code: 'US', name: translate("countries.US"), flag: '🇺🇸' },
+    { code: 'MX', name: translate("countries.MX"), flag: '🇲🇽' },
+    { code: 'CO', name: translate("countries.CO"), flag: '🇨🇴' },
+    { code: 'CL', name: translate("countries.CL"), flag: '🇨🇱' },
+  ];
   const { user, isUpdating, updateProfile } = useProfileStore();
 
   const [displayName, setDisplayName] = useState(user?.display_name || '');
@@ -48,17 +50,17 @@ export default function EditProfileScreen() {
   const handleSave = async () => {
     // Validation
     if (!displayName.trim()) {
-      Alert.alert('Error', 'El nombre no puede estar vacío');
+      Alert.alert(translate("common.errorTitle"), translate("errors.kyc.name"));
       return;
     }
 
     if (displayName.trim().length < 2) {
-      Alert.alert('Error', 'El nombre debe tener al menos 2 caracteres');
+      Alert.alert(translate("common.errorTitle"), translate("errors.kyc.nameLenght"));
       return;
     }
 
     if (!selectedCountry) {
-      Alert.alert('Error', 'Debes seleccionar un país');
+      Alert.alert(translate("common.errorTitle"), translate("errors.kyc.countrySelected"));
       return;
     }
 
@@ -85,7 +87,7 @@ export default function EditProfileScreen() {
         },
       ]);
     } else {
-      Alert.alert('Error', 'No se pudo actualizar el perfil. Intenta nuevamente.');
+      Alert.alert(translate("common.errorTitle"), translate("errors.kyc.editError"));
     }
   };
 
@@ -95,15 +97,15 @@ export default function EditProfileScreen() {
       selectedCountry !== user?.country
     ) {
       Alert.alert(
-        'Descartar cambios',
-        '¿Estás seguro de que quieres descartar los cambios?',
+        translate("errors.kyc.discardChangesTitle"),
+        translate("errors.kyc.discardChangesMessage"),
         [
           {
-            text: 'Continuar editando',
+            text: translate("errors.kyc.discardMessageButtonCancel"),
             style: 'cancel',
           },
           {
-            text: 'Descartar',
+            text: translate("errors.kyc.discardMessageButtonDiscard"),
             style: 'destructive',
             onPress: () => router.back(),
           },
@@ -132,7 +134,7 @@ export default function EditProfileScreen() {
             <Ionicons name="close" size={28} color="#1F2937" />
           </TouchableOpacity>
 
-          <Text style={styles.headerTitle}>Editar Perfil</Text>
+          <Text style={styles.headerTitle}>{translate("private.profile.editProfile")}</Text>
 
           <TouchableOpacity
             onPress={handleSave}
@@ -141,7 +143,7 @@ export default function EditProfileScreen() {
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
             <Text style={[styles.saveText, isUpdating && styles.saveTextDisabled]}>
-              {isUpdating ? 'Guardando...' : 'Guardar'}
+              {isUpdating ? translate("private.profile.saving") : translate("private.profile.save")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -153,7 +155,7 @@ export default function EditProfileScreen() {
         >
           {/* Display Name */}
           <View style={styles.section}>
-            <Text style={styles.label}>Nombre</Text>
+            <Text style={styles.label}>{translate("common.name")}</Text>
             <View style={styles.inputContainer}>
               <Ionicons
                 name="person-outline"
@@ -177,13 +179,13 @@ export default function EditProfileScreen() {
               )}
             </View>
             <Text style={styles.hint}>
-              {displayName.length}/50 caracteres
+              {displayName.length}/50 {translate("private.profile.characters")}
             </Text>
           </View>
 
           {/* Email (readonly) */}
           <View style={styles.section}>
-            <Text style={styles.label}>Email</Text>
+            <Text style={styles.label}>{translate("common.email")}</Text>
             <View style={[styles.inputContainer, styles.inputDisabled]}>
               <Ionicons
                 name="mail-outline"
@@ -199,13 +201,13 @@ export default function EditProfileScreen() {
               <Ionicons name="lock-closed-outline" size={20} color="#9CA3AF" />
             </View>
             <Text style={styles.hint}>
-              El email no se puede cambiar
+              {translate("private.profile.emailDisclaimer")}
             </Text>
           </View>
 
           {/* Country */}
           <View style={styles.section}>
-            <Text style={styles.label}>País</Text>
+            <Text style={styles.label}>{translate("common.country")}</Text>
             <TouchableOpacity
               style={styles.countrySelector}
               onPress={() => setShowCountryPicker(!showCountryPicker)}
@@ -265,7 +267,7 @@ export default function EditProfileScreen() {
             )}
 
             <Text style={styles.hint}>
-              El país determina opciones de pago disponibles
+              {translate("private.profile.countryDisclaimer")}
             </Text>
           </View>
 
@@ -273,8 +275,7 @@ export default function EditProfileScreen() {
           <View style={styles.infoBox}>
             <Ionicons name="information-circle" size={24} color="#007AFF" />
             <Text style={styles.infoText}>
-              Cambiar tu país puede afectar las opciones de verificación y métodos de pago
-              disponibles para ti como beneficiario.
+              {translate("private.profile.countryPaymentDisclaimer")}
             </Text>
           </View>
         </ScrollView>

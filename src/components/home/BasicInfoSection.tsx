@@ -11,11 +11,13 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/theme';
 import { useCreateCampaignStore } from '@/src/stores/createCampaign.store';
+import { useTranslation } from 'react-i18next';
 
 
 export const BasicInfoSection = () => {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const { t: translate } = useTranslation("common");
   
   const {
     formData,
@@ -42,7 +44,7 @@ export const BasicInfoSection = () => {
       }]}>
         <View style={styles.labelContainer}>
           <Text style={[styles.label, { color: colors.text }]}>
-            Título de la campaña
+            {translate("private.createCampaign.titleLabel")}
           </Text>
           <Text style={[styles.required, { color: colors.error }]}> *</Text>
         </View>
@@ -58,7 +60,7 @@ export const BasicInfoSection = () => {
               borderColor: titleError ? colors.error : 'transparent',
             },
           ]}
-          placeholder="Ej: Ayuda para María"
+          placeholder={translate("private.createCampaign.titlePlaceholder")}
           placeholderTextColor={colors.secondaryText}
           value={formData.title}
           onChangeText={setTitle}
@@ -78,7 +80,7 @@ export const BasicInfoSection = () => {
               },
             ]}
           >
-            {formData.title.length}/12 mínimo
+            {translate("private.createCampaign.titleMinChars", { count: formData.title.length })}
           </Text>
         </View>
 
@@ -99,7 +101,9 @@ export const BasicInfoSection = () => {
           ? 'rgba(42, 63, 84, 0.5)'
           : 'rgba(172, 202, 231, 0.3)',
       }]}>
-        <Text style={[styles.label, { color: colors.text }]}>Descripción</Text>
+        <Text style={[styles.label, { color: colors.text }]}>
+          {translate("private.createCampaign.descriptionLabel")}
+        </Text>
 
         <TextInput
           style={[
@@ -112,7 +116,7 @@ export const BasicInfoSection = () => {
               borderColor: descriptionError ? colors.error : 'transparent',
             },
           ]}
-          placeholder="Cuéntanos sobre la campaña..."
+          placeholder={translate("private.createCampaign.descriptionPlaceholder")}
           placeholderTextColor={colors.secondaryText}
           value={formData.description}
           onChangeText={setDescription}
@@ -135,7 +139,7 @@ export const BasicInfoSection = () => {
               },
             ]}
           >
-            {formData.description.length}/90 mínimo
+            {translate("private.createCampaign.descriptionMinChars", { count: formData.description.length })}
           </Text>
         </View>
 
@@ -164,7 +168,7 @@ export const BasicInfoSection = () => {
             style={styles.toggleIcon}
           />
           <Text style={[styles.toggleLabel, { color: colors.text }]}>
-            ¿Tienes algún diagnóstico médico?
+            {translate("private.createCampaign.diagnosisToggleLabel")}
           </Text>
         </View>
 

@@ -16,6 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/theme';
 import { useCreateCampaignStore } from '@/src/stores/createCampaign.store';
 import { Formatters } from '@/src/utils/formatters';
+import { useTranslation } from 'react-i18next';
 
 
 type PickerType = 'start' | 'end' | null;
@@ -23,6 +24,7 @@ type PickerType = 'start' | 'end' | null;
 export const DatesSection = () => {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const { t: translate } = useTranslation("common");
 
   const { formData, setStartDate, setEndDate, errors } = useCreateCampaignStore();
 
@@ -110,13 +112,13 @@ export const DatesSection = () => {
       >
         {/* HEADER */}
         <Text style={[styles.sectionTitle, { color: colors.text }]}>
-          Fechas:
+          {translate("private.createCampaign.datesSectionTitle")}
         </Text>
 
         {/* FECHA DE INICIO */}
         <View style={styles.dateRow}>
           <Text style={[styles.label, { color: colors.text }]}>
-            Fecha de inicio
+            {translate("private.createCampaign.startDateLabel")}
           </Text>
           <TouchableOpacity
             style={[
@@ -147,7 +149,7 @@ export const DatesSection = () => {
         {/* FECHA DE FIN */}
         <View style={styles.dateRow}>
           <Text style={[styles.label, { color: colors.text }]}>
-            Fecha de fin
+            {translate("private.createCampaign.endDateLabel")}
           </Text>
           <TouchableOpacity
             style={[
@@ -202,7 +204,12 @@ export const DatesSection = () => {
                 },
               ]}
             >
-              Duración: {duration} {duration === 1 ? 'mes' : 'meses'}
+              {translate("private.createCampaign.durationLabel", {
+                duration,
+                unit: duration === 1 
+                  ? translate("private.createCampaign.durationMonth")
+                  : translate("private.createCampaign.durationMonths")
+              })}
             </Text>
           </View>
         )}
@@ -233,17 +240,19 @@ export const DatesSection = () => {
               <View style={styles.modalHeader}>
                 <TouchableOpacity onPress={handleCancel} style={styles.modalButton}>
                   <Text style={[styles.modalButtonText, { color: colors.error }]}>
-                    Cancelar
+                    {translate("private.createCampaign.modalCancelButton")}
                   </Text>
                 </TouchableOpacity>
 
                 <Text style={[styles.modalTitle, { color: colors.text }]}>
-                  {activePicker === 'start' ? 'Fecha de inicio' : 'Fecha de fin'}
+                  {activePicker === 'start' 
+                    ? translate("private.createCampaign.modalStartDateTitle")
+                    : translate("private.createCampaign.modalEndDateTitle")}
                 </Text>
 
                 <TouchableOpacity onPress={handleConfirm} style={styles.modalButton}>
                   <Text style={[styles.modalButtonText, { color: colors.primary }]}>
-                    Confirmar
+                    {translate("private.createCampaign.modalConfirmButton")}
                   </Text>
                 </TouchableOpacity>
               </View>

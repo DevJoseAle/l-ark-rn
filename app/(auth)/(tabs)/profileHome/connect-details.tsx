@@ -13,8 +13,11 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useProfileStore, profileSelectors } from '../../../../src/stores/profile.store';
 import { StripeConnectService } from '../../../../src/services/stripeConnect.service';
+import { useTranslation } from 'react-i18next';
 
 export default function ConnectDetailsScreen() {
+  const { t: translate } = useTranslation("common");
+  
   const {
     user,
     beneficiaryAccount,
@@ -44,11 +47,11 @@ export default function ConnectDetailsScreen() {
           
           // Show info
           Alert.alert(
-            'Completando verificación',
-            'Cuando termines el proceso en Stripe, regresa a la app para ver tu estado actualizado.',
+            translate("alert.profile.onboardingInProgressTitle"),
+            translate("alert.profile.onboardingInProgressMessage"),
             [
               {
-                text: 'Entendido',
+                text: translate("alert.profile.onboardingInProgressButton"),
                 onPress: () => {
                   // Refresh after a delay to give user time to complete
                   setTimeout(() => {
@@ -59,14 +62,14 @@ export default function ConnectDetailsScreen() {
             ]
           );
         } else {
-          throw new Error('No se puede abrir el enlace');
+          throw new Error(translate("alert.profile.linkErrorMessage"));
         }
       }
     } catch (error: any) {
       console.error('Error starting onboarding:', error);
       Alert.alert(
-        'Error',
-        error.message || 'No se pudo iniciar la verificación. Intenta nuevamente.'
+        translate("alert.profile.onboardingErrorTitle"),
+        error.message || translate("alert.profile.onboardingErrorMessage")
       );
     } finally {
       setIsLoading(false);
@@ -78,7 +81,10 @@ export default function ConnectDetailsScreen() {
     setIsLoading(true);
     await refreshConnectStatus();
     setIsLoading(false);
-    Alert.alert('Actualizado', 'Estado de verificación actualizado');
+    Alert.alert(
+      translate("alert.profile.refreshSuccessTitle"),
+      translate("alert.profile.refreshSuccessMessage")
+    );
   };
 
   // Get status info
@@ -88,8 +94,8 @@ export default function ConnectDetailsScreen() {
         color: '#6B7280',
         backgroundColor: '#F3F4F6',
         icon: 'information-circle-outline' as const,
-        title: 'No eres beneficiario',
-        message: 'No estás registrado como beneficiario en ninguna campaña. Stripe Connect solo es necesario para recibir pagos automáticos como beneficiario.',
+        title: translate("private.profile.statusNotBeneficiaryTitle"),
+        message: translate("private.profile.statusNotBeneficiaryMessage"),
         showAction: false,
       };
     }
@@ -99,8 +105,10 @@ export default function ConnectDetailsScreen() {
         color: '#8B5CF6',
         backgroundColor: '#EDE9FE',
         icon: 'document-outline' as const,
-        title: 'Pago Manual',
-        message: `Tu país (${user?.country || 'desconocido'}) no soporta Stripe Connect actualmente. Los pagos serán procesados manualmente cuando se active la causal.`,
+        title: translate("private.profile.statusManualPayTitle"),
+        message: translate("private.profile.statusManualPayMessage", { 
+          country: user?.country || 'desconocido' 
+        }),
         showAction: false,
       };
     }
@@ -114,8 +122,8 @@ export default function ConnectDetailsScreen() {
           color: '#10B981',
           backgroundColor: '#D1FAE5',
           icon: 'checkmark-circle' as const,
-          title: '✅ Verificación Completa',
-          message: 'Tu cuenta de Stripe Connect está verificada y activa. Puedes recibir pagos automáticamente cuando se active la causal.',
+          title: translate("private.profile.statusVerifiedTitle"),
+          message: translate("private.profile.statusVerifiedMessage"),
           showAction: false,
         };
       
@@ -124,10 +132,10 @@ export default function ConnectDetailsScreen() {
           color: '#3B82F6',
           backgroundColor: '#DBEAFE',
           icon: 'document-text-outline' as const,
-          title: '📝 En Proceso',
-          message: 'Estás en proceso de completar tu verificación. Continúa donde lo dejaste.',
+          title: translate("private.profile.statusOnboardingTitle"),
+          message: translate("private.profile.statusOnboardingMessage"),
           showAction: true,
-          actionLabel: 'Continuar verificación',
+          actionLabel: translate("private.profile.statusOnboardingAction"),
         };
       
       case 'pending':
@@ -135,10 +143,10 @@ export default function ConnectDetailsScreen() {
           color: '#F59E0B',
           backgroundColor: '#FEF3C7',
           icon: 'hourglass-outline' as const,
-          title: '⏳ Pendiente',
-          message: 'Tu verificación está pendiente. Stripe está revisando tu información.',
+          title: translate("private.profile.statusPendingTitle"),
+          message: translate("private.profile.statusPendingMessage"),
           showAction: true,
-          actionLabel: 'Revisar estado',
+          actionLabel: translate("private.profile.statusPendingAction"),
         };
       
       case 'rejected':
@@ -146,10 +154,10 @@ export default function ConnectDetailsScreen() {
           color: '#DC2626',
           backgroundColor: '#FEE2E2',
           icon: 'close-circle' as const,
-          title: '❌ Rechazado',
-          message: 'Tu verificación fue rechazada por Stripe. Contacta a soporte para más información.',
+          title: translate("private.profile.statusRejectedTitle"),
+          message: translate("private.profile.statusRejectedMessage"),
           showAction: true,
-          actionLabel: 'Contactar soporte',
+          actionLabel: translate("private.profile.statusRejectedAction"),
         };
       
       default:
@@ -157,10 +165,10 @@ export default function ConnectDetailsScreen() {
           color: '#F59E0B',
           backgroundColor: '#FEF3C7',
           icon: 'warning-outline' as const,
-          title: '⚠️ Verificación Requerida',
-          message: 'Completa tu verificación de Stripe Connect para recibir pagos automáticamente cuando se active la causal.',
+          title: translate("private.profile.statusRequiredTitle"),
+          message: translate("private.profile.statusRequiredMessage"),
           showAction: true,
-          actionLabel: 'Iniciar verificación',
+          actionLabel: translate("private.profile.statusRequiredAction"),
         };
     }
   };
@@ -193,7 +201,7 @@ export default function ConnectDetailsScreen() {
             color="#FFF"
           />
           <Text style={styles.primaryButtonText}>
-            {isLoading ? 'Cargando...' : statusInfo.actionLabel}
+            {isLoading ? translate("private.profile.loadingButton") : statusInfo.actionLabel}
           </Text>
         </TouchableOpacity>
       )}
@@ -201,22 +209,28 @@ export default function ConnectDetailsScreen() {
       {/* Account Details */}
       {beneficiaryAccount && (
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Detalles de Cuenta</Text>
+          <Text style={styles.sectionTitle}>
+            {translate("private.profile.accountDetailsTitle")}
+          </Text>
           
           <View style={styles.detailCard}>
             <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>ID de Cuenta</Text>
+              <Text style={styles.detailLabel}>
+                {translate("private.profile.accountIdLabel")}
+              </Text>
               <Text style={styles.detailValue}>
                 {beneficiaryAccount.stripe_connect_account_id
                   ? `...${beneficiaryAccount.stripe_connect_account_id.slice(-8)}`
-                  : 'Sin asignar'}
+                  : translate("private.profile.accountIdValue")}
               </Text>
             </View>
 
             <View style={styles.separator} />
 
             <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>País</Text>
+              <Text style={styles.detailLabel}>
+                {translate("private.profile.countryLabel")}
+              </Text>
               <Text style={styles.detailValue}>
                 {beneficiaryAccount.country}
               </Text>
@@ -225,11 +239,13 @@ export default function ConnectDetailsScreen() {
             <View style={styles.separator} />
 
             <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Modo de Pago</Text>
+              <Text style={styles.detailLabel}>
+                {translate("private.profile.payoutModeLabel")}
+              </Text>
               <Text style={styles.detailValue}>
                 {beneficiaryAccount.payout_mode === 'connect'
-                  ? 'Automático (Stripe)'
-                  : 'Manual'}
+                  ? translate("private.profile.payoutModeAutomatic")
+                  : translate("private.profile.payoutModeManual")}
               </Text>
             </View>
 
@@ -237,7 +253,9 @@ export default function ConnectDetailsScreen() {
               <>
                 <View style={styles.separator} />
                 <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>Cuenta Bancaria</Text>
+                  <Text style={styles.detailLabel}>
+                    {translate("private.profile.bankAccountLabel")}
+                  </Text>
                   <Text style={styles.detailValue}>
                     ****{beneficiaryAccount.bank_account_last4}
                   </Text>
@@ -249,7 +267,9 @@ export default function ConnectDetailsScreen() {
               <>
                 <View style={styles.separator} />
                 <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>Banco</Text>
+                  <Text style={styles.detailLabel}>
+                    {translate("private.profile.bankNameLabel")}
+                  </Text>
                   <Text style={styles.detailValue}>
                     {beneficiaryAccount.bank_name}
                   </Text>
@@ -260,7 +280,9 @@ export default function ConnectDetailsScreen() {
             <View style={styles.separator} />
 
             <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Creado</Text>
+              <Text style={styles.detailLabel}>
+                {translate("private.profile.createdLabel")}
+              </Text>
               <Text style={styles.detailValue}>
                 {new Date(beneficiaryAccount.created_at).toLocaleDateString('es-CL')}
               </Text>
@@ -273,7 +295,9 @@ export default function ConnectDetailsScreen() {
       {beneficiaryCampaigns.length > 0 && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>
-            Campañas donde eres beneficiario ({beneficiaryCampaigns.length})
+            {translate("private.profile.beneficiaryCampaignsTitle", { 
+              count: beneficiaryCampaigns.length 
+            })}
           </Text>
 
           <View style={styles.campaignsList}>
@@ -281,15 +305,20 @@ export default function ConnectDetailsScreen() {
               <View key={bc.id} style={styles.campaignCard}>
                 <Text style={styles.campaignTitle}>{bc.campaign.title}</Text>
                 <Text style={styles.campaignOwner}>
-                  por {bc.campaign.owner.display_name}
+                  {translate("private.profile.campaignOwner", { 
+                    owner: bc.campaign.owner.display_name 
+                  })}
                 </Text>
                 
                 <View style={styles.shareInfo}>
                   <Ionicons name="pie-chart-outline" size={16} color="#007AFF" />
                   <Text style={styles.shareText}>
                     {bc.share_type === 'percent'
-                      ? `${bc.share_value}% de participación`
-                      : `${bc.campaign.currency} ${bc.share_value.toLocaleString('es-CL')} fijo`}
+                      ? translate("private.profile.sharePercentage", { value: bc.share_value })
+                      : translate("private.profile.shareFixed", { 
+                          currency: bc.campaign.currency,
+                          value: bc.share_value.toLocaleString('es-CL')
+                        })}
                   </Text>
                 </View>
               </View>
@@ -302,10 +331,11 @@ export default function ConnectDetailsScreen() {
       <View style={styles.infoBox}>
         <Ionicons name="information-circle-outline" size={24} color="#007AFF" />
         <View style={styles.infoTextContainer}>
-          <Text style={styles.infoTitle}>¿Qué es Stripe Connect?</Text>
+          <Text style={styles.infoTitle}>
+            {translate("private.profile.infoBoxTitle")}
+          </Text>
           <Text style={styles.infoText}>
-            Stripe Connect permite recibir pagos automáticamente en tu cuenta bancaria cuando
-            se active la causal de la campaña. Es seguro, rápido y está regulado.
+            {translate("private.profile.infoBoxMessage")}
           </Text>
         </View>
       </View>
@@ -321,13 +351,17 @@ export default function ConnectDetailsScreen() {
           size={20}
           color="#007AFF"
         />
-        <Text style={styles.refreshText}>Actualizar estado</Text>
+        <Text style={styles.refreshText}>
+          {translate("private.profile.refreshButton")}
+        </Text>
       </TouchableOpacity>
 
       {/* Support Button */}
       <TouchableOpacity style={styles.supportButton}>
         <Ionicons name="help-circle-outline" size={20} color="#007AFF" />
-        <Text style={styles.supportText}>¿Problemas? Contacta a soporte</Text>
+        <Text style={styles.supportText}>
+          {translate("private.profile.supportButton")}
+        </Text>
       </TouchableOpacity>
 
       <View style={{ height: 132 }} />

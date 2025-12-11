@@ -1,9 +1,8 @@
-import React, { useState, useRef, useEffect, use } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-
   useColorScheme,
   Alert,
   ActivityIndicator,
@@ -11,7 +10,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
+import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { Colors } from '@/constants/theme';
@@ -19,39 +18,40 @@ import { KYCService } from '@/src/services/kyc.service';
 import { KYCDocumentType, KYCDocument } from '@/src/types/kyc.types';
 import { useHomeData } from '@/src/features/home/useHomeData';
 import { useAuthStore } from '@/src/stores/authStore';
-
-const STEPS_CONFIG = {
-  id_front: {
-    title: 'Documento Frontal',
-    instruction: 'Coloca tu cédula en el marco y asegúrate de que se vea clara',
-    icon: 'card-outline' as const,
-  },
-  id_back: {
-    title: 'Documento Reverso',
-    instruction: 'Ahora fotografía el reverso de tu cédula',
-    icon: 'card-outline' as const,
-  },
-  selfie: {
-    title: 'Selfie',
-    instruction: 'Toma una foto de tu rostro. Asegúrate de tener buena iluminación',
-    icon: 'person-circle-outline' as const,
-  },
-};
+import { useTranslation } from 'react-i18next';
 
 export default function KYCCaptureScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const { t: translate } = useTranslation("common");
   const cameraRef = useRef<CameraView>(null);
-  const {
-    loadData
-  } = useHomeData();
+  const { loadData } = useHomeData();
   const initialize = useAuthStore((state) => state.initialize);
+  
   const [permission, requestPermission] = useCameraPermissions();
   const [currentStep, setCurrentStep] = useState<KYCDocumentType>('id_front');
   const [documents, setDocuments] = useState<Partial<Record<KYCDocumentType, KYCDocument>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitProgress, setSubmitProgress] = useState({ step: '', progress: 0 });
+
+  const STEPS_CONFIG = {
+    id_front: {
+      titleKey: 'private.kyc.captureIdFrontTitle',
+      instructionKey: 'private.kyc.captureIdFrontInstruction',
+      icon: 'card-outline' as const,
+    },
+    id_back: {
+      titleKey: 'private.kyc.captureIdBackTitle',
+      instructionKey: 'private.kyc.captureIdBackInstruction',
+      icon: 'card-outline' as const,
+    },
+    selfie: {
+      titleKey: 'private.kyc.captureSelfieTitle',
+      instructionKey: 'private.kyc.captureSelfieInstruction',
+      icon: 'person-circle-outline' as const,
+    },
+  };
 
   useEffect(() => {
     requestPermission();
@@ -89,7 +89,10 @@ export default function KYCCaptureScreen() {
 
     } catch (error) {
       console.error('Error taking picture:', error);
-      Alert.alert('Error', 'No se pudo tomar la foto');
+      Alert.alert(
+        translate("alert.kyc.photoErrorTitle"),
+        translate("alert.kyc.photoErrorMessage")
+      );
     }
   };
 
@@ -125,13 +128,19 @@ export default function KYCCaptureScreen() {
       }
     } catch (error) {
       console.error('Error picking image:', error);
-      Alert.alert('Error', 'No se pudo seleccionar la imagen');
+      Alert.alert(
+        translate("alert.kyc.pickImageErrorTitle"),
+        translate("alert.kyc.pickImageErrorMessage")
+      );
     }
   };
 
   const handleSubmit = async (allDocuments: Partial<Record<KYCDocumentType, KYCDocument>>) => {
     if (!allDocuments.id_front || !allDocuments.id_back || !allDocuments.selfie) {
-      Alert.alert('Error', 'Faltan documentos por capturar');
+      Alert.alert(
+        translate("alert.kyc.missingDocumentsTitle"),
+        translate("alert.kyc.missingDocumentsMessage")
+      );
       return;
     }
 
@@ -150,11 +159,11 @@ export default function KYCCaptureScreen() {
       );
 
       Alert.alert(
-        '¡Verificación enviada!',
-        'Tu solicitud está en revisión. Te notificaremos cuando esté aprobada.',
+        translate("alert.kyc.verificationSentTitle"),
+        translate("alert.kyc.verificationSentMessage"),
         [
           {
-            text: 'Entendido',
+            text: translate("alert.kyc.verificationSentButton"),
             onPress: () => router.replace('/(auth)/(tabs)/arkHome'),
           },
         ]
@@ -163,7 +172,10 @@ export default function KYCCaptureScreen() {
       initialize();
     } catch (error: any) {
       console.error('Error submitting KYC:', error);
-      Alert.alert('Error', error?.message || 'No se pudo enviar la verificación');
+      Alert.alert(
+        translate("alert.kyc.submitErrorTitle"),
+        error?.message || translate("alert.kyc.submitErrorMessage")
+      );
       setIsSubmitting(false);
     }
   };
@@ -190,14 +202,14 @@ export default function KYCCaptureScreen() {
     return (
       <View style={styles.centerContainer}>
         <Text style={[styles.permissionText, { color: colors.text }]}>
-          Necesitamos permiso para acceder a la cámara
+          {translate("private.kyc.permissionText")}
         </Text>
         <TouchableOpacity
           style={[styles.button, { backgroundColor: colors.primary }]}
           onPress={requestPermission}
         >
           <Text style={[styles.buttonText, { color: colors.customWhite }]}>
-            Otorgar permiso
+            {translate("private.kyc.grantPermissionButton")}
           </Text>
         </TouchableOpacity>
       </View>
@@ -209,10 +221,10 @@ export default function KYCCaptureScreen() {
       <View style={[styles.centerContainer, { backgroundColor: colors.background }]}>
         <ActivityIndicator size="large" color={colors.primary} />
         <Text style={[styles.submitText, { color: colors.text }]}>
-          {submitProgress.step}
+          {submitProgress.step || translate("private.kyc.submittingText")}
         </Text>
         <Text style={[styles.submitProgress, { color: colors.secondaryText }]}>
-          {submitProgress.progress}%
+          {translate("private.kyc.submitProgress", { progress: submitProgress.progress })}
         </Text>
       </View>
     );
@@ -251,8 +263,12 @@ export default function KYCCaptureScreen() {
         {/* Instructions */}
         <View style={styles.instructionsContainer}>
           <Ionicons name={stepConfig.icon} size={48} color="#FFFFFF" />
-          <Text style={styles.instructionTitle}>{stepConfig.title}</Text>
-          <Text style={styles.instructionText}>{stepConfig.instruction}</Text>
+          <Text style={styles.instructionTitle}>
+            {translate(stepConfig.titleKey)}
+          </Text>
+          <Text style={styles.instructionText}>
+            {translate(stepConfig.instructionKey)}
+          </Text>
         </View>
 
         {/* Frame */}
@@ -276,7 +292,6 @@ export default function KYCCaptureScreen() {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

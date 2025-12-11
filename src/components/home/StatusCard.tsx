@@ -4,6 +4,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { KycStatus, ConnectStatus } from '../../types/profile.types';
+import { useTranslation } from 'react-i18next';
 
 type StatusType = KycStatus | ConnectStatus | 'manual';
 
@@ -24,83 +25,6 @@ interface StatusCardProps {
   onPress?: () => void;
 }
 
-const STATUS_CONFIGS: Record<string, StatusConfig> = {
-  // KYC Statuses
-  kyc_pending: {
-    color: '#6B7280',
-    backgroundColor: '#F3F4F6',
-    icon: 'hourglass-outline',
-    label: 'Sin verificar',
-  },
-  kyc_review: {
-    color: '#F59E0B',
-    backgroundColor: '#FEF3C7',
-    icon: 'time-outline',
-    label: 'En revisión',
-  },
-  kyc_verified: {
-    color: '#10B981',
-    backgroundColor: '#D1FAE5',
-    icon: 'checkmark-circle',
-    label: 'Verificado',
-  },
-  kyc_rejected: {
-    color: '#DC2626',
-    backgroundColor: '#FEE2E2',
-    icon: 'close-circle',
-    label: 'Rechazado',
-  },
-
-  // Connect Statuses
-  invited: {
-    color: '#6B7280',
-    backgroundColor: '#F3F4F6',
-    icon: 'mail-outline',
-    label: 'Invitado',
-  },
-  pending: {
-    color: '#F59E0B',
-    backgroundColor: '#FEF3C7',
-    icon: 'hourglass-outline',
-    label: 'Pendiente',
-  },
-  onboarding: {
-    color: '#3B82F6',
-    backgroundColor: '#DBEAFE',
-    icon: 'document-text-outline',
-    label: 'En proceso',
-  },
-  verified: {
-    color: '#10B981',
-    backgroundColor: '#D1FAE5',
-    icon: 'checkmark-circle',
-    label: 'Verificado',
-  },
-  active: {
-    color: '#10B981',
-    backgroundColor: '#D1FAE5',
-    icon: 'checkmark-circle',
-    label: 'Activo',
-  },
-  rejected: {
-    color: '#DC2626',
-    backgroundColor: '#FEE2E2',
-    icon: 'close-circle',
-    label: 'Rechazado',
-  },
-  external: {
-    color: '#8B5CF6',
-    backgroundColor: '#EDE9FE',
-    icon: 'document-outline',
-    label: 'Pago Manual',
-  },
-  manual: {
-    color: '#8B5CF6',
-    backgroundColor: '#EDE9FE',
-    icon: 'hand-left-outline',
-    label: 'Manual',
-  },
-};
 
 export const StatusCard: React.FC<StatusCardProps> = ({
   title,
@@ -111,10 +35,87 @@ export const StatusCard: React.FC<StatusCardProps> = ({
   onActionPress,
   onPress,
 }) => {
+  const {t:translate } = useTranslation("common")
+  const STATUS_CONFIGS: Record<string, StatusConfig> = {
+    // KYC Statuses
+    kyc_pending: {
+      color: '#6B7280',
+      backgroundColor: '#F3F4F6',
+      icon: 'hourglass-outline',
+      label: translate("private.profile.configStatusNotVerified"),
+    },
+    kyc_review: {
+      color: '#F59E0B',
+      backgroundColor: '#FEF3C7',
+      icon: 'time-outline',
+      label: translate("private.profile.configStatusUnderReview"),
+    },
+    kyc_verified: {
+      color: '#10B981',
+      backgroundColor: '#D1FAE5',
+      icon: 'checkmark-circle',
+      label: translate("private.profile.configStatusVerified"),
+    },
+    kyc_rejected: {
+      color: '#DC2626',
+      backgroundColor: '#FEE2E2',
+      icon: 'close-circle',
+      label: translate("private.profile.configStatusRejected"),
+    },
+  
+    // Connect Statuses
+    invited: {
+      color: '#6B7280',
+      backgroundColor: '#F3F4F6',
+      icon: 'mail-outline',
+      label: translate("private.profile.configStatusInvited")
+    },
+    pending: {
+      color: '#F59E0B',
+      backgroundColor: '#FEF3C7',
+      icon: 'hourglass-outline',
+      label: translate("private.profile.configStatusPending"),
+    },
+    onboarding: {
+      color: '#3B82F6',
+      backgroundColor: '#DBEAFE',
+      icon: 'document-text-outline',
+      label: translate("private.profile.configStatusOnProcess"),
+    },
+    verified: {
+      color: '#10B981',
+      backgroundColor: '#D1FAE5',
+      icon: 'checkmark-circle',
+      label: translate("private.profile.configStatusVerified"),
+    },
+    active: {
+      color: '#10B981',
+      backgroundColor: '#D1FAE5',
+      icon: 'checkmark-circle',
+      label: translate("private.profile.configStatusActive"),
+    },
+    rejected: {
+      color: '#DC2626',
+      backgroundColor: '#FEE2E2',
+      icon: 'close-circle',
+      label: translate("private.profile.configStatusRejected"),
+    },
+    external: {
+      color: '#8B5CF6',
+      backgroundColor: '#EDE9FE',
+      icon: 'document-outline',
+      label: translate("private.profile.configStatusManualPay"),
+    },
+    manual: {
+      color: '#8B5CF6',
+      backgroundColor: '#EDE9FE',
+      icon: 'hand-left-outline',
+      label: translate("private.profile.configStatusManual"),
+    },
+  };
   const config = STATUS_CONFIGS[status] || STATUS_CONFIGS.kyc_pending;
-
+  
   const CardWrapper = onPress ? TouchableOpacity : View;
-
   return (
     <CardWrapper
       style={styles.container}
@@ -168,7 +169,9 @@ export const StatusCard: React.FC<StatusCardProps> = ({
       {/* Tap to see more */}
       {onPress && (
         <View style={styles.tapHint}>
-          <Text style={styles.tapHintText}>Toca para ver detalles</Text>
+          <Text style={styles.tapHintText}>
+            {translate("private.profile.moreDetailsButton")}
+          </Text>
           <Ionicons name="chevron-forward" size={16} color="#9CA3AF" />
         </View>
       )}

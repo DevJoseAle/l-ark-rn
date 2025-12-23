@@ -27,7 +27,10 @@
         "rejected": "Rejected",
         "name": "Name",
         "email": "Email",
-        "country": "Country"
+        "country": "Country",
+        "visible":"Visible",
+        "hidden":"Hidden"
+
     },
     "public": {
         "welcome": {
@@ -77,6 +80,7 @@
             "noDonationsMessage": "There are no donations for this campaign yet.",
             "campaignCard": {
                 "totalRaised": "Total Raised:",
+                "campaignStatus":"Campaign Status",
                 "toMyCampaignButton": "View My Campaign",
                 "yourGoal": "Your Goal",
                 "goalPercentage": "You've reached {{percentage}}% of your goal!",

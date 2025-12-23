@@ -33,15 +33,16 @@ import {
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-const STATUS_CONFIG = {
-  draft: { label: 'Borrador', color: '#FF9800', icon: 'create-outline' as const },
-  active: { label: 'Activa', color: '#4CAF50', icon: 'checkmark-circle-outline' as const },
-  paused: { label: 'Pausada', color: '#9E9E9E', icon: 'pause-circle-outline' as const },
-  completed: { label: 'Completada', color: '#2196F3', icon: 'trophy-outline' as const },
-  cancelled: { label: 'Cancelada', color: '#F44336', icon: 'close-circle-outline' as const },
-};
 
 export default function CampaignDetailScreen() {
+  const { t: translate } = useTranslation("common");
+  const STATUS_CONFIG = {
+    draft: { label: translate("common.draft"), color: '#FF9800', icon: 'create-outline' as const },
+    active: { label: translate("common.active"), color: '#4CAF50', icon: 'checkmark-circle-outline' as const },
+    paused: { label: translate("common.paused"), color: '#9E9E9E', icon: 'pause-circle-outline' as const },
+    completed: { label: translate("common.completed"), color: '#2196F3', icon: 'trophy-outline' as const },
+    cancelled: { label: translate("commo"), color: '#F44336', icon: 'close-circle-outline' as const },
+  };
   const router = useRouter();
   const params = useLocalSearchParams();
   const colorScheme = useColorScheme();
@@ -53,7 +54,7 @@ export default function CampaignDetailScreen() {
   const [error, setError] = useState<string | null>(null);
   const [showDonateModal, setShowDonateModal] = useState(false);
   const [showCertificateModal, setShowCertificateModal] = useState(false);
-  const { t: translate } = useTranslation("common");
+  
   const campaignId = params.id as string;
   const handleBackPress = () => {
     router.replace('/(auth)/(tabs)/arkHome');

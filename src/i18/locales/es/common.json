@@ -27,7 +27,9 @@
         "rejected": "Rechazado",
         "name": "Nombre",
         "email": "Email",
-        "country": "País"
+        "country": "País",
+        "visible":"Visible",
+        "hidden":"Oculta"
     },
     "public": {
         "welcome": {
@@ -77,6 +79,7 @@
             "noDonationsMessage": "Aún no hay donaciones para esta campaña.",
             "campaignCard": {
                 "totalRaised": "Total Recaudado:",
+                "campaignStatus":"Estatus de Campaña",
                 "toMyCampaignButton": "Ver mi Campaña",
                 "yourGoal": "Tu Meta",
                 "goalPercentage": "¡Llevas un {{percentage}}% de tu meta!",

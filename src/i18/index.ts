@@ -27,7 +27,7 @@ const getDeviceLanguage = async (): Promise<string> => {
 
     const locales = Localization.getLocales();
     const deviceLocale = locales[0]?.languageCode || 'en'; // "es", "en"
-    return ['en', 'es'].includes(deviceLocale) ? deviceLocale : 'en';
+    return 'en'
   } catch {
     return 'en';
   }

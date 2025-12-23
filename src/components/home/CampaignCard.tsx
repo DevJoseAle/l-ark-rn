@@ -64,8 +64,12 @@ export default function CampaignCard({
       <View style={styles.header}>
         <View>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Text style={styles.headerLabel}>Estatus Campaña:</Text> 
-            <Text style={styles.headerLabel}>{isVisible ? "Visible" : "Oculta"}</Text>
+            <Text style={styles.headerLabel}>{translate("private.home.campaignCard.campaignStatus")}</Text> 
+            <Text style={styles.headerLabel}>{isVisible 
+            ? translate("common.visible") 
+            : translate("common.hidden")
+            }
+            </Text>
           </View>
           <Text style={styles.headerLabel}>{translate("private.home.campaignCard.totalRaised")}</Text>
             <View style={{flexDirection: 'row'}}>
